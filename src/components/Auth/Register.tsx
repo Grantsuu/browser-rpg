@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import UserForm from "../Forms/UserForm";
 
 const Register = () => {
     return (
@@ -6,12 +7,7 @@ const Register = () => {
             <h2>
                 Register
             </h2>
-            <input type="email" placeholder="Email" className="input mb-2" />
-            <input type="password" placeholder="Password" className="input mb-2" />
-            <input type="password" placeholder="Confirm password" className="input mb-2" />
-            <div className="card-actions justify-center">
-                <button className="btn btn-primary mb-2">Register</button>
-            </div>
+            <UserForm mode="register" />
             <Link to="/login" className="text-xs">
                 Return to login
             </Link>
