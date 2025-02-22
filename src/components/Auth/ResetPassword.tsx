@@ -1,14 +1,14 @@
 import { Link } from "react-router";
 import UserForm from "../Forms/UserForm";
 
-const Register = () => {
+const ResetPassword = () => {
 
     return (
         <div className="flex flex-col items-center prose">
             <h2>
-                Register
+                Reset Password
             </h2>
-            <UserForm mode="register" />
+            <UserForm mode="reset" />
             <Link to="/login" className="text-xs">
                 Return to login
             </Link>
@@ -16,4 +16,4 @@ const Register = () => {
     )
 }
 
-export default Register;
+export default ResetPassword;

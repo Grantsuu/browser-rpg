@@ -17,7 +17,7 @@ const FormTextInput = ({ ...props }) => {
 };
 
 interface UserFormProps {
-    mode: "login" | "register";
+    mode: "login" | "register" | "reset";
 }
 
 const UserForm = ({ mode = "login" }: UserFormProps) => {
@@ -53,12 +53,12 @@ const UserForm = ({ mode = "login" }: UserFormProps) => {
                     placeholder="Email"
                     className="input"
                 />
-                <FormTextInput
+                {mode !== "reset" && <FormTextInput
                     name="password"
                     type="password"
                     placeholder="Password"
                     className="input"
-                />
+                />}
                 {
                     mode === "register" &&
                     <FormTextInput
@@ -71,7 +71,9 @@ const UserForm = ({ mode = "login" }: UserFormProps) => {
                 <div className="flex justify-center">
                     <button type="submit" className="btn btn-primary mb-2">
                         {
-                            mode === "login" ? "Login" : "Register"
+                            mode === "login" ? "Login" :
+                                mode === "register" ? "Register" :
+                                    "Reset Password"
                         }
                     </button>
                 </div>

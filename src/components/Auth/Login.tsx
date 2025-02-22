@@ -8,6 +8,9 @@ const Login = () => {
                 Login
             </h2>
             <UserForm mode="login" />
+            <Link to="/reset-password" className="text-xs mb-1">
+                Forgot password?
+            </Link>
             <Link to="/register" className="text-xs">
                 Register a new account
             </Link>
