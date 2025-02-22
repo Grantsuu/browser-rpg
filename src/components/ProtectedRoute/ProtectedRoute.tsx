@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router';
+import { Session } from '@supabase/supabase-js';
 import { SupabaseContext } from '../../contexts/SupabaseContext'
 
 type ProtectedRouteProps = {
@@ -7,10 +8,8 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
-    const supabaseContext = useContext(SupabaseContext);
-    const [session, setSession] = useState(null);
-
-    const { supabase } = supabaseContext;
+    const supabase = useContext(SupabaseContext);
+    const [session, setSession] = useState<Session | null>(null);
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {

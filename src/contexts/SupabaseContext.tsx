@@ -1,14 +1,14 @@
-import { createContext, useState } from 'react';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createContext } from 'react';
+import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
-const SupabaseContext = createContext();
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-const SupabaseProvider = ({ children }) => {
-    const [supabase, setSupabase] = useState<SupabaseClient>(createClient(supabaseUrl, supabaseKey));
+const SupabaseContext = createContext(supabase);
 
+const SupabaseProvider = ({ children }: { children: React.ReactNode }) => {
     return <SupabaseContext value={supabase}>{children}</SupabaseContext>
 }
 
