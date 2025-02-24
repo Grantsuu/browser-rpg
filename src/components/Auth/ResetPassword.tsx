@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import UserForm from "../Forms/UserForm";
+import AuthForm from "./AuthForm";
 
 const ResetPassword = () => {
 
@@ -8,7 +8,7 @@ const ResetPassword = () => {
             <h2>
                 Reset Password
             </h2>
-            <UserForm mode="reset" />
+            <AuthForm mode="reset" />
             <Link to="/login" className="text-xs">
                 Return to login
             </Link>

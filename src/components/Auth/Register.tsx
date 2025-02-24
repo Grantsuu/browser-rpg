@@ -1,14 +1,13 @@
 import { Link } from "react-router";
-import UserForm from "../Forms/UserForm";
+import AuthForm from "./AuthForm";
 
 const Register = () => {
-
     return (
         <div className="flex flex-col items-center prose">
             <h2>
                 Register
             </h2>
-            <UserForm mode="register" />
+            <AuthForm mode="register" />
             <Link to="/login" className="text-xs">
                 Return to login
             </Link>

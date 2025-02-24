@@ -1,4 +1,7 @@
 import { Outlet } from "react-router";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShieldHalved } from "@fortawesome/free-solid-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 const Auth = () => {
     return (
@@ -6,7 +9,7 @@ const Auth = () => {
             <div className="flex flex-col gap-4 w-full items-center justify-center">
                 <div className="prose">
                     <h1>
-                        Browser RPG
+                        Browser RPG <FontAwesomeIcon icon={faShieldHalved as IconProp} />
                     </h1>
                 </div>
                 <div className="w-1/5">

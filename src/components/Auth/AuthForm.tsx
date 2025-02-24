@@ -1,5 +1,8 @@
+import { useContext } from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
+import { Navigate } from 'react-router';
+import { SupabaseContext } from "../../contexts/SupabaseContext";
 
 const FormTextInput = ({ ...props }) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
@@ -20,7 +23,32 @@ interface UserFormProps {
     mode: "login" | "register" | "reset";
 }
 
-const UserForm = ({ mode = "login" }: UserFormProps) => {
+const AuthForm = ({ mode = "login" }: UserFormProps) => {
+    const supabase = useContext(SupabaseContext);
+
+    const handleRegister = async (email: string, password: string) => {
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                // emailRedirectTo: 'https://example.com/welcome',
+            },
+        })
+        if (error) {
+            console.log(error.message)
+            return
+        }
+        console.log(data);
+        return <Navigate to="/" />
+    }
+
+    const handleLogin = async () => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: 'valid.email@supabase.io',
+            password: 'example-password',
+        })
+    }
+
     return (
         <Formik
             initialValues={{
@@ -41,7 +69,10 @@ const UserForm = ({ mode = "login" }: UserFormProps) => {
                         .required('Please confirm your password')
                         .oneOf([Yup.ref('password')], 'Passwords must match')
                 })}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={async (values, { setSubmitting }) => {
+                if (mode === 'register') {
+                    const data = await handleRegister(values.email, values.password);
+                }
                 console.log(values);
                 setSubmitting(false);
             }}
@@ -82,4 +113,4 @@ const UserForm = ({ mode = "login" }: UserFormProps) => {
     )
 }
 
-export default UserForm;
+export default AuthForm;

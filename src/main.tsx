@@ -27,5 +27,5 @@ createRoot(document.getElementById('root')!).render(
                 </Routes>
             </BrowserRouter>
         </SupabaseProvider>
-    </StrictMode>,
+    </StrictMode>
 )
