@@ -23,7 +23,7 @@ const FormTextInput = ({ ...props }) => {
 };
 
 interface UserFormProps {
-    mode: "login" | "register" | "reset";
+    mode: "login" | "register" | "reset" | "update";
 }
 
 const AuthForm = ({ mode = "login" }: UserFormProps) => {
@@ -66,6 +66,30 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
         setLoading(false);
     }
 
+    const handleResetPassword = async (email: string) => {
+        setLoading(true);
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: 'http://localhost:3000/account/update-password',
+        })
+        if (error) {
+            setErrorMessage(`Error requesting password reset: ${error.message}`);
+        } else {
+            setErrorMessage(`Password reset request succesful. Please check your email.`)
+        }
+        setLoading(false);
+    }
+
+    const handleUpdatePassword = async (password: string) => {
+        setLoading(true);
+        const { error } = await supabase.auth.updateUser({ password: password })
+        if (error) {
+            setErrorMessage(`Error updating password: ${error.message}`);
+        } else {
+            setErrorMessage(`Password update successful.`)
+        }
+        setLoading(false);
+    }
+
     return (
         <>
             {registerSuccess ?
@@ -83,19 +107,31 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                     }}
                     validationSchema={
                         Yup.object({
+                            // Email: login, register, reset
                             email: Yup.string()
-                                .email('Please enter a valid email address')
-                                .required('Please enter your email address'),
+                                .when([], {
+                                    is: () => !mode.includes("update"),
+                                    then: (schema) => schema
+                                        .email('Please enter a valid email address')
+                                        .required('Please enter your email address')
+                                }),
+                            // Password: login, register, update
                             password: Yup.string()
-                                .required('Please enter a valid password')
+                                .when([], {
+                                    is: () => !mode.includes("reset"),
+                                    then: (schema) => schema.required('Please enter a valid password')
+                                })
+                                // Only need to validate minimum password length on registration
                                 .when([], {
                                     is: () => mode.includes("register"),
                                     then: (schema) => schema.min(8, "Please enter at least 8 characters"),
                                 }),
+                            // Password: register, update
                             confirmPassword: Yup.string()
                                 .when([], {
-                                    is: () => mode.includes("register"),
-                                    then: (schema) => schema.required('Please confirm your password')
+                                    is: () => mode.includes("register") || mode.includes("update"),
+                                    then: (schema) => schema
+                                        .required('Please confirm your password')
                                         .oneOf([Yup.ref('password')], 'Passwords must match')
                                 })
                         })}
@@ -105,18 +141,24 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                             await handleRegister(values.email, values.password);
                         } else if (mode === 'login') {
                             await handleLogin(values.email, values.password);
+                        } else if (mode === 'reset') {
+                            await handleResetPassword(values.email);
+                        } else if (mode === 'update') {
+                            await handleUpdatePassword(values.password);
                         }
                         setSubmitting(false);
                     }}
                 >
                     <Form className="w-full">
-                        <FormTextInput
+                        {/* Email: login, register, reset */}
+                        {mode !== "update" && <FormTextInput
                             name="email"
                             type="email"
                             placeholder="Email"
                             className="input"
                             disabled={loading}
-                        />
+                        />}
+                        {/* Password: login, register, update */}
                         {mode !== "reset" && <FormTextInput
                             name="password"
                             type="password"
@@ -124,16 +166,15 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                             className="input"
                             disabled={loading}
                         />}
-                        {
-                            mode === "register" &&
+                        {/* Confirm Password: register, update */}
+                        {(mode === "register" || mode === "update") &&
                             <FormTextInput
                                 name="confirmPassword"
                                 type="password"
                                 placeholder="Confirm password"
                                 className="input"
                                 disabled={loading}
-                            />
-                        }
+                            />}
                         <div className="flex justify-center">
                             <button type="submit" className="btn btn-primary mb-2">
                                 {

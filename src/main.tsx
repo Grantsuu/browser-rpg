@@ -10,6 +10,7 @@ import Auth from './layouts/Auth.tsx';
 import Login from './components/Auth/Login.tsx';
 import Register from './components/Auth/Register.tsx';
 import ResetPassword from './components/Auth/ResetPassword.tsx';
+import UpdatePassword from './components/Auth/UpdatePassword.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -18,11 +19,13 @@ createRoot(document.getElementById('root')!).render(
                 <Routes>
                     <Route element={<ProtectedRoute redirectPath='login' />}>
                         <Route index element={<Home />} />
+                        <Route path="/account/update-password" element={<UpdatePassword />} />
                     </Route>
                     <Route element={<Auth />}>
                         <Route path="login" element={<Login />} />
                         <Route path="register" element={<Register />} />
                         <Route path="reset-password" element={<ResetPassword />} />
+
                     </Route>
                 </Routes>
             </BrowserRouter>
