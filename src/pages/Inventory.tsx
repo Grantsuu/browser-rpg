@@ -73,12 +73,13 @@ const Inventory = () => {
             {loading ? <span className="loading loading-spinner loading-xl"></span> :
                 <div className="card w-full h-full bg-base-100 shadow-md">
                     <div className="card-body min-w-full max-h-full">
-                        <div className="prose mb-4">
+                        <div className="prose">
                             <h1>
                                 <FontAwesomeIcon icon={faBox as IconProp} /> Inventory
                             </h1>
                         </div>
-                        <div className="overflow-y-scroll w-full h-full rounded-box border border-base-content/8 ">
+                        <div className="divider"></div>
+                        <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
                             <table className="table table-pin-rows bg-base-100">
                                 {/* head */}
                                 <thead>
