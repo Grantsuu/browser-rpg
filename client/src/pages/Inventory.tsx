@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { SupabaseContext } from "../contexts/SupabaseContext"
+// import { SupabaseContext } from "../contexts/SupabaseContext"
 
 interface item {
     image: string,
@@ -14,7 +14,7 @@ interface item {
 }
 
 const Inventory = () => {
-    const supabase = useContext(SupabaseContext);
+    // const supabase = useContext(SupabaseContext);
 
     const [loading, setLoading] = useState(true);
     const [inventory, setInventory] = useState<item[]>([]);
