@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router';
-import { Session } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { SupabaseContext } from '../../contexts/SupabaseContext'
 
 type ProtectedRouteProps = {
@@ -9,27 +9,37 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
     const supabase = useContext(SupabaseContext);
-    const [session, setSession] = useState<Session | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-        })
+        async function fetchUser() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                setUser(user);
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
 
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session)
-        })
-
-        return () => subscription.unsubscribe()
+        fetchUser();
     }, [])
 
-    if (!session) {
-        return <Navigate to={redirectPath} replace />;
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
-    return <Outlet />;
+    return (
+        <>
+            {
+                user ?
+                    <Outlet /> :
+                    <Navigate to={redirectPath} />
+            }
+        </>
+    )
 };
 
 export default ProtectedRoute;
