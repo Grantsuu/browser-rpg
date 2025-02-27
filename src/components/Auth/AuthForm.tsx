@@ -26,6 +26,8 @@ interface UserFormProps {
     mode: "login" | "register" | "reset" | "update";
 }
 
+const redirectUrl = import.meta.env.VITE_SUPABASE_REDIRECT;
+
 const AuthForm = ({ mode = "login" }: UserFormProps) => {
     const supabase = useContext(SupabaseContext);
     const navigate = useNavigate();
@@ -39,7 +41,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             email: email,
             password: password,
             options: {
-                // emailRedirectTo: 'https://example.com/welcome',
+                emailRedirectTo: redirectUrl,
             },
         })
         if (error) {
