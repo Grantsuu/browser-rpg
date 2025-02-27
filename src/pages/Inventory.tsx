@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-// import { SupabaseContext } from "../contexts/SupabaseContext"
+import { useSupabase } from "../contexts/SupabaseContext"
 
 interface item {
     image: string,
@@ -14,10 +14,29 @@ interface item {
 }
 
 const Inventory = () => {
-    // const supabase = useContext(SupabaseContext);
+    const { supabaseClient, supabaseUser } = useSupabase();
 
     const [loading, setLoading] = useState(true);
     const [inventory, setInventory] = useState<item[]>([]);
+
+    const handleGetInventory = async () => {
+        if (supabaseClient && supabaseUser) {
+            const character = await supabaseClient
+                .from('characters')
+                .select('id')
+                .eq('user', supabaseUser.id);
+            // console.log(character);
+            if (character.data && character.data.length > 0) {
+                const inventory = await supabaseClient
+                    .from('inventories')
+                    .select()
+                    .eq('character', character.data[0].id);
+                console.log(inventory);
+            }
+        }
+    }
+
+    handleGetInventory();
 
     const items: item[] = [
         {

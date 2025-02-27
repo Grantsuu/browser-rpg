@@ -1,8 +1,8 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router';
-import { SupabaseContext } from "../../contexts/SupabaseContext";
+import { useSupabase } from "../../contexts/SupabaseContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -29,67 +29,75 @@ interface UserFormProps {
 const redirectUrl = import.meta.env.VITE_SUPABASE_REDIRECT;
 
 const AuthForm = ({ mode = "login" }: UserFormProps) => {
-    const supabase = useContext(SupabaseContext);
+    const { supabaseClient } = useSupabase();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [registerSuccess, setRegisterSuccess] = useState(false);
 
     const handleRegister = async (email: string, password: string) => {
-        setLoading(true);
-        const { error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                emailRedirectTo: redirectUrl,
-            },
-        })
-        if (error) {
-            setErrorMessage(`Error registering: ${error.message}. Please try again later.`);
-        } else {
-            setRegisterSuccess(true);
+        if (supabaseClient) {
+            setLoading(true);
+            const { error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    emailRedirectTo: redirectUrl,
+                },
+            })
+            if (error) {
+                setErrorMessage(`Error registering: ${error.message}. Please try again later.`);
+            } else {
+                setRegisterSuccess(true);
+            }
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     const handleLogin = async (email: string, password: string) => {
-        setLoading(true);
-        const { data: { user }, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        })
-        if (error) {
-            setErrorMessage(`Error logging in: ${error.message}. Please try again later.`);
+        if (supabaseClient) {
+            setLoading(true);
+            const { data: { user }, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password,
+            })
+            if (error) {
+                setErrorMessage(`Error logging in: ${error.message}. Please try again later.`);
+            }
+            // Only redirect if a valid user is logged in
+            if (user) {
+                navigate("/");
+            }
+            setLoading(false);
         }
-        // Only redirect if a valid user is logged in
-        if (user) {
-            navigate("/");
-        }
-        setLoading(false);
     }
 
     const handleResetPassword = async (email: string) => {
-        setLoading(true);
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: 'http://localhost:3000/account/update-password',
-        })
-        if (error) {
-            setErrorMessage(`Error requesting password reset: ${error.message}`);
-        } else {
-            setErrorMessage(`Password reset request succesful. Please check your email.`)
+        if (supabaseClient) {
+            setLoading(true);
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: `${redirectUrl}/account/update-password`,
+            })
+            if (error) {
+                setErrorMessage(`Error requesting password reset: ${error.message}`);
+            } else {
+                setErrorMessage(`Password reset request succesful. Please check your email.`)
+            }
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     const handleUpdatePassword = async (password: string) => {
-        setLoading(true);
-        const { error } = await supabase.auth.updateUser({ password: password })
-        if (error) {
-            setErrorMessage(`Error updating password: ${error.message}`);
-        } else {
-            setErrorMessage(`Password update successful.`)
+        if (supabaseClient) {
+            setLoading(true);
+            const { error } = await supabaseClient.auth.updateUser({ password: password })
+            if (error) {
+                setErrorMessage(`Error updating password: ${error.message}`);
+            } else {
+                setErrorMessage(`Password update successful.`)
+            }
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     return (

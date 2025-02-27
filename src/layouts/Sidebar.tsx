@@ -1,16 +1,15 @@
-import { useContext } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBox, faHammer, faHouse, faRightFromBracket, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { SupabaseContext } from "../contexts/SupabaseContext"
+import { useSupabase } from "../contexts/SupabaseContext"
 
 const Sidebar = () => {
-    const supabase = useContext(SupabaseContext);
+    const { supabaseClient } = useSupabase();
     const navigate = useNavigate();
     async function handleSignout() {
         try {
-            await supabase.auth.signOut();
+            await supabaseClient?.auth.signOut();
         } catch (error) {
             console.error("Error signing out:", error);
         } finally {
