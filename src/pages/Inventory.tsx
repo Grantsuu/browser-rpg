@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { useSupabase } from "../contexts/SupabaseContext"
+import { useSupabase } from "../contexts/SupabaseContext";
 
 interface item {
     image: string,
@@ -32,6 +32,17 @@ const Inventory = () => {
         }
     }
 
+    interface SupabaseItem {
+        amount: number,
+        item: {
+            category: { name: string },
+            description: string,
+            image: { base64: string },
+            name: string,
+            value: number
+        }
+    }
+
     const handleGetInventory = async () => {
         setLoading(true);
         if (supabaseClient && supabaseUser) {
@@ -39,18 +50,19 @@ const Inventory = () => {
             const { data, error } = await supabaseClient
                 .from('inventories')
                 .select(`
-                    amount,
-                    item:items(
-                        name,
-                        category:item_categories(name),
-                        value,
-                        description,
-                        image:item_images(base64)
-                    )
-                `)
-                .eq('character', characterId);
+                amount,
+                item:items(
+                    name,
+                    category:item_categories(name),
+                    value,
+                    description,
+                    image:item_images(base64)
+                )
+            `)
+                .eq('character', characterId)
+                .returns<SupabaseItem[]>();
+
             if (!error) {
-                console.log(data);
                 data.map((item) => {
                     setInventory([...inventory, {
                         image: item.item.image.base64,
@@ -59,7 +71,7 @@ const Inventory = () => {
                         amount: item.amount,
                         value: item.item.value,
                         description: item.item.description
-                    }])
+                    }]);
                 })
             }
         }
