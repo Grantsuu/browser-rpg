@@ -19,61 +19,48 @@ const Inventory = () => {
     const [loading, setLoading] = useState(true);
     const [inventory, setInventory] = useState<item[]>([]);
 
-    const handleGetInventory = async () => {
-        setLoading(true);
-        // Get character UUID
+    const getCharacterId = async () => {
         if (supabaseClient && supabaseUser) {
-            const character = await supabaseClient
+            const { data, error } = await supabaseClient
                 .from('characters')
                 .select('id')
-                .eq('user', supabaseUser.id);
-            // Get all inventory for character
-            if (character.data && character.data.length > 0) {
-                const characterInventory = await supabaseClient
-                    .from('inventories')
-                    .select()
-                    .eq('character', character.data[0].id);
-                // Get items in inventory
-                if (characterInventory.data && characterInventory.data.length > 0) {
-                    characterInventory.data.map(async (item) => {
-                        // console.log(item);
-                        const newItem: item = {
-                            image: '',
-                            name: '',
-                            category: '',
-                            amount: item.amount,
-                            value: 0,
-                            description: ''
-                        };
-                        // Get item
-                        const inventoryItem = await supabaseClient
-                            .from('items')
-                            .select()
-                            .eq('id', item.item);
-                        if (inventoryItem.data && inventoryItem.data.length > 0) {
-                            newItem.name = inventoryItem.data[0].name;
-                            newItem.value = inventoryItem.data[0].value;
-                            newItem.description = inventoryItem.data[0].description;
-                            // Get item categories
-                            const itemCategory = await supabaseClient
-                                .from('item_categories')
-                                .select('name')
-                                .eq('id', inventoryItem.data[0].category);
-                            if (itemCategory.data && itemCategory.data.length > 0) {
-                                newItem.category = itemCategory.data[0].name;
-                            }
-                            // Get item images
-                            const itemImage = await supabaseClient
-                                .from('item_images')
-                                .select('base64')
-                                .eq('id', inventoryItem.data[0].image);
-                            if (itemImage.data && itemImage.data.length > 0) {
-                                newItem.image = itemImage.data[0].base64;
-                            }
-                        }
-                        setInventory([...inventory, newItem]);
-                    })
-                }
+                .eq('user', supabaseUser.id)
+            if (error) {
+                return ''
+            }
+            return data[0].id
+        }
+    }
+
+    const handleGetInventory = async () => {
+        setLoading(true);
+        if (supabaseClient && supabaseUser) {
+            const characterId = await getCharacterId();
+            const { data, error } = await supabaseClient
+                .from('inventories')
+                .select(`
+                    amount,
+                    item:items(
+                        name,
+                        category:item_categories(name),
+                        value,
+                        description,
+                        image:item_images(base64)
+                    )
+                `)
+                .eq('character', characterId);
+            if (!error) {
+                console.log(data);
+                data.map((item) => {
+                    setInventory([...inventory, {
+                        image: item.item.image.base64,
+                        name: item.item.name,
+                        category: item.item.category.name,
+                        amount: item.amount,
+                        value: item.item.value,
+                        description: item.item.description
+                    }])
+                })
             }
         }
         setLoading(false);
