@@ -61,18 +61,19 @@ const Inventory = () => {
             `)
                 .eq('character', characterId)
                 .returns<SupabaseItem[]>();
-
             if (!error) {
+                const items: item[] = [];
                 data.map((item) => {
-                    setInventory([...inventory, {
+                    items.push({
                         image: item.item.image.base64,
                         name: item.item.name,
                         category: item.item.category.name,
                         amount: item.amount,
                         value: item.item.value,
                         description: item.item.description
-                    }]);
+                    });
                 })
+                setInventory(items);
             }
         }
         setLoading(false);
