@@ -26,6 +26,18 @@ interface recipe {
     ingredients: ingredient[]
 }
 
+interface SupabaseItem {
+    amount: number,
+    item: {
+        id: number,
+        category: { name: string },
+        description: string,
+        image: { base64: string, type: string },
+        name: string,
+        value: number
+    }
+}
+
 interface SupabaseRecipe {
     item: {
         id: number,
@@ -52,9 +64,60 @@ const Crafting = () => {
     const [loading, setLoading] = useState(false);
     const [recipes, setRecipes] = useState<recipe[]>([]);
 
+    const getCharacterId = async () => {
+        if (supabaseClient && supabaseUser) {
+            const { data, error } = await supabaseClient
+                .from('characters')
+                .select('id')
+                .eq('user', supabaseUser.id)
+            if (error) {
+                return ''
+            }
+            return data[0].id
+        }
+    }
+
+    const insertInvetories = async (itemId: number, amount: number) => {
+        if (supabaseClient) {
+            const characterId = await getCharacterId();
+            const { error } = await supabaseClient
+                .from('inventories')
+                .insert({
+                    character: characterId,
+                    item: itemId,
+                    amount: amount
+                })
+            return error
+        }
+    }
+
+    const updateInvetories = async (itemId: number, amount: number) => {
+        if (supabaseClient) {
+            const characterId = await getCharacterId();
+            const { error } = await supabaseClient
+                .from('inventories')
+                .update({ amount: amount })
+                .eq('character', characterId)
+                .eq('item', itemId)
+            return error
+        }
+    }
+
+    const deleteFromInventories = async (itemId: number) => {
+        if (supabaseClient) {
+            const characterId = await getCharacterId();
+            const { error } = await supabaseClient
+                .from('inventories')
+                .delete()
+                .eq('character', characterId)
+                .eq('item', itemId)
+            return error
+        }
+    }
+
     const handleGetRecipes = async () => {
         setLoading(true);
-        if (supabaseClient && supabaseUser) {
+        if (supabaseClient) {
             const { data, error } = await supabaseClient
                 .from('recipes')
                 .select(`
@@ -80,8 +143,11 @@ const Crafting = () => {
             if (!error) {
                 const recipes: recipe[] = [];
                 data.map((recipe) => {
-                    if (recipes.find((r) => r.item.id === recipe.item.id)) {
-                        recipes.find((r) => r.item.id === recipe.item.id)?.ingredients.push(
+                    // Look for a recipe with an item id that matches the current recipe being processed
+                    const recipeFound = recipes.find((r) => r.item.id === recipe.item.id);
+                    // If the recipe is found, then we just add the ingredients of the current recipe being processed
+                    if (recipeFound) {
+                        recipeFound.ingredients.push(
                             {
                                 item: {
                                     id: recipe.ingredient.id,
@@ -98,6 +164,7 @@ const Crafting = () => {
                             }
                         );
                     } else {
+                        // Otherwise, add a new recipe to the list
                         recipes.push({
                             item: {
                                 id: recipe.item.id,
@@ -132,6 +199,83 @@ const Crafting = () => {
             }
         }
         setLoading(false);
+    }
+
+    const handleCraft = async (recipe: recipe) => {
+        // Lookup player inventory and determine if all of the ingredients exist
+        if (supabaseClient) {
+            const characterId = await getCharacterId();
+            const { data, error } = await supabaseClient
+                .from('inventories')
+                .select(`
+                amount,
+                item:items(
+                    id,
+                    name,
+                    category:lk_item_categories(name),
+                    value,
+                    description,
+                    image:lk_item_images(base64,type)
+                )
+            `)
+                .eq('character', characterId)
+                .returns<SupabaseItem[]>();
+            if (!error) {
+                const updatedIngredients: ingredient[] = [];
+                recipe.ingredients.forEach((ingredient) => {
+                    const inventoryIngredient = data.find((item) => item.item.id === ingredient.item.id);
+                    if (!inventoryIngredient) {
+                        // console.log('player does not have item: ' + ingredient.item.name)
+                        return
+                    }
+                    console.log('player has item: ' + ingredient.item.name)
+                    if (inventoryIngredient.amount < ingredient.amount) {
+                        // If the player does not have enough of the ingredient return out
+                        // console.log('player does not have enough of item')
+                        return
+                    }
+                    console.log('player has enough of item')
+                    updatedIngredients.push({
+                        amount: inventoryIngredient.amount - ingredient.amount,
+                        item: ingredient.item
+                    })
+                })
+                // Remove ingredients from player inventory
+                updatedIngredients.forEach(async (ingredient) => {
+                    if (ingredient.amount > 0) {
+                        // Update the number of ingredients in the player's inventory
+                        const error = await updateInvetories(ingredient.item.id, ingredient.amount);
+                        if (error) {
+                            return
+                        }
+                    } else {
+                        // Otherwise remove the item entirely
+                        const error = await deleteFromInventories(ingredient.item.id);
+                        if (error) {
+                            return
+                        }
+                    }
+                })
+                // Add new recipe item to player inventory
+                const craftedItem = data.find((item) => item.item.id === recipe.item.id);
+                if (craftedItem) {
+                    // If the item already exists just want to update the number of those items
+                    const error = await updateInvetories(craftedItem.item.id, craftedItem.amount += 1);
+                    if (error) {
+                        return
+                    }
+                } else {
+                    // Otherwise insert it into their inventory
+                    const error = await insertInvetories(recipe.item.id, 1);
+                    if (error) {
+                        return
+                    }
+                }
+            }
+        }
+
+
+
     }
 
     useEffect(() => {
@@ -195,7 +339,7 @@ const Crafting = () => {
                                                     })}
                                                 </td>
                                                 <td>
-                                                    <button className="btn btn-soft btn-primary">Craft</button>
+                                                    <button className="btn btn-soft btn-primary" onClick={() => handleCraft(recipe)}>Craft</button>
                                                 </td>
                                             </tr>
                                         )
