@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useSupabase } from "../contexts/SupabaseContext";
+import { ToastContainer, toast } from 'react-toastify';
 
 interface item {
     id: number
@@ -60,8 +61,12 @@ interface SupabaseRecipe {
 
 const Crafting = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
+    const toastCraftError = (itemName: string, message: string) => {
+        toast.error(`Error crafting ${itemName}: ${message}`)
+    };
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [loadingCraft, setLoadingCraft] = useState(false);
     const [recipes, setRecipes] = useState<recipe[]>([]);
 
     const getCharacterId = async () => {
@@ -202,6 +207,7 @@ const Crafting = () => {
     }
 
     const handleCraft = async (recipe: recipe) => {
+        setLoadingCraft(true);
         // Lookup player inventory and determine if all of the ingredients exist
         if (supabaseClient) {
             const characterId = await getCharacterId();
@@ -225,16 +231,14 @@ const Crafting = () => {
                 recipe.ingredients.forEach((ingredient) => {
                     const inventoryIngredient = data.find((item) => item.item.id === ingredient.item.id);
                     if (!inventoryIngredient) {
-                        // console.log('player does not have item: ' + ingredient.item.name)
+                        toastCraftError(recipe.item.name, `Ingredient not found (${ingredient.item.name})`);
                         return
                     }
-                    console.log('player has item: ' + ingredient.item.name)
                     if (inventoryIngredient.amount < ingredient.amount) {
                         // If the player does not have enough of the ingredient return out
-                        // console.log('player does not have enough of item')
+                        toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.item.name})`);
                         return
                     }
-                    console.log('player has enough of item')
                     updatedIngredients.push({
                         amount: inventoryIngredient.amount - ingredient.amount,
                         item: ingredient.item
@@ -246,12 +250,14 @@ const Crafting = () => {
                         // Update the number of ingredients in the player's inventory
                         const error = await updateInvetories(ingredient.item.id, ingredient.amount);
                         if (error) {
+                            toast.error(`Error updating item: (${ingredient.item.name})`);
                             return
                         }
                     } else {
                         // Otherwise remove the item entirely
                         const error = await deleteFromInventories(ingredient.item.id);
                         if (error) {
+                            toast.error(`Error removing item from inventory: (${ingredient.item.name})`);
                             return
                         }
                     }
@@ -262,20 +268,21 @@ const Crafting = () => {
                     // If the item already exists just want to update the number of those items
                     const error = await updateInvetories(craftedItem.item.id, craftedItem.amount += 1);
                     if (error) {
+                        toast.error(`Error updating item: (${craftedItem.item.name})`);
                         return
                     }
                 } else {
                     // Otherwise insert it into their inventory
                     const error = await insertInvetories(recipe.item.id, 1);
                     if (error) {
+                        toast.error(`Error adding item to inventory: (${recipe.item.name})`);
                         return
                     }
                 }
+                toast.success(`Successfully crafted 1 x ${recipe.item.name}!`)
             }
         }
-
-
-
+        setLoadingCraft(false);
     }
 
     useEffect(() => {
@@ -285,6 +292,7 @@ const Crafting = () => {
 
     return (
         <>
+            <ToastContainer />
             {loading ? <span className="loading loading-spinner loading-xl"></span> :
                 <div className="card w-full h-full bg-base-100 shadow-md">
                     <div className="card-body min-w-full max-h-full">
@@ -339,7 +347,10 @@ const Crafting = () => {
                                                     })}
                                                 </td>
                                                 <td>
-                                                    <button className="btn btn-soft btn-primary" onClick={() => handleCraft(recipe)}>Craft</button>
+                                                    <button className="btn btn-soft btn-primary" onClick={() => handleCraft(recipe)}>
+                                                        {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
+                                                            `Craft`}
+                                                    </button>
                                                 </td>
                                             </tr>
                                         )
