@@ -4,8 +4,23 @@ import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useSupabase } from "../contexts/SupabaseContext";
 
+
+interface SupabaseItem {
+    amount: number,
+    item: {
+        category: { name: string },
+        description: string,
+        image: { base64: string, type: string },
+        name: string,
+        value: number
+    }
+}
+
 interface item {
-    image: string,
+    image: {
+        base64: string,
+        type: string
+    },
     name: string,
     category: string,
     amount: number,
@@ -32,17 +47,6 @@ const Inventory = () => {
         }
     }
 
-    interface SupabaseItem {
-        amount: number,
-        item: {
-            category: { name: string },
-            description: string,
-            image: { base64: string },
-            name: string,
-            value: number
-        }
-    }
-
     const handleGetInventory = async () => {
         setLoading(true);
         if (supabaseClient && supabaseUser) {
@@ -53,10 +57,10 @@ const Inventory = () => {
                 amount,
                 item:items(
                     name,
-                    category:item_categories(name),
+                    category:lk_item_categories(name),
                     value,
                     description,
-                    image:item_images(base64)
+                    image:lk_item_images(base64,type)
                 )
             `)
                 .eq('character', characterId)
@@ -65,7 +69,10 @@ const Inventory = () => {
                 const items: item[] = [];
                 data.map((item) => {
                     items.push({
-                        image: item.item.image.base64,
+                        image: {
+                            base64: item.item.image.base64,
+                            type: item.item.image.type
+                        },
                         name: item.item.name,
                         category: item.item.category.name,
                         amount: item.amount,
@@ -78,49 +85,6 @@ const Inventory = () => {
         }
         setLoading(false);
     }
-
-    // const items: item[] = [
-    //     {
-    //         image: "items/blazing_edge.svg",
-    //         name: "Blazing Edge",
-    //         category: "Weapon",
-    //         amount: 1,
-    //         value: 2500,
-    //         description: "A sword imbued with the essence of fire, burning enemies with each strike."
-    //     },
-    //     {
-    //         image: "items/ring_of_arcane.svg",
-    //         name: "Ring of Arcane Insight",
-    //         category: "Accessory",
-    //         amount: 1,
-    //         value: 1800,
-    //         description: "An enchanted ring that enhances the wearer’s magical abilities and intellect."
-    //     },
-    //     {
-    //         image: "items/potion_of_rejuvination.svg",
-    //         name: "Potion of Rejuvenation",
-    //         category: "Consumable",
-    //         amount: 3,
-    //         value: 300,
-    //         description: "A rare potion that instantly heals wounds and restores stamina."
-    //     },
-    //     {
-    //         image: "items/cloak_phantom.svg",
-    //         name: "Cloak of the Phantom",
-    //         category: "Armor",
-    //         amount: 1,
-    //         value: 2200,
-    //         description: "A dark, ethereal cloak that grants invisibility for a short period when activated."
-    //     },
-    //     {
-    //         image: "items/dragon_scale.svg",
-    //         name: "Dragon Scale",
-    //         category: "Ingredient",
-    //         amount: 3,
-    //         value: 2000,
-    //         description: "A shimmering scale from an ancient dragon, used in crafting indestructible armor and potions of fortitude."
-    //     }
-    // ];
 
     useEffect(() => {
         handleGetInventory();
@@ -157,7 +121,7 @@ const Inventory = () => {
                                         return (
                                             <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                                 <td className="m-0 w-1/16">
-                                                    <img src={`data:image/svg+xml;base64,${item.image}`} />
+                                                    <img src={`data:image/${item.image.type};base64,${item.image.base64}`} />
                                                 </td>
                                                 <td>
                                                     {item.name}

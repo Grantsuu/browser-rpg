@@ -27,9 +27,9 @@ const Sidebar = () => {
                     <ul className="menu bg-base-100 text-base-content w-70 p-4">
                         {/* Sidebar content here */}
                         <li><Link to="/"><FontAwesomeIcon icon={faHouse as IconProp} className="w-5" />Home</Link></li>
-                        <li><Link to="/"><FontAwesomeIcon icon={faUserShield as IconProp} className="w-5" />Character</Link></li>
+                        <li><Link to="/character"><FontAwesomeIcon icon={faUserShield as IconProp} className="w-5" />Character</Link></li>
                         <li><Link to="/inventory"><FontAwesomeIcon icon={faBox as IconProp} className="w-5" />Inventory</Link></li>
-                        <li><Link to="/"><FontAwesomeIcon icon={faHammer as IconProp} className="w-5" />Crafting</Link></li>
+                        <li><Link to="/crafting"><FontAwesomeIcon icon={faHammer as IconProp} className="w-5" />Crafting</Link></li>
                     </ul>
                 </div>
                 <div className="p-2">

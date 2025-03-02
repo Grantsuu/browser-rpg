@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
 import Dashboard from './layouts/Dashboard.tsx';
 import Home from './pages/Home.tsx';
 import Inventory from './pages/Inventory.tsx';
+import Crafting from './pages/Crafting.tsx';
 import Auth from './layouts/Auth.tsx';
 import Login from './components/Auth/Login.tsx';
 import Register from './components/Auth/Register.tsx';
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')!).render(
                         <Route element={<Dashboard />} >
                             <Route index element={<Home />} />
                             <Route path="inventory" element={<Inventory />} />
+                            <Route path="crafting" element={<Crafting />} />
                             <Route path="/account/update-password" element={<UpdatePassword />} />
                         </Route>
                     </Route>
