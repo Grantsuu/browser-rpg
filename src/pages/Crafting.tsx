@@ -206,6 +206,52 @@ const Crafting = () => {
         setLoading(false);
     }
 
+    // Returns list of ingredients with updated amounts
+    // If any ingredients are not found or there are not enough then return an empty list
+    const findIngredients = async (data: SupabaseItem[], recipe: recipe) => {
+        const updatedIngredients: ingredient[] = [];
+        recipe.ingredients.forEach((ingredient) => {
+            const inventoryIngredient = data.find((item) => item.item.id === ingredient.item.id);
+            if (!inventoryIngredient) {
+                toastCraftError(recipe.item.name, `Ingredient not found (${ingredient.item.name})`);
+                return []
+            }
+            if (inventoryIngredient.amount < ingredient.amount) {
+                // If the player does not have enough of the ingredient return out
+                toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.item.name})`);
+                return []
+            }
+            updatedIngredients.push({
+                amount: inventoryIngredient.amount - ingredient.amount,
+                item: ingredient.item
+            })
+        })
+        return updatedIngredients;
+    }
+
+    // Update the number of ingredients in the players inventory
+    // If any updates fail then return false, otherwise return true if all successful
+    const updateIngredients = async (ingredients: ingredient[]) => {
+        ingredients.forEach(async (ingredient) => {
+            if (ingredient.amount > 0) {
+                // Update the number of ingredients in the player's inventory
+                const error = await updateInvetories(ingredient.item.id, ingredient.amount);
+                if (error) {
+                    toast.error(`Error updating item: (${ingredient.item.name})`);
+                    return false
+                }
+            } else {
+                // Otherwise remove the item entirely
+                const error = await deleteFromInventories(ingredient.item.id);
+                if (error) {
+                    toast.error(`Error removing item from inventory: (${ingredient.item.name})`);
+                    return false
+                }
+            }
+        })
+        return true
+    }
+
     const handleCraft = async (recipe: recipe) => {
         setLoadingCraft(true);
         // Lookup player inventory and determine if all of the ingredients exist
@@ -227,41 +273,20 @@ const Crafting = () => {
                 .eq('character', characterId)
                 .returns<SupabaseItem[]>();
             if (!error) {
-                const updatedIngredients: ingredient[] = [];
-                recipe.ingredients.forEach((ingredient) => {
-                    const inventoryIngredient = data.find((item) => item.item.id === ingredient.item.id);
-                    if (!inventoryIngredient) {
-                        toastCraftError(recipe.item.name, `Ingredient not found (${ingredient.item.name})`);
-                        return
-                    }
-                    if (inventoryIngredient.amount < ingredient.amount) {
-                        // If the player does not have enough of the ingredient return out
-                        toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.item.name})`);
-                        return
-                    }
-                    updatedIngredients.push({
-                        amount: inventoryIngredient.amount - ingredient.amount,
-                        item: ingredient.item
-                    })
-                })
+                const updatedIngredients = await findIngredients(data, recipe);
+                // If ingredients are not found or there are not enough then exit early
+                if (updatedIngredients.length < 1) {
+                    setLoadingCraft(false);
+                    return
+                }
                 // Remove ingredients from player inventory
-                updatedIngredients.forEach(async (ingredient) => {
-                    if (ingredient.amount > 0) {
-                        // Update the number of ingredients in the player's inventory
-                        const error = await updateInvetories(ingredient.item.id, ingredient.amount);
-                        if (error) {
-                            toast.error(`Error updating item: (${ingredient.item.name})`);
-                            return
-                        }
-                    } else {
-                        // Otherwise remove the item entirely
-                        const error = await deleteFromInventories(ingredient.item.id);
-                        if (error) {
-                            toast.error(`Error removing item from inventory: (${ingredient.item.name})`);
-                            return
-                        }
-                    }
-                })
+                const ingredientsUpdated = await updateIngredients(updatedIngredients);
+
+                // If any updates failed then exit early
+                if (!ingredientsUpdated) {
+                    setLoadingCraft(false);
+                    return
+                }
                 // Add new recipe item to player inventory
                 const craftedItem = data.find((item) => item.item.id === recipe.item.id);
                 if (craftedItem) {
@@ -269,6 +294,7 @@ const Crafting = () => {
                     const error = await updateInvetories(craftedItem.item.id, craftedItem.amount += 1);
                     if (error) {
                         toast.error(`Error updating item: (${craftedItem.item.name})`);
+                        setLoadingCraft(false);
                         return
                     }
                 } else {
@@ -276,6 +302,7 @@ const Crafting = () => {
                     const error = await insertInvetories(recipe.item.id, 1);
                     if (error) {
                         toast.error(`Error adding item to inventory: (${recipe.item.name})`);
+                        setLoadingCraft(false);
                         return
                     }
                 }
