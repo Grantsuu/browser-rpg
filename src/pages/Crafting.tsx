@@ -162,7 +162,7 @@ const Crafting = () => {
                 updatedIngredients.splice(0, updatedIngredients.length);
                 return
             }
-            if (inventoryIngredient.amount < ingredient.amount) {
+            if (inventoryIngredient.amount < ingredient.amount!) {
                 // If the player does not have enough of the ingredient return out
                 toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.name})`);
                 updatedIngredients.splice(0, updatedIngredients.length);
@@ -178,7 +178,7 @@ const Crafting = () => {
                 category: ingredient.category,
                 value: ingredient.value,
                 description: ingredient.description,
-                amount: inventoryIngredient.amount - ingredient.amount,
+                amount: inventoryIngredient.amount - ingredient.amount!,
             })
         })
         return updatedIngredients;
@@ -189,9 +189,9 @@ const Crafting = () => {
     const updateIngredients = async (ingredients: item[]) => {
         let updateSuccess = true;
         ingredients.forEach(async (ingredient) => {
-            if (ingredient.amount > 0) {
+            if (ingredient.amount! > 0) {
                 // Update the number of ingredients in the player's inventory
-                const error = await updateInvetories(ingredient.id, ingredient.amount);
+                const error = await updateInvetories(ingredient.id, ingredient.amount!);
                 if (error) {
                     toast.error(`Error updating item: (${ingredient.name})`, { position: 'top-center' });
                     updateSuccess = false;
