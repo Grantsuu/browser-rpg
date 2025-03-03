@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { useSupabase } from "../contexts/SupabaseContext";
 import PageCard from '../layouts/PageCard';
+import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 interface SupabaseItem {
     amount: number,
@@ -25,6 +26,8 @@ interface item {
     value: number,
     description: string
 }
+
+type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
 
 const Inventory = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
@@ -116,9 +119,7 @@ const Inventory = () => {
                                         {item.name}
                                     </td>
                                     <td>
-                                        <span className="badge badge-soft badge-primary badge-sm">
-                                            {item.category}
-                                        </span>
+                                        <ItemCategoryBadge category={item.category as ItemCategory} />
                                     </td>
                                     <td>
                                         {item.amount}

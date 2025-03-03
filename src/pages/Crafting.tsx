@@ -3,6 +3,7 @@ import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { useSupabase } from "../contexts/SupabaseContext";
 import { ToastContainer, toast } from 'react-toastify';
 import PageCard from '../layouts/PageCard';
+import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 interface item {
     id: number
@@ -57,6 +58,8 @@ interface SupabaseRecipe {
     }
     amount: number,
 }
+
+type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
 
 const Crafting = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
@@ -360,9 +363,10 @@ const Crafting = () => {
                                         {recipe.item.name}
                                     </td>
                                     <td>
-                                        <span className="badge badge-soft badge-primary badge-sm">
+                                        {/* <span className="badge badge-soft badge-primary badge-sm">
                                             {recipe.item.category}
-                                        </span>
+                                        </span> */}
+                                        <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
                                     </td>
                                     <td>
                                         {recipe.item.value}
