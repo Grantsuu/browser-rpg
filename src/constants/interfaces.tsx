@@ -25,10 +25,15 @@ export interface SupabaseItem {
     value: number
 }
 
+export interface SupabaseShopItem {
+    item: SupabaseItem;
+}
+
 export interface SupabaseInventoryItem {
     amount: number,
     item: SupabaseItem
 }
+
 export interface SupabaseRecipe {
     item: SupabaseItem,
     ingredient: SupabaseItem,
