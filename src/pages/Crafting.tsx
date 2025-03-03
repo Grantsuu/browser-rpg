@@ -61,7 +61,7 @@ interface SupabaseRecipe {
 const Crafting = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
     const toastCraftError = (itemName: string, message: string) => {
-        toast.error(`Error crafting ${itemName}: ${message}`)
+        toast.error(`Error crafting ${itemName}: ${message}`, { position: 'top-center' })
     };
 
     const [loading, setLoading] = useState(true);
@@ -213,12 +213,15 @@ const Crafting = () => {
             const inventoryIngredient = data.find((item) => item.item.id === ingredient.item.id);
             if (!inventoryIngredient) {
                 toastCraftError(recipe.item.name, `Ingredient not found (${ingredient.item.name})`);
-                return []
+                // have to clear the returned array because otherwise it will still craft
+                updatedIngredients.splice(0, updatedIngredients.length);
+                return
             }
             if (inventoryIngredient.amount < ingredient.amount) {
                 // If the player does not have enough of the ingredient return out
                 toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.item.name})`);
-                return []
+                updatedIngredients.splice(0, updatedIngredients.length);
+                return
             }
             updatedIngredients.push({
                 amount: inventoryIngredient.amount - ingredient.amount,
@@ -236,14 +239,14 @@ const Crafting = () => {
                 // Update the number of ingredients in the player's inventory
                 const error = await updateInvetories(ingredient.item.id, ingredient.amount);
                 if (error) {
-                    toast.error(`Error updating item: (${ingredient.item.name})`);
+                    toast.error(`Error updating item: (${ingredient.item.name})`, { position: 'top-center' });
                     return false
                 }
             } else {
                 // Otherwise remove the item entirely
                 const error = await deleteFromInventories(ingredient.item.id);
                 if (error) {
-                    toast.error(`Error removing item from inventory: (${ingredient.item.name})`);
+                    toast.error(`Error removing item from inventory: (${ingredient.item.name})`, { position: 'top-center' });
                     return false
                 }
             }
@@ -278,6 +281,7 @@ const Crafting = () => {
                     setLoadingCraft(false);
                     return
                 }
+                console.log('ingredients found ', updatedIngredients);
                 // Remove ingredients from player inventory
                 const ingredientsUpdated = await updateIngredients(updatedIngredients);
 
@@ -292,7 +296,7 @@ const Crafting = () => {
                     // If the item already exists just want to update the number of those items
                     const error = await updateInvetories(craftedItem.item.id, craftedItem.amount += 1);
                     if (error) {
-                        toast.error(`Error updating item: (${craftedItem.item.name})`);
+                        toast.error(`Error updating item: (${craftedItem.item.name})`, { position: 'top-center' });
                         setLoadingCraft(false);
                         return
                     }
@@ -305,7 +309,19 @@ const Crafting = () => {
                         return
                     }
                 }
-                toast.success(`Successfully crafted 1 x ${recipe.item.name}!`)
+                toast.success(
+                    <div className='flex flex-row w-full items-center gap-3'>
+                        <div>
+                            Successfully crafted 1 x {recipe.item.name}!
+                        </div>
+                        <div className='w-6'>
+                            <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
+                        </div>
+                    </div>,
+                    {
+                        position: 'top-center'
+                    }
+                )
             }
         }
         setLoadingCraft(false);
