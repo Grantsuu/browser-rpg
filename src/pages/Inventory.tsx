@@ -27,8 +27,6 @@ interface item {
     description: string
 }
 
-type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
-
 const Inventory = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
 
@@ -119,7 +117,7 @@ const Inventory = () => {
                                         {item.name}
                                     </td>
                                     <td>
-                                        <ItemCategoryBadge category={item.category as ItemCategory} />
+                                        <ItemCategoryBadge category={item.category} />
                                     </td>
                                     <td>
                                         {item.amount}
