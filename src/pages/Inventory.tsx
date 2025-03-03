@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useSupabase } from "../contexts/SupabaseContext";
-
+import PageCard from '../layouts/PageCard';
 
 interface SupabaseItem {
     amount: number,
@@ -92,66 +90,55 @@ const Inventory = () => {
     }, []);
 
     return (
-        <>
-            {loading ? <span className="loading loading-spinner loading-xl"></span> :
-                <div className="card w-full h-full bg-base-100 shadow-md">
-                    <div className="card-body min-w-full max-h-full">
-                        <div className="prose">
-                            <h1>
-                                <FontAwesomeIcon icon={faBox as IconProp} /> Inventory
-                            </h1>
-                        </div>
-                        <div className="divider"></div>
-                        <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
-                            <table className="table table-pin-rows bg-base-100">
-                                {/* head */}
-                                <thead>
-                                    <tr className="bg-secondary-content">
-                                        <th></th>
-                                        <th>Name</th>
-                                        <th>Category</th>
-                                        <th>Amount</th>
-                                        <th>Value</th>
-                                        <th>Description</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {inventory.map((item: item, id) => {
-                                        return (
-                                            <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                                <td className="m-0 w-1/16">
-                                                    <img src={`data:image/${item.image.type};base64,${item.image.base64}`} />
-                                                </td>
-                                                <td>
-                                                    {item.name}
-                                                </td>
-                                                <td>
-                                                    <span className="badge badge-soft badge-primary badge-sm">
-                                                        {item.category}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    {item.amount}
-                                                </td>
-                                                <td>
-                                                    {item.value}
-                                                </td>
-                                                <td>
-                                                    {item.description}
-                                                </td>
-                                                <td>
-                                                    <button className="btn btn-soft btn-error">Delete</button>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>}
-        </>
+        <PageCard title="Inventory" icon={faBox} loading={loading}>
+            <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
+                <table className="table table-pin-rows bg-base-100">
+                    {/* head */}
+                    <thead>
+                        <tr className="bg-secondary-content">
+                            <th></th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {inventory.map((item: item, id) => {
+                            return (
+                                <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
+                                    <td className="m-0 w-1/16">
+                                        <img src={`data:image/${item.image.type};base64,${item.image.base64}`} />
+                                    </td>
+                                    <td>
+                                        {item.name}
+                                    </td>
+                                    <td>
+                                        <span className="badge badge-soft badge-primary badge-sm">
+                                            {item.category}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {item.amount}
+                                    </td>
+                                    <td>
+                                        {item.value}
+                                    </td>
+                                    <td>
+                                        {item.description}
+                                    </td>
+                                    <td>
+                                        <button className="btn btn-soft btn-error">Delete</button>
+                                    </td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </PageCard>
     )
 }
 

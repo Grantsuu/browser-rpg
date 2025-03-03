@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useSupabase } from "../contexts/SupabaseContext";
 import { ToastContainer, toast } from 'react-toastify';
+import PageCard from '../layouts/PageCard';
 
 interface item {
     id: number
@@ -318,76 +317,65 @@ const Crafting = () => {
     }, []);
 
     return (
-        <>
+        <PageCard title="Crafting" icon={faHammer} loading={loading}>
             <ToastContainer />
-            {loading ? <span className="loading loading-spinner loading-xl"></span> :
-                <div className="card w-full h-full bg-base-100 shadow-md">
-                    <div className="card-body min-w-full max-h-full">
-                        <div className="prose">
-                            <h1>
-                                <FontAwesomeIcon icon={faHammer as IconProp} /> Crafting
-                            </h1>
-                        </div>
-                        <div className="divider"></div>
-                        <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
-                            <table className="table table-pin-rows bg-base-100">
-                                {/* head */}
-                                <thead>
-                                    <tr className="bg-secondary-content">
-                                        <th></th>
-                                        <th>Name</th>
-                                        <th>Category</th>
-                                        <th>Value</th>
-                                        <th>Description</th>
-                                        <th>Ingredients</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {recipes.map((recipe: recipe, id) => {
-                                        return (
-                                            <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                                <td className="m-0 w-1/16">
-                                                    <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
-                                                </td>
-                                                <td>
-                                                    {recipe.item.name}
-                                                </td>
-                                                <td>
-                                                    <span className="badge badge-soft badge-primary badge-sm">
-                                                        {recipe.item.category}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    {recipe.item.value}
-                                                </td>
-                                                <td>
-                                                    {recipe.item.description}
-                                                </td>
-                                                <td>
-                                                    {recipe.ingredients.map((ingredient: ingredient, id) => {
-                                                        return (
-                                                            <div key={id}>
-                                                                {ingredient.amount} x {ingredient.item.name}
-                                                            </div>
-                                                        )
-                                                    })}
-                                                </td>
-                                                <td>
-                                                    <button className="btn btn-soft btn-primary" onClick={() => handleCraft(recipe)}>
-                                                        {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
-                                                            `Craft`}
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>}
-        </>
+            <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
+                <table className="table table-pin-rows bg-base-100">
+                    {/* head */}
+                    <thead>
+                        <tr className="bg-secondary-content">
+                            <th></th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                            <th>Ingredients</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {recipes.map((recipe: recipe, id) => {
+                            return (
+                                <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
+                                    <td className="m-0 w-1/16">
+                                        <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
+                                    </td>
+                                    <td>
+                                        {recipe.item.name}
+                                    </td>
+                                    <td>
+                                        <span className="badge badge-soft badge-primary badge-sm">
+                                            {recipe.item.category}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {recipe.item.value}
+                                    </td>
+                                    <td>
+                                        {recipe.item.description}
+                                    </td>
+                                    <td>
+                                        {recipe.ingredients.map((ingredient: ingredient, id) => {
+                                            return (
+                                                <div key={id}>
+                                                    {ingredient.amount} x {ingredient.item.name}
+                                                </div>
+                                            )
+                                        })}
+                                    </td>
+                                    <td>
+                                        <button className="btn btn-soft btn-primary" onClick={() => handleCraft(recipe)}>
+                                            {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
+                                                `Craft`}
+                                        </button>
+                                    </td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </PageCard>
     )
 }
 
