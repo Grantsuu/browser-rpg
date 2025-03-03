@@ -1,65 +1,11 @@
 import { useEffect, useState } from 'react';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
-import { useSupabase } from "../contexts/SupabaseContext";
 import { ToastContainer, toast } from 'react-toastify';
+import { item, recipe, SupabaseInventoryItem, SupabaseRecipe } from '../constants/interfaces';
+import { useSupabase } from "../contexts/SupabaseContext";
+import { ItemCategory } from '../constants/types';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
-
-interface item {
-    id: number
-    image: {
-        base64: string,
-        type: string
-    },
-    name: string,
-    category: string,
-    value: number,
-    description: string
-}
-
-interface ingredient {
-    item: item,
-    amount: number
-}
-
-interface recipe {
-    item: item
-    ingredients: ingredient[]
-}
-
-interface SupabaseItem {
-    amount: number,
-    item: {
-        id: number,
-        category: { name: string },
-        description: string,
-        image: { base64: string, type: string },
-        name: string,
-        value: number
-    }
-}
-
-interface SupabaseRecipe {
-    item: {
-        id: number,
-        category: { name: string },
-        description: string,
-        image: { base64: string, type: string },
-        name: string,
-        value: number
-    }
-    ingredient: {
-        id: number,
-        category: { name: string },
-        description: string,
-        image: { base64: string, type: string },
-        name: string,
-        value: number
-    }
-    amount: number,
-}
-
-type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
 
 const Crafting = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
@@ -156,17 +102,15 @@ const Crafting = () => {
                     if (recipeFound) {
                         recipeFound.ingredients.push(
                             {
-                                item: {
-                                    id: recipe.ingredient.id,
-                                    image: {
-                                        base64: recipe.ingredient.image.base64,
-                                        type: recipe.ingredient.image.type
-                                    },
-                                    name: recipe.ingredient.name,
-                                    category: recipe.ingredient.category.name,
-                                    value: recipe.ingredient.value,
-                                    description: recipe.ingredient.description
+                                id: recipe.ingredient.id,
+                                image: {
+                                    base64: recipe.ingredient.image.base64,
+                                    type: recipe.ingredient.image.type
                                 },
+                                name: recipe.ingredient.name,
+                                category: recipe.ingredient.category.name,
+                                value: recipe.ingredient.value,
+                                description: recipe.ingredient.description,
                                 amount: recipe.amount
                             }
                         );
@@ -185,18 +129,16 @@ const Crafting = () => {
                                 description: recipe.item.description
                             },
                             ingredients: [{
-                                amount: recipe.amount,
-                                item: {
-                                    id: recipe.ingredient.id,
-                                    image: {
-                                        base64: recipe.ingredient.image.base64,
-                                        type: recipe.ingredient.image.type
-                                    },
-                                    name: recipe.ingredient.name,
-                                    category: recipe.ingredient.category.name,
-                                    value: recipe.ingredient.value,
-                                    description: recipe.ingredient.description
-                                }
+                                id: recipe.ingredient.id,
+                                image: {
+                                    base64: recipe.ingredient.image.base64,
+                                    type: recipe.ingredient.image.type
+                                },
+                                name: recipe.ingredient.name,
+                                category: recipe.ingredient.category.name,
+                                value: recipe.ingredient.value,
+                                description: recipe.ingredient.description,
+                                amount: recipe.amount
                             }]
                         });
                     }
@@ -210,25 +152,33 @@ const Crafting = () => {
 
     // Returns list of ingredients with updated amounts
     // If any ingredients are not found or there are not enough then return an empty list
-    const findIngredients = async (data: SupabaseItem[], recipe: recipe) => {
-        const updatedIngredients: ingredient[] = [];
+    const findIngredients = async (data: SupabaseInventoryItem[], recipe: recipe) => {
+        const updatedIngredients: item[] = [];
         recipe.ingredients.forEach((ingredient) => {
-            const inventoryIngredient = data.find((item) => item.item.id === ingredient.item.id);
+            const inventoryIngredient = data.find((item) => item.item.id === ingredient.id);
             if (!inventoryIngredient) {
-                toastCraftError(recipe.item.name, `Ingredient not found (${ingredient.item.name})`);
+                toastCraftError(recipe.item.name, `Ingredient not found (${ingredient.name})`);
                 // have to clear the returned array because otherwise it will still craft
                 updatedIngredients.splice(0, updatedIngredients.length);
                 return
             }
             if (inventoryIngredient.amount < ingredient.amount) {
                 // If the player does not have enough of the ingredient return out
-                toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.item.name})`);
+                toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.name})`);
                 updatedIngredients.splice(0, updatedIngredients.length);
                 return
             }
             updatedIngredients.push({
+                id: ingredient.id,
+                image: {
+                    base64: ingredient.image.base64,
+                    type: ingredient.image.type
+                },
+                name: ingredient.name,
+                category: ingredient.category,
+                value: ingredient.value,
+                description: ingredient.description,
                 amount: inventoryIngredient.amount - ingredient.amount,
-                item: ingredient.item
             })
         })
         return updatedIngredients;
@@ -236,25 +186,28 @@ const Crafting = () => {
 
     // Update the number of ingredients in the players inventory
     // If any updates fail then return false, otherwise return true if all successful
-    const updateIngredients = async (ingredients: ingredient[]) => {
+    const updateIngredients = async (ingredients: item[]) => {
+        let updateSuccess = true;
         ingredients.forEach(async (ingredient) => {
             if (ingredient.amount > 0) {
                 // Update the number of ingredients in the player's inventory
-                const error = await updateInvetories(ingredient.item.id, ingredient.amount);
+                const error = await updateInvetories(ingredient.id, ingredient.amount);
                 if (error) {
-                    toast.error(`Error updating item: (${ingredient.item.name})`, { position: 'top-center' });
-                    return false
+                    toast.error(`Error updating item: (${ingredient.name})`, { position: 'top-center' });
+                    updateSuccess = false;
+                    return
                 }
             } else {
                 // Otherwise remove the item entirely
-                const error = await deleteFromInventories(ingredient.item.id);
+                const error = await deleteFromInventories(ingredient.id);
                 if (error) {
-                    toast.error(`Error removing item from inventory: (${ingredient.item.name})`, { position: 'top-center' });
-                    return false
+                    toast.error(`Error removing item from inventory: (${ingredient.name})`, { position: 'top-center' });
+                    updateSuccess = false;
+                    return
                 }
             }
         })
-        return true
+        return updateSuccess;
     }
 
     const handleCraft = async (recipe: recipe) => {
@@ -276,7 +229,7 @@ const Crafting = () => {
                 )
             `)
                 .eq('character', characterId)
-                .returns<SupabaseItem[]>();
+                .returns<SupabaseInventoryItem[]>();
             if (!error) {
                 const updatedIngredients = await findIngredients(data, recipe);
                 // If ingredients are not found or there are not enough then exit early
@@ -284,7 +237,6 @@ const Crafting = () => {
                     setLoadingCraft(false);
                     return
                 }
-                console.log('ingredients found ', updatedIngredients);
                 // Remove ingredients from player inventory
                 const ingredientsUpdated = await updateIngredients(updatedIngredients);
 
@@ -363,9 +315,6 @@ const Crafting = () => {
                                         {recipe.item.name}
                                     </td>
                                     <td>
-                                        {/* <span className="badge badge-soft badge-primary badge-sm">
-                                            {recipe.item.category}
-                                        </span> */}
                                         <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
                                     </td>
                                     <td>
@@ -375,10 +324,10 @@ const Crafting = () => {
                                         {recipe.item.description}
                                     </td>
                                     <td>
-                                        {recipe.ingredients.map((ingredient: ingredient, id) => {
+                                        {recipe.ingredients.map((ingredient: item, id) => {
                                             return (
                                                 <div key={id}>
-                                                    {ingredient.amount} x {ingredient.item.name}
+                                                    {ingredient.amount} x {ingredient.name}
                                                 </div>
                                             )
                                         })}

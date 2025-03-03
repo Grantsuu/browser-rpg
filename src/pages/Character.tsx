@@ -9,7 +9,7 @@ const Character = () => {
     }, []);
 
     return (
-        <PageCard title="Inventory" icon={faUserShield} loading={loading}>
+        <PageCard title="Character" icon={faUserShield} loading={loading}>
             <></>
         </PageCard>
     )

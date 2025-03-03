@@ -1,31 +1,9 @@
 import { useEffect, useState } from 'react';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { useSupabase } from "../contexts/SupabaseContext";
+import { item, SupabaseInventoryItem } from '../constants/interfaces';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
-
-interface SupabaseItem {
-    amount: number,
-    item: {
-        category: { name: string },
-        description: string,
-        image: { base64: string, type: string },
-        name: string,
-        value: number
-    }
-}
-
-interface item {
-    image: {
-        base64: string,
-        type: string
-    },
-    name: string,
-    category: string,
-    amount: number,
-    value: number,
-    description: string
-}
 
 const Inventory = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
@@ -55,6 +33,7 @@ const Inventory = () => {
                 .select(`
                 amount,
                 item:items(
+                    id,
                     name,
                     category:lk_item_categories(name),
                     value,
@@ -63,20 +42,21 @@ const Inventory = () => {
                 )
             `)
                 .eq('character', characterId)
-                .returns<SupabaseItem[]>();
+                .returns<SupabaseInventoryItem[]>();
             if (!error) {
                 const items: item[] = [];
                 data.map((item) => {
                     items.push({
+                        id: item.item.id,
                         image: {
                             base64: item.item.image.base64,
                             type: item.item.image.type
                         },
                         name: item.item.name,
                         category: item.item.category.name,
-                        amount: item.amount,
                         value: item.item.value,
-                        description: item.item.description
+                        description: item.item.description,
+                        amount: item.amount,
                     });
                 })
                 setInventory(items);
