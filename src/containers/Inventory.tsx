@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { useSupabase } from "../contexts/SupabaseContext";
-import { item, SupabaseInventoryItem } from '../types/interfaces';
+import { item, SupabaseInventoryItem } from '../types/types';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
