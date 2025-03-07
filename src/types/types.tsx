@@ -1,4 +1,6 @@
-export interface item {
+export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
+
+export type item = {
     id: number
     image: {
         base64: string,
@@ -11,12 +13,12 @@ export interface item {
     amount?: number
 }
 
-export interface recipe {
+export type recipe = {
     item: item
     ingredients: item[]
 }
 
-export interface SupabaseItem {
+export type SupabaseItem = {
     id: number,
     category: { name: string },
     description: string,
@@ -25,16 +27,16 @@ export interface SupabaseItem {
     value: number
 }
 
-export interface SupabaseShopItem {
+export type SupabaseShopItem = {
     item: SupabaseItem;
 }
 
-export interface SupabaseInventoryItem {
+export type SupabaseInventoryItem = {
     amount: number,
     item: SupabaseItem
 }
 
-export interface SupabaseRecipe {
+export type SupabaseRecipe = {
     item: SupabaseItem,
     ingredient: SupabaseItem,
     amount: number,

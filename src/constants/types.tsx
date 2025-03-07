@@ -1,1 +1,0 @@
-export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';

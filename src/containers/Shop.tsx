@@ -4,12 +4,13 @@ import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { useSupabase } from "../contexts/SupabaseContext";
-import { item, SupabaseInventoryItem } from '../constants/interfaces';
+import { item, SupabaseInventoryItem } from '../types/types';
+import { getShopInventory } from '../lib/api-client';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 type ShopModes = 'buy' | 'sell';
-const apiUrl = import.meta.env.VITE_API_URL;
+
 
 const Shop = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
@@ -31,14 +32,6 @@ const Shop = () => {
             }
             return data[0].id
         }
-    }
-
-    const getShopInventory = async () => {
-        const response = await fetch(`${apiUrl}/shop`);
-        if (!response.ok) {
-            throw new Error(response.statusText);
-        }
-        return await response.json();
     }
 
     const handleGetShopInventory = async () => {

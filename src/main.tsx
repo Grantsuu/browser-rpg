@@ -6,11 +6,11 @@ import { SupabaseProvider } from './contexts/SupabaseContext.tsx';
 import './index.css'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx';
 import Dashboard from './layouts/Dashboard.tsx';
-import Home from './pages/Home.tsx';
-import Character from './pages/Character.tsx';
-import Shop from './pages/Shop.tsx';
-import Inventory from './pages/Inventory.tsx';
-import Crafting from './pages/Crafting.tsx';
+import Home from './containers/Home.tsx';
+import Character from './containers/Character.tsx';
+import Shop from './containers/Shop.tsx';
+import Inventory from './containers/Inventory.tsx';
+import Crafting from './containers/Crafting.tsx';
 import Auth from './layouts/Auth.tsx';
 import Login from './components/Auth/Login.tsx';
 import Register from './components/Auth/Register.tsx';

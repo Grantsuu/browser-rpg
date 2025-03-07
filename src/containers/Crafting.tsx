@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import { item, recipe, SupabaseInventoryItem, SupabaseRecipe } from '../constants/interfaces';
+import { item, recipe, SupabaseInventoryItem, SupabaseRecipe } from '../types/types';
 import { useSupabase } from "../contexts/SupabaseContext";
-import { ItemCategory } from '../constants/types';
+import { ItemCategory } from '../types/types';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
