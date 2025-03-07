@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { item, recipe, SupabaseInventoryItem, SupabaseRecipe } from '../constants/interfaces';
 import { useSupabase } from "../contexts/SupabaseContext";
 import { ItemCategory } from '../constants/types';
@@ -289,7 +289,6 @@ const Crafting = () => {
 
     return (
         <PageCard title="Crafting" icon={faHammer} loading={loading}>
-            <ToastContainer />
             <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
                 <table className="table table-pin-rows bg-base-100">
                     {/* head */}

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useSupabase } from "../contexts/SupabaseContext";
-import { item, SupabaseShopItem, SupabaseInventoryItem } from '../constants/interfaces';
+import { item, SupabaseInventoryItem } from '../constants/interfaces';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 type ShopModes = 'buy' | 'sell';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const Shop = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
@@ -32,41 +33,24 @@ const Shop = () => {
         }
     }
 
+    const getShopInventory = async () => {
+        const response = await fetch(`${apiUrl}/shop`);
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        return await response.json();
+    }
+
     const handleGetShopInventory = async () => {
         setLoading(true);
-        if (supabaseClient) {
-            const { data, error } = await supabaseClient
-                .from('shop_inventory')
-                .select(`
-                item:items(
-                    id,
-                    name,
-                    category:lk_item_categories(name),
-                    value,
-                    description,
-                    image:lk_item_images(base64,type)
-                )
-            `)
-                .returns<SupabaseShopItem[]>();
-            if (!error) {
-                const items: item[] = [];
-                data.map((item) => {
-                    items.push({
-                        id: item.item.id,
-                        image: {
-                            base64: item.item.image.base64,
-                            type: item.item.image.type
-                        },
-                        name: item.item.name,
-                        category: item.item.category.name,
-                        value: item.item.value,
-                        description: item.item.description,
-                    });
-                })
-                setShopInventory(items);
-            }
+        try {
+            const inventory = await getShopInventory()
+            setShopInventory(inventory);
+        } catch (error) {
+            toast.error(`Something went wrong fetching the Shop inventory: ${(error as Error).message}`);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     const handleGetPlayerInventory = async () => {
@@ -121,7 +105,6 @@ const Shop = () => {
 
     return (
         <PageCard title="Shop" icon={faShop} loading={loading}>
-            <ToastContainer />
             <div className="flex flex-row items-center justify-between">
                 <div className="join">
                     <input className="join-item btn" type="radio" name="options" aria-label="Buy" defaultChecked onClick={() => setShopMode('buy')} />
@@ -161,7 +144,7 @@ const Shop = () => {
                                             <ItemCategoryBadge category={item.category} />
                                         </td>
                                         <td>
-                                            {item.value / 2}
+                                            {item.value}
                                         </td>
                                         <td>
                                             {item.description}
