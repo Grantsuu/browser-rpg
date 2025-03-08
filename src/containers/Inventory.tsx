@@ -1,68 +1,25 @@
 import { useEffect, useState } from 'react';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
-import { useSupabase } from "../contexts/SupabaseContext";
-import { item, SupabaseInventoryItem } from '../types/types';
+import { toast } from 'react-toastify';
+import { item } from '../types/types';
+import { getCharacterInventory } from '../lib/api-client';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 const Inventory = () => {
-    const { supabaseClient, supabaseUser } = useSupabase();
-
     const [loading, setLoading] = useState(true);
     const [inventory, setInventory] = useState<item[]>([]);
 
-    const getCharacterId = async () => {
-        if (supabaseClient && supabaseUser) {
-            const { data, error } = await supabaseClient
-                .from('characters')
-                .select('id')
-                .eq('user', supabaseUser.id)
-            if (error) {
-                return ''
-            }
-            return data[0].id
-        }
-    }
-
     const handleGetInventory = async () => {
         setLoading(true);
-        if (supabaseClient && supabaseUser) {
-            const characterId = await getCharacterId();
-            const { data, error } = await supabaseClient
-                .from('inventories')
-                .select(`
-                amount,
-                item:items(
-                    id,
-                    name,
-                    category:lk_item_categories(name),
-                    value,
-                    description,
-                    image:lk_item_images(base64,type)
-                )
-            `)
-                .eq('character', characterId)
-                .returns<SupabaseInventoryItem[]>();
-            if (!error) {
-                const items: item[] = [];
-                data.map((item) => {
-                    items.push({
-                        id: item.item.id,
-                        image: {
-                            base64: item.item.image.base64,
-                            type: item.item.image.type
-                        },
-                        name: item.item.name,
-                        category: item.item.category.name,
-                        value: item.item.value,
-                        description: item.item.description,
-                        amount: item.amount,
-                    });
-                })
-                setInventory(items);
-            }
+        try {
+            const inventory = await getCharacterInventory()
+            setInventory(inventory);
+        } catch (error) {
+            toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     useEffect(() => {

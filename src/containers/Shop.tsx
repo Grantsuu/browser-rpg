@@ -3,36 +3,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import { useSupabase } from "../contexts/SupabaseContext";
-import { item, SupabaseInventoryItem } from '../types/types';
-import { getShopInventory } from '../lib/api-client';
+import { item } from '../types/types';
+import { getCharacterInventory, getShopInventory } from '../lib/api-client';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 type ShopModes = 'buy' | 'sell';
 
-
 const Shop = () => {
-    const { supabaseClient, supabaseUser } = useSupabase();
-
     const [loading, setLoading] = useState(false);
     const [shopMode, setShopMode] = useState<ShopModes>('buy');
 
     const [shopInventory, setShopInventory] = useState<item[]>([]);
     const [playerInventory, setPlayerInventory] = useState<item[]>([]);
-
-    const getCharacterId = async () => {
-        if (supabaseClient && supabaseUser) {
-            const { data, error } = await supabaseClient
-                .from('characters')
-                .select('id')
-                .eq('user', supabaseUser.id)
-            if (error) {
-                return ''
-            }
-            return data[0].id
-        }
-    }
 
     const handleGetShopInventory = async () => {
         setLoading(true);
@@ -48,43 +31,14 @@ const Shop = () => {
 
     const handleGetPlayerInventory = async () => {
         setLoading(true);
-        if (supabaseClient) {
-            const characterId = await getCharacterId();
-            const { data, error } = await supabaseClient
-                .from('inventories')
-                .select(`
-                amount,
-                item:items(
-                    id,
-                    name,
-                    category:lk_item_categories(name),
-                    value,
-                    description,
-                    image:lk_item_images(base64,type)
-                )
-            `)
-                .eq('character', characterId)
-                .returns<SupabaseInventoryItem[]>();
-            if (!error) {
-                const items: item[] = [];
-                data.map((item) => {
-                    items.push({
-                        id: item.item.id,
-                        image: {
-                            base64: item.item.image.base64,
-                            type: item.item.image.type
-                        },
-                        name: item.item.name,
-                        category: item.item.category.name,
-                        value: item.item.value,
-                        description: item.item.description,
-                        amount: item.amount,
-                    });
-                })
-                setPlayerInventory(items);
-            }
+        try {
+            const inventory = await getCharacterInventory()
+            setPlayerInventory(inventory);
+        } catch (error) {
+            toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
