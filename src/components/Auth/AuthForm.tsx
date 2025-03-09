@@ -186,7 +186,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                                 disabled={loading}
                             />}
                         <div className="flex justify-center">
-                            <button type="submit" className="btn btn-primary mb-2">
+                            <button type="submit" className="btn btn-primary mb-2" disabled={loading}>
                                 {
                                     loading ? <span className="loading loading-spinner loading-sm"></span> :
                                         mode === "login" ? "Login" :

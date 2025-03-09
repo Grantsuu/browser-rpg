@@ -97,8 +97,7 @@ const Crafting = () => {
                                         })}
                                     </td>
                                     <td>
-                                        {/* TODO: Should disable button while loading */}
-                                        <button className="btn btn-soft btn-primary" onClick={() => handleCraftRecipe(recipe)}>
+                                        <button className="btn btn-soft btn-primary" onClick={() => handleCraftRecipe(recipe)} disabled={loadingCraft}>
                                             {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
                                                 `Craft`}
                                         </button>

@@ -66,7 +66,7 @@ const Inventory = () => {
                                         {item.description}
                                     </td>
                                     <td>
-                                        <button className="btn btn-soft btn-error">Delete</button>
+                                        <button className="btn btn-soft btn-error" disabled={loading}>Delete</button>
                                     </td>
                                 </tr>
                             )

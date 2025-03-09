@@ -97,7 +97,7 @@ const Shop = () => {
                                             {item.description}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-success">Buy</button>
+                                            <button className="btn btn-soft btn-success" disabled={loading}>Buy</button>
                                         </td>
                                     </tr>
                                 )
@@ -124,7 +124,7 @@ const Shop = () => {
                                             {item.description}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-error">Sell</button>
+                                            <button className="btn btn-soft btn-error" disabled={loading}>Sell</button>
                                         </td>
                                     </tr>
                                 )
