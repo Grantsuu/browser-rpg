@@ -1,6 +1,6 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const jwt = JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[1].split('.')[0]}-auth-token`) as string).access_token;
+const jwt = JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[1].split('.')[0]}-auth-token`) as string)?.access_token;
 
 // Character
 
