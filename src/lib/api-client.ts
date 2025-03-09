@@ -35,3 +35,16 @@ export const getShopInventory = async () => {
 }
 
 // Crafting
+
+// GET
+export const getCraftingRecipes = async () => {
+    const response = await fetch(`${apiUrl}/crafting`, {
+        headers: {
+            'Authorization': `Bearer ${jwt}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}

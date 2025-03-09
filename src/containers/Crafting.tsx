@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import { item, recipe, SupabaseInventoryItem, SupabaseRecipe } from '../types/types';
+import { item, recipe, SupabaseInventoryItem } from '../types/types';
 import { useSupabase } from "../contexts/SupabaseContext";
+import { getCraftingRecipes } from "../lib/api-client"
 import { ItemCategory } from '../types/types';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
@@ -10,12 +11,24 @@ import ItemCategoryBadge from '../components/ItemCategoryBadge';
 const Crafting = () => {
     const { supabaseClient, supabaseUser } = useSupabase();
     const toastCraftError = (itemName: string, message: string) => {
-        toast.error(`Error crafting ${itemName}: ${message}`, { position: 'top-center' })
+        toast.error(`Error crafting ${itemName}: ${message}`)
     };
 
     const [loading, setLoading] = useState(true);
     const [loadingCraft, setLoadingCraft] = useState(false);
-    const [recipes, setRecipes] = useState<recipe[]>([]);
+    const [craftingRecipes, setCraftingRecipes] = useState<recipe[]>([]);
+
+    const handleGetCraftingRecipes = async () => {
+        setLoading(true);
+        try {
+            const inventory = await getCraftingRecipes()
+            setCraftingRecipes(inventory);
+        } catch (error) {
+            toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const getCharacterId = async () => {
         if (supabaseClient && supabaseUser) {
@@ -66,88 +79,6 @@ const Crafting = () => {
                 .eq('item', itemId)
             return error
         }
-    }
-
-    const handleGetRecipes = async () => {
-        setLoading(true);
-        if (supabaseClient) {
-            const { data, error } = await supabaseClient
-                .from('recipes')
-                .select(`
-                item:items!recipes_item_fkey(
-                    id,
-                    name,
-                    category:lk_item_categories(name),
-                    value,
-                    description,
-                    image:lk_item_images(base64,type)
-                ),
-                ingredient:items!recipes_ingredient_fkey(
-                    id,
-                    name,
-                    category:lk_item_categories(name),
-                    value,
-                    description,
-                    image:lk_item_images(base64,type)
-                ),
-                amount
-            `)
-                .returns<SupabaseRecipe[]>();
-            if (!error) {
-                const recipes: recipe[] = [];
-                data.map((recipe) => {
-                    // Look for a recipe with an item id that matches the current recipe being processed
-                    const recipeFound = recipes.find((r) => r.item.id === recipe.item.id);
-                    // If the recipe is found, then we just add the ingredients of the current recipe being processed
-                    if (recipeFound) {
-                        recipeFound.ingredients.push(
-                            {
-                                id: recipe.ingredient.id,
-                                image: {
-                                    base64: recipe.ingredient.image.base64,
-                                    type: recipe.ingredient.image.type
-                                },
-                                name: recipe.ingredient.name,
-                                category: recipe.ingredient.category.name,
-                                value: recipe.ingredient.value,
-                                description: recipe.ingredient.description,
-                                amount: recipe.amount
-                            }
-                        );
-                    } else {
-                        // Otherwise, add a new recipe to the list
-                        recipes.push({
-                            item: {
-                                id: recipe.item.id,
-                                image: {
-                                    base64: recipe.item.image.base64,
-                                    type: recipe.item.image.type
-                                },
-                                name: recipe.item.name,
-                                category: recipe.item.category.name,
-                                value: recipe.item.value,
-                                description: recipe.item.description
-                            },
-                            ingredients: [{
-                                id: recipe.ingredient.id,
-                                image: {
-                                    base64: recipe.ingredient.image.base64,
-                                    type: recipe.ingredient.image.type
-                                },
-                                name: recipe.ingredient.name,
-                                category: recipe.ingredient.category.name,
-                                value: recipe.ingredient.value,
-                                description: recipe.ingredient.description,
-                                amount: recipe.amount
-                            }]
-                        });
-                    }
-
-                })
-                setRecipes(recipes);
-            }
-        }
-        setLoading(false);
     }
 
     // Returns list of ingredients with updated amounts
@@ -283,8 +214,7 @@ const Crafting = () => {
     }
 
     useEffect(() => {
-        handleGetRecipes();
-        // eslint-disable-next-line
+        handleGetCraftingRecipes();
     }, []);
 
     return (
@@ -304,7 +234,7 @@ const Crafting = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {recipes.map((recipe: recipe, id) => {
+                        {craftingRecipes.map((recipe: recipe, id) => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                     <td className="m-0 w-1/16">
