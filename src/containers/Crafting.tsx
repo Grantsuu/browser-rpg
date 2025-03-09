@@ -1,18 +1,13 @@
 import { useEffect, useState } from 'react';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import { item, recipe, SupabaseInventoryItem } from '../types/types';
-import { useSupabase } from "../contexts/SupabaseContext";
-import { getCraftingRecipes } from "../lib/api-client"
+import { item, recipe } from '../types/types';
+import { getCraftingRecipes, postCraftRecipe } from "../lib/api-client"
 import { ItemCategory } from '../types/types';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 const Crafting = () => {
-    const { supabaseClient, supabaseUser } = useSupabase();
-    const toastCraftError = (itemName: string, message: string) => {
-        toast.error(`Error crafting ${itemName}: ${message}`)
-    };
 
     const [loading, setLoading] = useState(true);
     const [loadingCraft, setLoadingCraft] = useState(false);
@@ -30,188 +25,31 @@ const Crafting = () => {
         }
     }
 
-    const getCharacterId = async () => {
-        if (supabaseClient && supabaseUser) {
-            const { data, error } = await supabaseClient
-                .from('characters')
-                .select('id')
-                .eq('user', supabaseUser.id)
-            if (error) {
-                return ''
-            }
-            return data[0].id
-        }
-    }
-
-    const insertInvetories = async (itemId: number, amount: number) => {
-        if (supabaseClient) {
-            const characterId = await getCharacterId();
-            const { error } = await supabaseClient
-                .from('inventories')
-                .insert({
-                    character: characterId,
-                    item: itemId,
-                    amount: amount
-                })
-            return error
-        }
-    }
-
-    const updateInvetories = async (itemId: number, amount: number) => {
-        if (supabaseClient) {
-            const characterId = await getCharacterId();
-            const { error } = await supabaseClient
-                .from('inventories')
-                .update({ amount: amount })
-                .eq('character', characterId)
-                .eq('item', itemId)
-            return error
-        }
-    }
-
-    const deleteFromInventories = async (itemId: number) => {
-        if (supabaseClient) {
-            const characterId = await getCharacterId();
-            const { error } = await supabaseClient
-                .from('inventories')
-                .delete()
-                .eq('character', characterId)
-                .eq('item', itemId)
-            return error
-        }
-    }
-
-    // Returns list of ingredients with updated amounts
-    // If any ingredients are not found or there are not enough then return an empty list
-    const findIngredients = async (data: SupabaseInventoryItem[], recipe: recipe) => {
-        const updatedIngredients: item[] = [];
-        recipe.ingredients.forEach((ingredient) => {
-            const inventoryIngredient = data.find((item) => item.item.id === ingredient.id);
-            if (!inventoryIngredient) {
-                toastCraftError(recipe.item.name, `Ingredient not found (${ingredient.name})`);
-                // have to clear the returned array because otherwise it will still craft
-                updatedIngredients.splice(0, updatedIngredients.length);
-                return
-            }
-            if (inventoryIngredient.amount < ingredient.amount!) {
-                // If the player does not have enough of the ingredient return out
-                toastCraftError(recipe.item.name, `Not enough ingredient (${ingredient.name})`);
-                updatedIngredients.splice(0, updatedIngredients.length);
-                return
-            }
-            updatedIngredients.push({
-                id: ingredient.id,
-                image: {
-                    base64: ingredient.image.base64,
-                    type: ingredient.image.type
-                },
-                name: ingredient.name,
-                category: ingredient.category,
-                value: ingredient.value,
-                description: ingredient.description,
-                amount: inventoryIngredient.amount - ingredient.amount!,
-            })
-        })
-        return updatedIngredients;
-    }
-
-    // Update the number of ingredients in the players inventory
-    // If any updates fail then return false, otherwise return true if all successful
-    const updateIngredients = async (ingredients: item[]) => {
-        let updateSuccess = true;
-        ingredients.forEach(async (ingredient) => {
-            if (ingredient.amount! > 0) {
-                // Update the number of ingredients in the player's inventory
-                const error = await updateInvetories(ingredient.id, ingredient.amount!);
-                if (error) {
-                    toast.error(`Error updating item: (${ingredient.name})`, { position: 'top-center' });
-                    updateSuccess = false;
-                    return
-                }
-            } else {
-                // Otherwise remove the item entirely
-                const error = await deleteFromInventories(ingredient.id);
-                if (error) {
-                    toast.error(`Error removing item from inventory: (${ingredient.name})`, { position: 'top-center' });
-                    updateSuccess = false;
-                    return
-                }
-            }
-        })
-        return updateSuccess;
-    }
-
-    const handleCraft = async (recipe: recipe) => {
+    const handleCraftRecipe = async (recipe: recipe) => {
         setLoadingCraft(true);
-        // Lookup player inventory and determine if all of the ingredients exist
-        if (supabaseClient) {
-            const characterId = await getCharacterId();
-            const { data, error } = await supabaseClient
-                .from('inventories')
-                .select(`
-                amount,
-                item:items(
-                    id,
-                    name,
-                    category:lk_item_categories(name),
-                    value,
-                    description,
-                    image:lk_item_images(base64,type)
-                )
-            `)
-                .eq('character', characterId)
-                .returns<SupabaseInventoryItem[]>();
-            if (!error) {
-                const updatedIngredients = await findIngredients(data, recipe);
-                // If ingredients are not found or there are not enough then exit early
-                if (updatedIngredients.length < 1) {
-                    setLoadingCraft(false);
-                    return
+        try {
+            await postCraftRecipe(recipe);
+            toast.success(
+                <div className='flex flex-row w-full items-center gap-3'>
+                    <div>
+                        Successfully crafted 1 x {recipe.item.name}!
+                    </div>
+                    <div className='w-6'>
+                        <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
+                    </div>
+                </div>,
+                {
+                    position: 'top-center'
                 }
-                // Remove ingredients from player inventory
-                const ingredientsUpdated = await updateIngredients(updatedIngredients);
-
-                // If any updates failed then exit early
-                if (!ingredientsUpdated) {
-                    setLoadingCraft(false);
-                    return
-                }
-                // Add new recipe item to player inventory
-                const craftedItem = data.find((item) => item.item.id === recipe.item.id);
-                if (craftedItem) {
-                    // If the item already exists just want to update the number of those items
-                    const error = await updateInvetories(craftedItem.item.id, craftedItem.amount += 1);
-                    if (error) {
-                        toast.error(`Error updating item: (${craftedItem.item.name})`, { position: 'top-center' });
-                        setLoadingCraft(false);
-                        return
-                    }
-                } else {
-                    // Otherwise insert it into their inventory
-                    const error = await insertInvetories(recipe.item.id, 1);
-                    if (error) {
-                        toast.error(`Error adding item to inventory: (${recipe.item.name})`);
-                        setLoadingCraft(false);
-                        return
-                    }
-                }
-                toast.success(
-                    <div className='flex flex-row w-full items-center gap-3'>
-                        <div>
-                            Successfully crafted 1 x {recipe.item.name}!
-                        </div>
-                        <div className='w-6'>
-                            <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
-                        </div>
-                    </div>,
-                    {
-                        position: 'top-center'
-                    }
-                )
-            }
+            )
+        } catch (error) {
+            console.log(error);
+            toast.error(`Failed to craft ${recipe.item.name}: ${(error as Error).message}`);
+        } finally {
+            setLoadingCraft(false);
         }
-        setLoadingCraft(false);
     }
+
 
     useEffect(() => {
         handleGetCraftingRecipes();
@@ -262,7 +100,7 @@ const Crafting = () => {
                                         })}
                                     </td>
                                     <td>
-                                        <button className="btn btn-soft btn-primary" onClick={() => handleCraft(recipe)}>
+                                        <button className="btn btn-soft btn-primary" onClick={() => handleCraftRecipe(recipe)}>
                                             {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
                                                 `Craft`}
                                         </button>
