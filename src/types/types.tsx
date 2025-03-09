@@ -35,9 +35,3 @@ export type SupabaseInventoryItem = {
     amount: number,
     item: SupabaseItem
 }
-
-export type SupabaseRecipe = {
-    item: SupabaseItem,
-    ingredient: SupabaseItem,
-    amount: number,
-}
