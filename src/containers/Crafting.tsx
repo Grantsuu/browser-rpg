@@ -37,10 +37,7 @@ const Crafting = () => {
                     <div className='w-6'>
                         <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
                     </div>
-                </div>,
-                {
-                    position: 'top-center'
-                }
+                </div>
             )
         } catch (error) {
             console.log(error);
@@ -100,6 +97,7 @@ const Crafting = () => {
                                         })}
                                     </td>
                                     <td>
+                                        {/* TODO: Should disable button while loading */}
                                         <button className="btn btn-soft btn-primary" onClick={() => handleCraftRecipe(recipe)}>
                                             {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
                                                 `Craft`}
