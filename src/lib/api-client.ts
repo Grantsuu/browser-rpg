@@ -62,7 +62,9 @@ export const postCraftRecipe = async (recipe: recipe) => {
         body: JSON.stringify(recipe)
     });
     if (!response.ok) {
-        throw new Error(response.statusText);
+        // Crafting endpoint returns reason why craft failed so propagate error message
+        const body = await response.json();
+        throw new Error(body);
     }
     return await response.json();
 }
