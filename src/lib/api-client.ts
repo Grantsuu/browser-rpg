@@ -4,6 +4,21 @@ const jwt = JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[
 
 // Character
 
+// GET
+
+// Get Gold
+export const getCharacterGold = async () => {
+    const response = await fetch(`${apiUrl}/characters/gold`, {
+        headers: {
+            'Authorization': `Bearer ${jwt}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
 // Inventory
 
 // GET
@@ -54,6 +69,44 @@ export const getShopInventory = async () => {
     return await response.json();
 }
 
+// POST
+
+// Buy
+export const postBuyFromShop = async (itemId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', itemId.toString());
+    params.set('amount', '1');
+    const response = await fetch(`${apiUrl}/shop/buy?${params.toString()}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${jwt}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
+// Sell
+export const postSellToShop = async (itemId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', itemId.toString());
+    params.set('amount', '1');
+    const response = await fetch(`${apiUrl}/shop/sell?${params.toString()}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${jwt}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
 // Crafting
 
 // GET
@@ -71,8 +124,9 @@ export const getCraftingRecipes = async () => {
 
 // POST
 export const postCraftRecipe = async (itemId: number) => {
-    const params = new URLSearchParams({ id: itemId.toString() }).toString();
-    const response = await fetch(`${apiUrl}/crafting?${params}`, {
+    const params = new URLSearchParams();
+    params.set('id', itemId.toString());
+    const response = await fetch(`${apiUrl}/crafting?${params.toString()}`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${jwt}`

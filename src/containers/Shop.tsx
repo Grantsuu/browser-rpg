@@ -4,7 +4,7 @@ import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { item } from '../types/types';
-import { getCharacterInventory, getShopInventory } from '../lib/api-client';
+import { getCharacterGold, getCharacterInventory, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/api-client';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
@@ -14,8 +14,18 @@ const Shop = () => {
     const [loading, setLoading] = useState(false);
     const [shopMode, setShopMode] = useState<ShopModes>('buy');
 
+    const [playerGold, setPlayerGold] = useState(0);
     const [shopInventory, setShopInventory] = useState<item[]>([]);
     const [playerInventory, setPlayerInventory] = useState<item[]>([]);
+
+    const handleGetGold = async () => {
+        try {
+            const gold = await getCharacterGold();
+            setPlayerGold(gold);
+        } catch (error) {
+            toast.error(`Something went wrong fetching the player's gold: ${(error as Error).message}`);
+        }
+    }
 
     const handleGetShopInventory = async () => {
         setLoading(true);
@@ -41,14 +51,42 @@ const Shop = () => {
         }
     }
 
+    const handleBuy = async (itemId: number) => {
+        setLoading(true);
+        try {
+            await postBuyFromShop(itemId);
+        } catch (error) {
+            toast.error(`Something went wrong buying from the shop: ${(error as Error).message}`);
+        } finally {
+            handleGetGold();
+            setLoading(false);
+        }
+    }
+
+    const handleSell = async (itemId: number) => {
+        setLoading(true);
+        try {
+            await postSellToShop(itemId);
+        } catch (error) {
+            toast.error(`Something went wrong selling to the shop: ${(error as Error).message}`);
+        } finally {
+            await handleGetGold();
+            await handleGetPlayerInventory();
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         if (shopMode === 'buy') {
             handleGetShopInventory();
         } else {
             handleGetPlayerInventory();
         }
-        // eslint-disable-next-line
     }, [shopMode]);
+
+    useEffect(() => {
+        handleGetGold();
+    }, [])
 
     return (
         <PageCard title="Shop" icon={faShop} loading={loading}>
@@ -59,7 +97,7 @@ const Shop = () => {
                 </div>
                 <div className="prose prose-lg">
                     <FontAwesomeIcon icon={faCoins as IconProp} className="mr-1" />
-                    Gold: {0}
+                    Gold: {playerGold}
                 </div>
             </div>
             <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
@@ -97,7 +135,7 @@ const Shop = () => {
                                             {item.description}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-success" disabled={loading}>Buy</button>
+                                            <button className="btn btn-soft btn-success" onClick={() => { handleBuy(item.id) }} disabled={loading}>Buy</button>
                                         </td>
                                     </tr>
                                 )
@@ -124,7 +162,7 @@ const Shop = () => {
                                             {item.description}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-error" disabled={loading}>Sell</button>
+                                            <button className="btn btn-soft btn-error" onClick={() => { handleSell(item.id) }} disabled={loading}>Sell</button>
                                         </td>
                                     </tr>
                                 )
