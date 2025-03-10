@@ -28,7 +28,7 @@ const Crafting = () => {
     const handleCraftRecipe = async (recipe: recipe) => {
         setLoadingCraft(true);
         try {
-            await postCraftRecipe(recipe);
+            await postCraftRecipe(recipe.item.id);
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>

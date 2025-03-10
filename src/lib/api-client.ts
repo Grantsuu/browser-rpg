@@ -1,5 +1,3 @@
-import { recipe } from "../types/types";
-
 const apiUrl = import.meta.env.VITE_API_URL;
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const jwt = JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[1].split('.')[0]}-auth-token`) as string)?.access_token;
@@ -52,14 +50,13 @@ export const getCraftingRecipes = async () => {
 }
 
 // POST
-export const postCraftRecipe = async (recipe: recipe) => {
-    const response = await fetch(`${apiUrl}/crafting`, {
+export const postCraftRecipe = async (itemId: number) => {
+    const params = new URLSearchParams({ id: itemId.toString() }).toString();
+    const response = await fetch(`${apiUrl}/crafting?${params}`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${jwt}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(recipe)
+            'Authorization': `Bearer ${jwt}`
+        }
     });
     if (!response.ok) {
         // Crafting endpoint returns reason why craft failed so propagate error message
