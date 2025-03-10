@@ -19,6 +19,26 @@ export const getCharacterInventory = async () => {
     return await response.json();
 }
 
+// DELETE
+export const removeItemFromInventory = async (itemId: number, amount?: number) => {
+    const params = new URLSearchParams();
+    params.set('id', itemId.toString());
+    if (amount) {
+        params.set('amount', amount.toString());
+    }
+    const response = await fetch(`${apiUrl}/inventory?${params.toString()}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${jwt}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
 // Shop
 
 // GET

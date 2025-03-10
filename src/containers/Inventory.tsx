@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { item } from '../types/types';
-import { getCharacterInventory } from '../lib/api-client';
+import { getCharacterInventory, removeItemFromInventory } from '../lib/api-client';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
@@ -17,6 +17,18 @@ const Inventory = () => {
             setInventory(inventory);
         } catch (error) {
             toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleRemoveItem = async (itemId: number) => {
+        setLoading(true);
+        try {
+            Promise.all(await removeItemFromInventory(itemId));
+            handleGetInventory();
+        } catch (error) {
+            toast.error(`Something went wrong removing item from inventory: ${(error as Error).message}`);
         } finally {
             setLoading(false);
         }
@@ -66,7 +78,7 @@ const Inventory = () => {
                                         {item.description}
                                     </td>
                                     <td>
-                                        <button className="btn btn-soft btn-error" disabled={loading}>Delete</button>
+                                        <button className="btn btn-soft btn-error" onClick={() => { handleRemoveItem(item.id) }} disabled={loading}>Delete</button>
                                     </td>
                                 </tr>
                             )
