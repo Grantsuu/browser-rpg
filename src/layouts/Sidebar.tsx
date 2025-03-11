@@ -1,6 +1,6 @@
 import { useNavigate, Link } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBox, faHammer, faHouse, faRightFromBracket, faShop, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faHammer, faHouse, faRightFromBracket, faSeedling, faShop, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useSupabase } from "../contexts/SupabaseContext"
 
@@ -31,6 +31,7 @@ const Sidebar = () => {
                         <li><Link to="/shop"><FontAwesomeIcon icon={faShop as IconProp} className="w-5" />Shop</Link></li>
                         <li><Link to="/inventory"><FontAwesomeIcon icon={faBox as IconProp} className="w-5" />Inventory</Link></li>
                         <li><Link to="/crafting"><FontAwesomeIcon icon={faHammer as IconProp} className="w-5" />Crafting</Link></li>
+                        <li><Link to="/farming"><FontAwesomeIcon icon={faSeedling as IconProp} className="w-5" />Farming</Link></li>
                     </ul>
                 </div>
                 <div className="p-2">
