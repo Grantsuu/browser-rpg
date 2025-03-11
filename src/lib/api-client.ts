@@ -1,6 +1,10 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const jwt = JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[1].split('.')[0]}-auth-token`) as string)?.access_token;
+// Need to get the JWT at time of API call because the session can change while logged in
+const getJwt = () => {
+    return JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[1].split('.')[0]}-auth-token`) as string)?.access_token;
+}
+
 
 // Character
 
@@ -10,7 +14,7 @@ const jwt = JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[
 export const getCharacterGold = async () => {
     const response = await fetch(`${apiUrl}/characters/gold`, {
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
@@ -25,7 +29,7 @@ export const getCharacterGold = async () => {
 export const getCharacterInventory = async () => {
     const response = await fetch(`${apiUrl}/inventory`, {
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
@@ -44,7 +48,7 @@ export const removeItemFromInventory = async (itemId: number, amount?: number) =
     const response = await fetch(`${apiUrl}/inventory?${params.toString()}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
@@ -60,7 +64,7 @@ export const removeItemFromInventory = async (itemId: number, amount?: number) =
 export const getShopInventory = async () => {
     const response = await fetch(`${apiUrl}/shop`, {
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
@@ -79,7 +83,7 @@ export const postBuyFromShop = async (itemId: number) => {
     const response = await fetch(`${apiUrl}/shop/buy?${params.toString()}`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
@@ -97,7 +101,7 @@ export const postSellToShop = async (itemId: number) => {
     const response = await fetch(`${apiUrl}/shop/sell?${params.toString()}`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
@@ -113,7 +117,7 @@ export const postSellToShop = async (itemId: number) => {
 export const getCraftingRecipes = async () => {
     const response = await fetch(`${apiUrl}/crafting`, {
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
@@ -129,7 +133,7 @@ export const postCraftRecipe = async (itemId: number) => {
     const response = await fetch(`${apiUrl}/crafting?${params.toString()}`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${jwt}`
+            'Authorization': `Bearer ${getJwt()}`
         }
     });
     if (!response.ok) {
