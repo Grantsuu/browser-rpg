@@ -5,11 +5,12 @@ import PageCard from '../layouts/PageCard';
 const Character = () => {
     const [loading, setLoading] = useState(false);
     useEffect(() => {
+        console.log(loading);
         setLoading(false);
     }, []);
 
     return (
-        <PageCard title="Character" icon={faUserShield} loading={loading}>
+        <PageCard title="Character" icon={faUserShield}>
             <></>
         </PageCard>
     )

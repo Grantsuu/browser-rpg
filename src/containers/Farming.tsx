@@ -5,11 +5,12 @@ import PageCard from '../layouts/PageCard';
 const Farming = () => {
     const [loading, setLoading] = useState(false);
     useEffect(() => {
+        console.log(loading);
         setLoading(false);
     }, []);
 
     return (
-        <PageCard title="Farming" icon={faSeedling} loading={loading}>
+        <PageCard title="Farming" icon={faSeedling} >
             <></>
         </PageCard>
     )

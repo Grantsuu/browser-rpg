@@ -40,9 +40,9 @@ const Inventory = () => {
     }, []);
 
     return (
-        <PageCard title="Inventory" icon={faBox} loading={loading}>
-            <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
-                <table className="table table-pin-rows bg-base-100">
+        <PageCard title="Inventory" icon={faBox}>
+            <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
+                <table className={`table table-pin-rows bg-base-100 ${loading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
                         <tr className="bg-secondary-content">
@@ -56,33 +56,41 @@ const Inventory = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {inventory.map((item: item, id) => {
-                            return (
-                                <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                    <td className="m-0 w-1/16">
-                                        <img src={`data:image/${item.image.type};base64,${item.image.base64}`} />
-                                    </td>
-                                    <td>
-                                        {item.name}
-                                    </td>
-                                    <td>
-                                        <ItemCategoryBadge category={item.category} />
-                                    </td>
-                                    <td>
-                                        {item.amount}
-                                    </td>
-                                    <td>
-                                        {item.value}
-                                    </td>
-                                    <td>
-                                        {item.description}
-                                    </td>
-                                    <td>
-                                        <button className="btn btn-soft btn-error" onClick={() => { handleRemoveItem(item.id) }} disabled={loading}>Delete</button>
-                                    </td>
-                                </tr>
-                            )
-                        })}
+                        {loading ?
+                            <tr>
+                                <td colSpan={7}>
+                                    <div className="flex items-center justify-center">
+                                        <span className="loading loading-spinner loading-xl"></span>
+                                    </div>
+                                </td>
+                            </tr> :
+                            inventory.map((item: item, id) => {
+                                return (
+                                    <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
+                                        <td className="m-0 w-1/16">
+                                            <img src={item.image.base64} />
+                                        </td>
+                                        <td>
+                                            {item.name}
+                                        </td>
+                                        <td>
+                                            <ItemCategoryBadge category={item.category} />
+                                        </td>
+                                        <td>
+                                            {item.amount}
+                                        </td>
+                                        <td>
+                                            {item.value}
+                                        </td>
+                                        <td>
+                                            {item.description}
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-soft btn-error" onClick={() => { handleRemoveItem(item.id) }} disabled={loading}>Delete</button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                     </tbody>
                 </table>
             </div>

@@ -35,7 +35,7 @@ const Crafting = () => {
                         Successfully crafted 1 x {recipe.item.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
+                        <img src={recipe.item.image.base64} />
                     </div>
                 </div>
             )
@@ -53,9 +53,9 @@ const Crafting = () => {
     }, []);
 
     return (
-        <PageCard title="Crafting" icon={faHammer} loading={loading}>
-            <div className="overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
-                <table className="table table-pin-rows bg-base-100">
+        <PageCard title="Crafting" icon={faHammer}>
+            <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8">
+                <table className={`table table-pin-rows bg-base-100 ${loading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
                         <tr className="bg-secondary-content">
@@ -69,42 +69,50 @@ const Crafting = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {craftingRecipes.map((recipe: recipe, id) => {
-                            return (
-                                <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                    <td className="m-0 w-1/16">
-                                        <img src={`data:image/${recipe.item.image.type};base64,${recipe.item.image.base64}`} />
-                                    </td>
-                                    <td>
-                                        {recipe.item.name}
-                                    </td>
-                                    <td>
-                                        <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
-                                    </td>
-                                    <td>
-                                        {recipe.item.value}
-                                    </td>
-                                    <td>
-                                        {recipe.item.description}
-                                    </td>
-                                    <td>
-                                        {recipe.ingredients.map((ingredient: item, id) => {
-                                            return (
-                                                <div key={id}>
-                                                    {ingredient.amount} x {ingredient.name}
-                                                </div>
-                                            )
-                                        })}
-                                    </td>
-                                    <td>
-                                        <button className="btn btn-soft btn-primary" onClick={() => handleCraftRecipe(recipe)} disabled={loadingCraft}>
-                                            {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
-                                                `Craft`}
-                                        </button>
-                                    </td>
-                                </tr>
-                            )
-                        })}
+                        {loading ?
+                            <tr>
+                                <td colSpan={7}>
+                                    <div className="flex items-center justify-center">
+                                        <span className="loading loading-spinner loading-xl"></span>
+                                    </div>
+                                </td>
+                            </tr> :
+                            craftingRecipes.map((recipe: recipe, id) => {
+                                return (
+                                    <tr className="flex table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
+                                        <td className="m-0 w-1/16">
+                                            <img src={recipe.item.image.base64} />
+                                        </td>
+                                        <td>
+                                            {recipe.item.name}
+                                        </td>
+                                        <td>
+                                            <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
+                                        </td>
+                                        <td>
+                                            {recipe.item.value}
+                                        </td>
+                                        <td>
+                                            {recipe.item.description}
+                                        </td>
+                                        <td>
+                                            {recipe.ingredients.map((ingredient: item, id) => {
+                                                return (
+                                                    <div key={id}>
+                                                        {ingredient.amount} x {ingredient.name}
+                                                    </div>
+                                                )
+                                            })}
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-soft btn-primary" onClick={() => handleCraftRecipe(recipe)} disabled={loadingCraft}>
+                                                {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
+                                                    `Craft`}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                     </tbody>
                 </table>
             </div>

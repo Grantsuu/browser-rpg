@@ -3,8 +3,7 @@ export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'ma
 export type item = {
     id: number
     image: {
-        base64: string,
-        type: string
+        base64: string
     },
     name: string,
     category: string,
