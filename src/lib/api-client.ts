@@ -11,7 +11,7 @@ const getJwt = () => {
 // GET
 
 // Get Character Id
-export const getCharacterId = async () => {
+export const getCharacter = async () => {
     const response = await fetch(`${apiUrl}/characters`, {
         headers: {
             'Authorization': `Bearer ${getJwt()}`

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 import { useSupabase } from '../../contexts/SupabaseContext'
-import { getCharacterId } from '../../lib/api-client';
+import { getCharacter } from '../../lib/api-client';
 
 type ProtectedRouteProps = {
     redirectPath?: string;
@@ -13,9 +13,9 @@ const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
 
     const { supabaseUser } = useSupabase();
 
-    const handleGetCharacterId = async () => {
+    const handleGetCharacter = async () => {
         try {
-            await getCharacterId();
+            await getCharacter();
         } catch (error) {
             console.log(error);
             navigate('/character/create');
@@ -25,7 +25,7 @@ const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
     useEffect(() => {
         // Every time we navigate to a new url we want to force the player back to the character page if they don't have one yet while logged in
         if (supabaseUser) {
-            handleGetCharacterId();
+            handleGetCharacter();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.pathname]);
