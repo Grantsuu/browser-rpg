@@ -45,7 +45,7 @@ const Inventory = () => {
                 <table className={`table table-pin-rows bg-base-100 ${loading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
-                        <tr className="bg-secondary-content">
+                        <tr className="bg-secondary">
                             <th></th>
                             <th>Name</th>
                             <th>Category</th>

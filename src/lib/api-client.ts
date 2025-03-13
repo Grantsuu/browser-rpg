@@ -36,6 +36,22 @@ export const getCharacterGold = async () => {
     return await response.json();
 }
 
+export const postCreateCharacter = async (name: string) => {
+    const params = new URLSearchParams();
+    params.set('name', name);
+    const response = await fetch(`${apiUrl}/characters?${params.toString()}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
 // Inventory
 
 // GET

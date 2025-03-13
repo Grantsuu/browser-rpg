@@ -32,7 +32,7 @@ const Shop = () => {
     const handleGetShopInventory = async () => {
         setLoading(true);
         try {
-            const inventory = await getShopInventory()
+            const inventory = await getShopInventory();
             setShopInventory(inventory);
         } catch (error) {
             toast.error(`Something went wrong fetching the Shop inventory: ${(error as Error).message}`);
@@ -126,7 +126,7 @@ const Shop = () => {
                 <table className={`table table-pin-rows bg-base-100 ${loading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
-                        <tr className="bg-secondary-content">
+                        <tr className="bg-secondary">
                             <th></th>
                             <th>Name</th>
                             <th>Category</th>
@@ -165,7 +165,7 @@ const Shop = () => {
                                                 {item.description}
                                             </td>
                                             <td>
-                                                <button className="btn btn-soft btn-success" onClick={() => { handleBuy(item) }} disabled={buyLoading}>
+                                                <button className="btn btn-soft btn-primary" onClick={() => { handleBuy(item) }} disabled={buyLoading}>
                                                     {buyLoading ? <span className="loading loading-spinner loading-sm"></span> : 'Buy'}
                                                 </button>
                                             </td>

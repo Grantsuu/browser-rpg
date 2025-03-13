@@ -35,7 +35,7 @@ const Sidebar = () => {
                     </ul>
                 </div>
                 <div className="p-2">
-                    <button type="submit" className="btn btn-primary w-full" onClick={() => { handleSignout() }}>
+                    <button type="submit" className="btn btn-error w-full" onClick={() => { handleSignout() }}>
                         <FontAwesomeIcon icon={faRightFromBracket as IconProp} /> Sign Out
                     </button>
                 </div>

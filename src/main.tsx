@@ -17,6 +17,7 @@ import Login from './components/Auth/Login.tsx';
 import Register from './components/Auth/Register.tsx';
 import ResetPassword from './components/Auth/ResetPassword.tsx';
 import UpdatePassword from './components/Auth/UpdatePassword.tsx';
+import CharacterCreate from './components/Character/CharacterCreate.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -27,7 +28,9 @@ createRoot(document.getElementById('root')!).render(
                     <Route element={<ProtectedRoute redirectPath='login' />}>
                         <Route element={<Dashboard />} >
                             <Route index element={<Home />} />
-                            <Route path="character" element={<Character />} />
+                            <Route path="character" element={<Character />}>
+                                <Route path="create" element={<CharacterCreate />} />
+                            </Route>
                             <Route path="shop" element={<Shop />} />
                             <Route path="inventory" element={<Inventory />} />
                             <Route path="crafting" element={<Crafting />} />

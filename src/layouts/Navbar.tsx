@@ -4,7 +4,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 const Navbar = () => {
     return (
-        <div className="navbar bg-primary-content flex justify-between">
+        <div className="navbar bg-primary flex justify-between">
             {/* Title */}
             <div>
                 <a className="btn btn-ghost text-xl" href="/">Browser RPG <FontAwesomeIcon icon={faShieldHalved as IconProp} /></a>
