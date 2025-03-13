@@ -62,7 +62,7 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
         return <div>Loading...</div>
     }
 
-    return <SupabaseContext value={value}>{!loading && children}</SupabaseContext>
+    return <SupabaseContext value={value}>{children}</SupabaseContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

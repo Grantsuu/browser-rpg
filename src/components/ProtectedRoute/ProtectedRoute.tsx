@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, Outlet } from 'react-router';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 import { useSupabase } from '../../contexts/SupabaseContext'
 import { getCharacterId } from '../../lib/api-client';
 
@@ -8,32 +8,40 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const [loading, setLoading] = useState(true);
+
     const { supabaseUser } = useSupabase();
-    const [characterId, setCharacterId] = useState<number | null>(null);
 
     const handleGetCharacterId = async () => {
+        setLoading(true);
         try {
-            const characterId = await getCharacterId();
-            setCharacterId(characterId);
+            await getCharacterId();
         } catch (error) {
-            console.error(error);
+            console.log(error);
+            navigate('/character');
+        } finally {
+            setLoading(false);
         }
     }
 
     useEffect(() => {
-        if (supabaseUser) {
-            handleGetCharacterId();
-        }
-    }, [supabaseUser]);
+        // Every time we navigate to a new url we want to force the player back to the character page if they don't have one yet
+        handleGetCharacterId();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <>
-            {
-                supabaseUser ?
-                    characterId ?
-                        <Outlet /> :
-                        <><Navigate to="/character" /><Outlet /></> :
-                    <Navigate to={redirectPath} />
+            {supabaseUser ?
+                <Outlet /> :
+                <Navigate to={redirectPath} />
             }
         </>
     )
