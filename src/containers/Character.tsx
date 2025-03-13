@@ -22,6 +22,8 @@ const Character = () => {
 
     useEffect(() => {
         handleGetCharacter();
+        console.log(character);
+        console.log(loading);
     }, []);
 
     return (
