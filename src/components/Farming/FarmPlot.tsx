@@ -11,7 +11,6 @@ const FarmPlot = () => {
                 <div className="prose">
                     <div><b>Status:</b> Inactive, Growing, Ready to Harvest</div>
                     <div><b>Contents:</b> Wheat Seeds</div>
-
                     <div className="flex flew-row items-baseline gap-2">
                         <div><b>Progress:</b></div>
                         <progress className="progress progress-success w-full" value="100" max="100"></progress>
