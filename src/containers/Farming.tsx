@@ -12,7 +12,7 @@ const Farming = () => {
 
     useEffect(() => {
         console.log(loading);
-        setPlots([0, 1, 2]);
+        setPlots([0, 0, 0]);
         setLoading(false);
     }, []);
 

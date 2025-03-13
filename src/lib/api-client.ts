@@ -10,6 +10,19 @@ const getJwt = () => {
 
 // GET
 
+// Get Character Id
+export const getCharacterId = async () => {
+    const response = await fetch(`${apiUrl}/characters`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
 // Get Gold
 export const getCharacterGold = async () => {
     const response = await fetch(`${apiUrl}/characters/gold`, {
