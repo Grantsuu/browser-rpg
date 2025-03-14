@@ -16,3 +16,11 @@ export type recipe = {
     item: item
     ingredients: item[]
 }
+
+export type Character = {
+    id: string,
+    created_at: string,
+    name: string,
+    gold: number,
+    farming_experience: number
+}

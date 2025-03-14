@@ -1,30 +1,20 @@
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router';
 import { faUserShield } from "@fortawesome/free-solid-svg-icons";
-import { getCharacter } from '../lib/api-client';
+// import { Character } from '../types/types';
+// import { useCharacter } from '../contexts/CharacterContext';
 import PageCard from '../layouts/PageCard';
 
 const Character = () => {
-    const [loading, setLoading] = useState(false);
-    const [character, setCharacter] = useState({});
+    // const character = useCharacter();
+    // const [loading, setLoading] = useState(false);
+    // const [character, setCharacter] = useState({});
 
-    const handleGetCharacter = async () => {
-        setLoading(true);
-        try {
-            const character = await getCharacter();
-            setCharacter(character);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        handleGetCharacter();
-        console.log(character);
-        console.log(loading);
-    }, []);
+    // useEffect(() => {
+    //     handleGetCharacter();
+    //     console.log(character);
+    //     console.log(loading);
+    // }, []);
 
     return (
         <PageCard title="Character" icon={faUserShield}>
