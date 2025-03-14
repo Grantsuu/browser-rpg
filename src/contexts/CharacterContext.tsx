@@ -16,7 +16,7 @@ export const CharacterProvider = ({ children }: { children: React.ReactNode }) =
     const location = useLocation();
     const { supabaseUser } = useSupabase();
     const [character, setCharacter] = useState<Character | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const handleGetCharacter = async () => {
         setLoading(true);
