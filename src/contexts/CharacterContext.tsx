@@ -19,7 +19,9 @@ export const CharacterProvider = ({ children }: { children: React.ReactNode }) =
     const [loading, setLoading] = useState(false);
 
     const handleGetCharacter = async () => {
-        setLoading(true);
+        if (!character) {
+            setLoading(true);
+        }
         try {
             const character = await getCharacter();
             setCharacter(character)
