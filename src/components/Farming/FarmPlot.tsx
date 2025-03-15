@@ -1,4 +1,11 @@
-const FarmPlot = () => {
+import { FarmPlotData } from "../../types/types";
+
+interface FarmPlotProps {
+    plotData: FarmPlotData;
+}
+
+const FarmPlot = ({ plotData }: FarmPlotProps) => {
+    console.log(plotData);
     return (
         <div className="card w-full bg-base-100 card-lg shadow-sm">
             <div className="card-body">

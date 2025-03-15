@@ -172,3 +172,20 @@ export const postCraftRecipe = async (itemId: number) => {
     }
     return await response.json();
 }
+
+// Farming
+
+//GET
+
+// Get farm plots
+export const getFarmPlots = async () => {
+    const response = await fetch(`${apiUrl}/farming`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}

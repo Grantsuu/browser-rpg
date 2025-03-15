@@ -24,3 +24,11 @@ export type Character = {
     gold: number,
     farming_experience: number
 }
+
+export type FarmPlotData = {
+    id: number,
+    character_id: string,
+    crop_id: number,
+    start_time: string,
+    end_time: string
+}
