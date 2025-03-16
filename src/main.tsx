@@ -25,7 +25,8 @@ import Login from './components/Auth/Login.tsx';
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
+    <>
+        {/* <StrictMode> */}
         <ToastContainer position="top-center" />
         <QueryClientProvider client={queryClient}>
             <SupabaseProvider>
@@ -56,5 +57,6 @@ createRoot(document.getElementById('root')!).render(
                 </BrowserRouter>
             </SupabaseProvider>
         </QueryClientProvider>
-    </StrictMode>
+        {/* </StrictMode> */}
+    </>
 )
