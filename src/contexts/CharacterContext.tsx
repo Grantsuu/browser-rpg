@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Character } from '../types/types';
-import { getCharacter } from '../lib/api-client';
+import { getCharacter } from '../lib/apiClient';
 import { useSupabase } from '../contexts/SupabaseContext';
 
 interface CharacterContextProps {

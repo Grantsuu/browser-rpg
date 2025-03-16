@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Form, Formik, useField } from 'formik';
 import * as Yup from 'yup';
-import { postCreateCharacter } from '../../lib/api-client';
+import { postCreateCharacter } from '../../lib/apiClient';
 import { useNavigate } from 'react-router';
 
 const FormTextInput = ({ ...props }) => {

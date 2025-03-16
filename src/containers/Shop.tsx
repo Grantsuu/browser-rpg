@@ -4,7 +4,7 @@ import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { item } from '../types/types';
-import { getCharacterGold, getCharacterInventory, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/api-client';
+import { getCharacterGold, getCharacterInventory, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 

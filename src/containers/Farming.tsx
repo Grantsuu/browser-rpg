@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query';
 import { faSeedling } from "@fortawesome/free-solid-svg-icons";
 import PageCard from '../layouts/PageCard';
 import FarmPlot from '../components/Farming/FarmPlot';
 import { FarmPlotData } from '../types/types';
 import { toast } from 'react-toastify';
-import { getFarmPlots } from '../lib/api-client';
+import { getFarmPlots } from '../lib/apiClient';
 
 const MAX_PLOTS = 3;
 
