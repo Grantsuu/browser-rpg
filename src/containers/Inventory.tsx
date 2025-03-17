@@ -1,48 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { item } from '../types/types';
-import { getCharacterInventory, removeItemFromInventory } from '../lib/apiClient';
+import { useInventory } from '../lib/stateMangers';
+import { removeItemFromInventory } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 const Inventory = () => {
-    const [loading, setLoading] = useState(true);
-    const [inventory, setInventory] = useState<item[]>([]);
+    const queryClient = useQueryClient();
 
-    const handleGetInventory = async () => {
-        setLoading(true);
-        try {
-            const inventory = await getCharacterInventory()
-            setInventory(inventory);
-        } catch (error) {
-            toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
-        } finally {
-            setLoading(false);
+    const { data, error, isLoading } = useInventory();
+
+    const { mutate, isPending } = useMutation({
+        mutationFn: (itemId: number) => removeItemFromInventory(itemId),
+        onSuccess: () => {
+            toast.success('Item removed from inventory');
+            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+        },
+        onError: (error: Error) => {
+            toast.error(`Failed to remove item from inventory: ${(error as Error).message}`);
         }
-    }
+    })
 
-    const handleRemoveItem = async (itemId: number) => {
-        setLoading(true);
-        try {
-            Promise.all(await removeItemFromInventory(itemId));
-            handleGetInventory();
-        } catch (error) {
-            toast.error(`Something went wrong removing item from inventory: ${(error as Error).message}`);
-        } finally {
-            setLoading(false);
-        }
+    if (error) {
+        toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
     }
-
-    useEffect(() => {
-        handleGetInventory();
-        // eslint-disable-next-line
-    }, []);
 
     return (
         <PageCard title="Inventory" icon={faBox}>
             <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
-                <table className={`table table-pin-rows bg-base-100 ${loading ? 'flex-1' : ''}`}>
+                <table className={`table table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
                         <tr className="bg-secondary">
@@ -56,7 +44,7 @@ const Inventory = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {loading ?
+                        {isLoading ?
                             <tr>
                                 <td colSpan={7}>
                                     <div className="flex items-center justify-center">
@@ -64,7 +52,7 @@ const Inventory = () => {
                                     </div>
                                 </td>
                             </tr> :
-                            inventory.map((item: item, id) => {
+                            data.map((item: item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="m-0 w-1/16">
@@ -86,7 +74,7 @@ const Inventory = () => {
                                             {item.description}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-error" onClick={() => { handleRemoveItem(item.id) }} disabled={loading}>Delete</button>
+                                            <button className="btn btn-soft btn-error" onClick={() => { mutate(item.id) }} disabled={isPending}>Delete</button>
                                         </td>
                                     </tr>
                                 )
