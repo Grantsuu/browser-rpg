@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { faHammer } from "@fortawesome/free-solid-svg-icons";
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { item, recipe } from '../types/types';
 import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient"
 import { ItemCategory } from '../types/types';
@@ -8,54 +8,39 @@ import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 const Crafting = () => {
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['craftingRecipes'],
+        queryFn: getCraftingRecipes,
+    })
 
-    const [loading, setLoading] = useState(true);
-    const [loadingCraft, setLoadingCraft] = useState(false);
-    const [craftingRecipes, setCraftingRecipes] = useState<recipe[]>([]);
-
-    const handleGetCraftingRecipes = async () => {
-        setLoading(true);
-        try {
-            const inventory = await getCraftingRecipes()
-            setCraftingRecipes(inventory);
-        } catch (error) {
-            toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    const handleCraftRecipe = async (recipe: recipe) => {
-        setLoadingCraft(true);
-        try {
-            await postCraftRecipe(recipe.item.id);
+    const { mutate, isPending } = useMutation({
+        mutationFn: (recipe: recipe) => postCraftRecipe(recipe.item.id),
+        onSuccess: (variables: recipe) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
-                        Successfully crafted 1 x {recipe.item.name}!
+                        Successfully crafted 1 x {variables.item.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={recipe.item.image.base64} />
+                        <img src={variables.item.image.base64} />
                     </div>
                 </div>
             )
-        } catch (error) {
-            console.log(error);
-            toast.error(`Failed to craft ${recipe.item.name}: ${(error as Error).message}`);
-        } finally {
-            setLoadingCraft(false);
+            // queryClient.invalidateQueries({ queryKey: ['character'] });
+        },
+        onError: (error: Error, variables: recipe) => {
+            toast.error(`Failed to craft ${variables.item.name}: ${(error as Error).message}`);
         }
+    })
+
+    if (error) {
+        return toast.error(`Something went wrong fetching crafting recipes: ${(error as Error).message}`);
     }
-
-
-    useEffect(() => {
-        handleGetCraftingRecipes();
-    }, []);
 
     return (
         <PageCard title="Crafting" icon={faHammer}>
             <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8">
-                <table className={`table table-pin-rows bg-base-100 ${loading ? 'flex-1' : ''}`}>
+                <table className={`table table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
                         <tr className="bg-secondary">
@@ -69,7 +54,7 @@ const Crafting = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {loading ?
+                        {isLoading ?
                             <tr>
                                 <td colSpan={7}>
                                     <div className="flex items-center justify-center">
@@ -77,7 +62,7 @@ const Crafting = () => {
                                     </div>
                                 </td>
                             </tr> :
-                            craftingRecipes.map((recipe: recipe, id) => {
+                            data.map((recipe: recipe, id: number) => {
                                 return (
                                     <tr className="flex table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="m-0 w-1/16">
@@ -105,8 +90,8 @@ const Crafting = () => {
                                             })}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-primary" onClick={() => handleCraftRecipe(recipe)} disabled={loadingCraft}>
-                                                {loadingCraft ? <span className="loading loading-spinner loading-sm"></span> :
+                                            <button className="btn btn-soft btn-primary" onClick={() => mutate(recipe)} disabled={isPending}>
+                                                {isPending ? <span className="loading loading-spinner loading-sm"></span> :
                                                     `Craft`}
                                             </button>
                                         </td>
