@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
 import { useSupabase } from '../../contexts/SupabaseContext';
-import { useCharacter } from '../../lib/characterStateManager';
+import { useCharacter } from '../../lib/stateMangers';
 
 type ProtectedRouteProps = {
     redirectPath?: string;

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCharacter } from '../lib/apiClient';
+import { getCharacter } from './apiClient';
 
 export const useCharacter = () => useQuery({
     queryKey: ['character'],

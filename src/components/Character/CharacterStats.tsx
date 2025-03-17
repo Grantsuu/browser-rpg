@@ -1,5 +1,4 @@
-// import { Character } from "../../types/types";
-import { useCharacter } from '../../lib/characterStateManager';
+import { useCharacter } from '../../lib/stateMangers';
 
 const CharacterStats = () => {
     const { data } = useCharacter();

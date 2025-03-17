@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { Form, Formik, useField } from 'formik';
 import * as Yup from 'yup';
@@ -23,21 +22,18 @@ const FormTextInput = ({ ...props }) => {
 const CharacterCreate = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
 
-    const handleCreateCharacter = async (name: string) => {
-        setLoading(true);
-        try {
-            // Create character
-            await postCreateCharacter(name);
+    const { mutate, isPending } = useMutation({
+        mutationFn: postCreateCharacter,
+        onSuccess: () => {
+            toast.success('Character created successfully!');
             queryClient.invalidateQueries({ queryKey: ['character'] });
             navigate('/character');
-        } catch (error) {
-            toast.error(`Something went wrong creating the character: ${(error as Error).message}`);
-        } finally {
-            setLoading(false);
+        },
+        onError: (error: Error) => {
+            toast.error(`Something went wrong creating the character: ${error.message}`);
         }
-    }
+    })
 
     return (
         <Formik
@@ -49,7 +45,7 @@ const CharacterCreate = () => {
                     .max(20, 'Must be 20 characters or less'),
             })}
             onSubmit={(values) => {
-                handleCreateCharacter(values.name);
+                mutate(values.name);
             }}
         >
             <Form>
@@ -62,9 +58,9 @@ const CharacterCreate = () => {
                 <button
                     className='btn btn-primary w-full p-2 mt-2 text-white rounded'
                     type='submit'
-                    disabled={loading}
+                    disabled={isPending}
                 >
-                    {loading ? <span className="loading loading-spinner loading-sm"></span> : 'Create Character'}
+                    {isPending ? <span className="loading loading-spinner loading-sm"></span> : 'Create Character'}
                 </button>
             </Form>
         </Formik>
