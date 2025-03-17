@@ -15,7 +15,7 @@ const Crafting = () => {
 
     const { mutate, isPending } = useMutation({
         mutationFn: (recipe: recipe) => postCraftRecipe(recipe.item.id),
-        onSuccess: (variables: recipe) => {
+        onSuccess: (_, variables: recipe) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>

@@ -1,114 +1,77 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { item } from '../types/types';
-import { getCharacterGold, getCharacterInventory, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
+import { useCharacter, useInventory } from '../lib/stateMangers';
+import { getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 type ShopModes = 'buy' | 'sell';
 
 const Shop = () => {
-    const [loading, setLoading] = useState(false);
-    const [buyLoading, setBuyLoading] = useState(false);
-    const [sellLoading, setSellLoading] = useState(false);
+    const queryClient = useQueryClient();
     const [shopMode, setShopMode] = useState<ShopModes>('buy');
 
-    const [playerGold, setPlayerGold] = useState(0);
-    const [shopInventory, setShopInventory] = useState<item[]>([]);
-    const [playerInventory, setPlayerInventory] = useState<item[]>([]);
+    const { data: character } = useCharacter();
+    const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useInventory();
+    const { data: shop, error: shopError, isLoading: isShopLoading } = useQuery({
+        queryKey: ['shopInventory'],
+        queryFn: getShopInventory,
+    })
 
-    const handleGetGold = async () => {
-        try {
-            const gold = await getCharacterGold();
-            setPlayerGold(gold);
-        } catch (error) {
-            toast.error(`Something went wrong fetching the player's gold: ${(error as Error).message}`);
-        }
-    }
-
-    const handleGetShopInventory = async () => {
-        setLoading(true);
-        try {
-            const inventory = await getShopInventory();
-            setShopInventory(inventory);
-        } catch (error) {
-            toast.error(`Something went wrong fetching the Shop inventory: ${(error as Error).message}`);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    const handleGetPlayerInventory = async () => {
-        setLoading(true);
-        try {
-            const inventory = await getCharacterInventory()
-            setPlayerInventory(inventory);
-        } catch (error) {
-            toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    const handleBuy = async (item: item) => {
-        setBuyLoading(true);
-        try {
-            await postBuyFromShop(item.id);
+    const { mutate: buy, isPending: isBuyPending } = useMutation({
+        mutationFn: (item: item) => postBuyFromShop(item.id),
+        onSuccess: (_, variables: item) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
-                        Bought 1 x {item.name}!
+                        Bought 1 x {variables.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={item.image.base64} />
+                        <img src={variables.image.base64} />
                     </div>
                 </div>
             )
-        } catch (error) {
-            toast.error(`Something went wrong buying from the shop: ${(error as Error).message}`);
-        } finally {
-            handleGetGold();
-            setBuyLoading(false);
+            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.invalidateQueries({ queryKey: ['character'] });
+        },
+        onError: (error: Error) => {
+            toast.error(`Failed to buy item from shop: ${(error as Error).message}`);
         }
-    }
+    })
 
-    const handleSell = async (item: item) => {
-        setSellLoading(true);
-        try {
-            await postSellToShop(item.id);
+    const { mutate: sell, isPending: isSellPending } = useMutation({
+        mutationFn: (item: item) => postSellToShop(item.id),
+        onSuccess: (_, variables: item) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
-                        Sold 1 x {item.name}!
+                        Sold 1 x {variables.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={item.image.base64} />
+                        <img src={variables.image.base64} />
                     </div>
                 </div>
             )
-        } catch (error) {
-            toast.error(`Something went wrong selling to the shop: ${(error as Error).message}`);
-        } finally {
-            await handleGetGold();
-            await handleGetPlayerInventory();
-            setSellLoading(false);
+            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.invalidateQueries({ queryKey: ['character'] });
+        },
+        onError: (error: Error) => {
+            toast.error(`Failed to sell item to shop: ${(error as Error).message}`);
         }
+    })
+
+    if (inventoryError) {
+        toast.error(`Something went wrong fetching the Character's inventory: ${(inventoryError as Error).message}`);
     }
 
-    useEffect(() => {
-        if (shopMode === 'buy') {
-            handleGetShopInventory();
-        } else {
-            handleGetPlayerInventory();
-        }
-    }, [shopMode]);
-
-    useEffect(() => {
-        handleGetGold();
-    }, [])
+    if (shopError) {
+        toast.error(`Something went wrong fetching the Shop inventory: ${(shopError as Error).message}`);
+    }
 
     return (
         <PageCard title="Shop" icon={faShop}>
@@ -119,11 +82,11 @@ const Shop = () => {
                 </div>
                 <div className="prose prose-lg">
                     <FontAwesomeIcon icon={faCoins as IconProp} className="mr-1" />
-                    Gold: {playerGold}
+                    Gold: {character?.gold}
                 </div>
             </div>
             <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
-                <table className={`table table-pin-rows bg-base-100 ${loading ? 'flex-1' : ''}`}>
+                <table className={`table table-pin-rows bg-base-100 ${(isInventoryLoading || isShopLoading) ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
                         <tr className="bg-secondary">
@@ -137,7 +100,7 @@ const Shop = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {loading ?
+                        {(isInventoryLoading || isShopLoading) ?
                             <tr>
                                 <td colSpan={7}>
                                     <div className="flex items-center justify-center">
@@ -146,7 +109,7 @@ const Shop = () => {
                                 </td>
                             </tr> :
                             shopMode === 'buy' ?
-                                shopInventory.map((item: item, id) => {
+                                shop.map((item: item, id: number) => {
                                     return (
                                         <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                             <td className="m-0 w-1/16">
@@ -165,14 +128,14 @@ const Shop = () => {
                                                 {item.description}
                                             </td>
                                             <td>
-                                                <button className="btn btn-soft btn-primary" onClick={() => { handleBuy(item) }} disabled={buyLoading}>
-                                                    {buyLoading ? <span className="loading loading-spinner loading-sm"></span> : 'Buy'}
+                                                <button className="btn btn-soft btn-primary" onClick={() => { buy(item) }} disabled={isBuyPending}>
+                                                    {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy'}
                                                 </button>
                                             </td>
                                         </tr>
                                     )
                                 }) :
-                                playerInventory.map((item: item, id) => {
+                                inventory.map((item: item, id: number) => {
                                     return (
                                         <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                             <td className="m-0 w-1/16">
@@ -194,8 +157,8 @@ const Shop = () => {
                                                 {item.description}
                                             </td>
                                             <td>
-                                                <button className="btn btn-soft btn-error" onClick={() => { handleSell(item) }} disabled={sellLoading}>
-                                                    {sellLoading ? <span className="loading loading-spinner loading-sm"></span> : 'Sell'}
+                                                <button className="btn btn-soft btn-error" onClick={() => { sell(item) }} disabled={isSellPending}>
+                                                    {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell'}
                                                 </button>
                                             </td>
                                         </tr>
