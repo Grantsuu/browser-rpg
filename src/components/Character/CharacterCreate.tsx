@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { Form, Formik, useField } from 'formik';
 import * as Yup from 'yup';
@@ -20,6 +21,7 @@ const FormTextInput = ({ ...props }) => {
     );
 };
 const CharacterCreate = () => {
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
@@ -28,6 +30,7 @@ const CharacterCreate = () => {
         try {
             // Create character
             await postCreateCharacter(name);
+            queryClient.invalidateQueries({ queryKey: ['character'] });
             navigate('/character');
         } catch (error) {
             toast.error(`Something went wrong creating the character: ${(error as Error).message}`);

@@ -9,12 +9,12 @@ import { getFarmPlots } from '../lib/apiClient';
 const MAX_PLOTS = 3;
 
 const Farming = () => {
-    const { data, error, isPending, isFetching } = useQuery({
+    const { data, error, isLoading } = useQuery({
         queryKey: ['farmPlots'],
         queryFn: getFarmPlots
     });
 
-    if (isPending || isFetching) return <span className="loading loading-spinner loading-sm"></span>;
+    if (isLoading) return <span className="loading loading-spinner loading-sm"></span>;
 
     if (error) {
         return toast.error(`Something went wrong fetching farm plots: ${(error as Error).message}`);
