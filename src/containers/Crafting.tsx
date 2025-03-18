@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { item, recipe } from '../types/types';
@@ -8,6 +8,7 @@ import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 const Crafting = () => {
+    const queryClient = useQueryClient();
     const { data, error, isLoading } = useQuery({
         queryKey: ['craftingRecipes'],
         queryFn: getCraftingRecipes,
@@ -26,7 +27,7 @@ const Crafting = () => {
                     </div>
                 </div>
             )
-            // queryClient.invalidateQueries({ queryKey: ['character'] });
+            queryClient.invalidateQueries({ queryKey: ['inventory'] });
         },
         onError: (error: Error, variables: recipe) => {
             toast.error(`Failed to craft ${variables.item.name}: ${(error as Error).message}`);
