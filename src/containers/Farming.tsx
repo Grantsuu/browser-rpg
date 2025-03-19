@@ -24,9 +24,9 @@ const Farming = () => {
         <PageCard title="Farming" icon={faSeedling}>
             <div className="grid grid-cols-3 gap-4">
                 {/* Render active farm plots */}
-                {data.map((index: number) => {
+                {data.map((plot: FarmPlotData, index: number) => {
                     return (
-                        <FarmPlot key={index} plotData={{} as FarmPlotData} />
+                        <FarmPlot key={index} plotData={plot} />
                     )
                 })}
                 {/* Render inactive farm plots */}
