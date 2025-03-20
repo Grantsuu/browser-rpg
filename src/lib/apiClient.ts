@@ -189,3 +189,52 @@ export const getFarmPlots = async () => {
     }
     return await response.json();
 }
+
+export const postPlantPlot = async (seedId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', seedId.toString());
+    params.set('tz_offset', (new Date().getTimezoneOffset()).toString());
+    const response = await fetch(`${apiUrl}/farming/plant?${params.toString()}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
+export const deletePlot = async (plotId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', plotId.toString());
+    const response = await fetch(`${apiUrl}/farming?${params.toString()}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
+export const postHarvestPlot = async (plotId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', plotId.toString());
+    const response = await fetch(`${apiUrl}/farming/harvest?${params.toString()}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
