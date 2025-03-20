@@ -75,7 +75,9 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
         mutationFn: (plotId: number) => postHarvestPlot(plotId),
         onSuccess: (data) => {
             toast.success(`Harvested ${data.amount}x ${plotData.crop.product.name}!`);
+            toast.info(`Gained ${plotData.crop.experience} farming experience!`);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
+            queryClient.invalidateQueries({ queryKey: ['character'] });
         },
         onError: (error: Error) => {
             toast.error(`Failed to harvest crop: ${(error as Error).message}`);
