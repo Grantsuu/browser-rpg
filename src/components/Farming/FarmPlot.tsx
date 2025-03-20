@@ -19,15 +19,40 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     useEffect(() => {
         const time = new Date().toLocaleString();
         const plotEndTime = plotData.end_time ? parseISO(plotData.end_time).toLocaleString() : '';
-        console.log('time', time);
-        console.log('plot end time', plotEndTime);
+        // console.log('time', time);
+        // console.log('plot end time', plotEndTime);
         setStatus((Object.values(plotData).length === 0) ? 'Inactive' : (plotEndTime > time) ? 'Growing' : 'Ready to Harvest');
     }, [plotData]);
+
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        if (status === 'Growing') {
+            const startTime = parseISO(plotData.start_time);
+            const endTime = parseISO(plotData.end_time);
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const elapsedTime = now - startTime.getTime();
+                const percentage = (elapsedTime / (endTime.getTime() - startTime.getTime())) * 100;
+                setProgress(percentage);
+                if (percentage >= 100) {
+                    clearInterval(interval);
+                    setStatus('Ready to Harvest');
+                    queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
+                }
+            }, 100);
+
+            return () => clearInterval(interval);
+        } else if (status === 'Ready to Harvest') {
+            setProgress(100);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [status]);
 
     const { mutate: plantSeeds, isPending: isPlantSeedsPending } = useMutation({
         mutationFn: (seedId: number) => postPlantPlot(seedId),
         onSuccess: () => {
-            toast.success('Planted seeds!');
+            toast.success('Planted 1x Wheat Seeds!');
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
         },
         onError: (error: Error) => {
@@ -48,8 +73,8 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
 
     const { mutate: harvest, isPending: isHarvestPending } = useMutation({
         mutationFn: (plotId: number) => postHarvestPlot(plotId),
-        onSuccess: () => {
-            toast.success('Harvested crop!');
+        onSuccess: (data) => {
+            toast.success(`Harvested ${data.amount}x ${plotData.crop.product.name}!`);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
         },
         onError: (error: Error) => {
@@ -71,8 +96,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                     <div><b>Contents:</b> {plotData.crop ? plotData.crop.seed.name : 'None'}</div>
                     <div className="flex flew-row items-baseline gap-2">
                         <div><b>Progress:</b></div>
-                        <progress className="progress progress-success w-full" value="100" max="100"></progress>
-                        30s
+                        <progress className="progress progress-success w-full" value={progress} max="100"></progress>
                     </div>
                 </div>
                 <div className="justify-center card-actions">
