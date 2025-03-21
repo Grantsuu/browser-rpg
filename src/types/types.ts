@@ -12,9 +12,12 @@ export type item = {
     amount?: number
 }
 
-export type recipe = {
+export type Recipe = {
     item: item
     ingredients: item[]
+    amount: number
+    category: string
+    experience: number
 }
 
 export type Crop = {

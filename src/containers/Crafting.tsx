@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
-import { item, recipe } from '../types/types';
+import { item, Recipe } from '../types/types';
 import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient"
 import { ItemCategory } from '../types/types';
 import PageCard from '../layouts/PageCard';
@@ -15,8 +15,8 @@ const Crafting = () => {
     })
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (recipe: recipe) => postCraftRecipe(recipe.item.id),
-        onSuccess: (_, variables: recipe) => {
+        mutationFn: (recipe: Recipe) => postCraftRecipe(recipe.item.id),
+        onSuccess: (_, variables: Recipe) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
@@ -26,10 +26,12 @@ const Crafting = () => {
                         <img src={variables.item.image.base64} />
                     </div>
                 </div>
-            )
+            );
+            toast.info(`Gained ${variables.experience} cooking experience!`);
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.invalidateQueries({ queryKey: ['character'] });
         },
-        onError: (error: Error, variables: recipe) => {
+        onError: (error: Error, variables: Recipe) => {
             toast.error(`Failed to craft ${variables.item.name}: ${(error as Error).message}`);
         }
     })
@@ -63,7 +65,7 @@ const Crafting = () => {
                                     </div>
                                 </td>
                             </tr> :
-                            data.map((recipe: recipe, id: number) => {
+                            data.map((recipe: Recipe, id: number) => {
                                 return (
                                     <tr className="flex table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="m-0 w-1/16">
@@ -82,7 +84,7 @@ const Crafting = () => {
                                             {recipe.item.description}
                                         </td>
                                         <td>
-                                            {recipe.ingredients.map((ingredient: item, id) => {
+                                            {recipe.ingredients.map((ingredient: item, id: number) => {
                                                 return (
                                                     <div key={id}>
                                                         {ingredient.amount} x {ingredient.name}
