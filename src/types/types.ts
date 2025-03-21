@@ -1,5 +1,7 @@
 export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
 
+export type RecipeCategory = 'cooking';
+
 export type item = {
     id: number
     image: {
