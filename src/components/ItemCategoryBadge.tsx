@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 interface ItemCategoryBadgeProps {
     category: string;
 };
@@ -11,30 +13,36 @@ const toTitleCase = (str: string) => {
 };
 
 const ItemCategoryBadge = ({ category }: ItemCategoryBadgeProps) => {
+    const [badgeStyle, setBadgeStyle] = useState(category);
+
+    useEffect(() => {
+        switch (category) {
+            case 'weapon':
+                setBadgeStyle('badge-primary');
+                break;
+            case 'accessory':
+                setBadgeStyle('badge-secondary');
+                break;
+            case 'consumable':
+                setBadgeStyle('badge-accent');
+                break;
+            case 'armor':
+                setBadgeStyle('badge-neutral');
+                break;
+            case 'material':
+                setBadgeStyle('badge-success');
+                break;
+            default:
+                setBadgeStyle('badge-error');
+                break;
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     return (
-        // Admittedly terrible way to do this but its the only way the webpacker will work with the CSS
-        // Weapon
-        (category === 'weapon') ?
-            <span className="badge badge-sm badge-primary">
-                {toTitleCase(category)}
-                {/* Accessory */}
-            </span> : (category === 'accessory') ?
-                <span className="badge badge-sm badge-secondary">
-                    {toTitleCase(category)}
-                    {/* Consumable */}
-                </span> : (category === 'consumable') ?
-                    <span className="badge badge-sm badge-accent">
-                        {toTitleCase(category)}
-                    </span> : (category === 'armor') ?
-                        <span className="badge badge-sm badge-neutral">
-                            {toTitleCase(category)}
-                        </span> : (category === 'material') ?
-                            <span className="badge badge-sm badge-success">
-                                {toTitleCase(category)}
-                            </span> :
-                            <span className="badge badge-sm badge-error">
-                                {toTitleCase(category)}
-                            </span>
+        <span className={`badge badge-sm ${badgeStyle}`}>
+            {toTitleCase(category)}
+        </span>
     );
 };
 
