@@ -29,7 +29,7 @@ const CharacterStats = () => {
                         <FontAwesomeIcon icon={faSeedling as IconProp} />
                         <h3 className="text-lg font-semibold">Farming</h3>
                     </div>
-                    <p>Level: 1</p>
+                    <p>Level: {data?.farming_level}</p>
                     <p>Experience: {data?.farming_experience}/82</p>
                 </div>
                 <div>
@@ -37,7 +37,7 @@ const CharacterStats = () => {
                         <FontAwesomeIcon icon={faKitchenSet as IconProp} />
                         <h3 className="text-lg font-semibold">Cooking</h3>
                     </div>
-                    <p>Level: 1</p>
+                    <p>Level: {data?.farming_level}</p>
                     <p>Experience: {data?.cooking_experience}/82</p>
                 </div>
             </div>
