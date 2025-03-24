@@ -6,6 +6,7 @@ import { faSeedling } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { FarmPlotData } from "../../types/types";
 import { deletePlot, postHarvestPlot, postPlantPlot } from '../../lib/apiClient';
+import { useConfetti } from '../../contexts/ConfettiContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface FarmPlotProps {
@@ -14,7 +15,15 @@ interface FarmPlotProps {
 
 const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const queryClient = useQueryClient();
+    const { startConfetti, stopConfetti } = useConfetti();
     const [status, setStatus] = useState('Inactive');
+
+    const handleConfetti = () => {
+        startConfetti();
+        setTimeout(() => {
+            stopConfetti();
+        }, 10000);
+    }
 
     useEffect(() => {
         const time = new Date().toLocaleString();
@@ -76,6 +85,10 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
         onSuccess: (data) => {
             toast.success(`Harvested ${data.amount}x ${plotData.crop.product.name}!`);
             toast.info(`Gained ${plotData.crop.experience} farming experience!`);
+            if (data.level > 0) {
+                handleConfetti();
+                toast.success(`Congratulations! You've reached level ${data.level} Farming!`);
+            }
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
             queryClient.invalidateQueries({ queryKey: ['character'] });
         },

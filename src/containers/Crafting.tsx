@@ -1,22 +1,31 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
-import { item, Recipe } from '../types/types';
+import { item, ItemCategory, Recipe } from '../types/types';
 import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient"
-import { ItemCategory } from '../types/types';
+import { useConfetti } from '../contexts/ConfettiContext';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 
 const Crafting = () => {
     const queryClient = useQueryClient();
+    const { startConfetti, stopConfetti } = useConfetti();
+
     const { data, error, isLoading } = useQuery({
         queryKey: ['craftingRecipes'],
         queryFn: getCraftingRecipes,
     })
 
+    const handleConfetti = () => {
+        startConfetti();
+        setTimeout(() => {
+            stopConfetti();
+        }, 10000);
+    }
+
     const { mutate, isPending } = useMutation({
         mutationFn: (recipe: Recipe) => postCraftRecipe(recipe.item.id),
-        onSuccess: (_, variables: Recipe) => {
+        onSuccess: (data, variables: Recipe) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
@@ -28,6 +37,10 @@ const Crafting = () => {
                 </div>
             );
             toast.info(`Gained ${variables.experience} cooking experience!`);
+            if (data.level > 0) {
+                handleConfetti();
+                toast.success(`Congratulations! You've reached level ${data.level} Cooking!`);
+            }
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
             queryClient.invalidateQueries({ queryKey: ['character'] });
         },

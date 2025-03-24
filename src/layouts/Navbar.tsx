@@ -1,8 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { useCharacter } from '../lib/stateMangers';
 
 const Navbar = () => {
+    const { data } = useCharacter();
     return (
         <div className="navbar bg-primary flex justify-between">
             {/* Title */}
@@ -33,7 +35,7 @@ const Navbar = () => {
                 <div className="dropdown dropdown-end">
                     <div className="flex flex-row gap-2 items-center justify-center">
                         <div>
-                            Character Name Lv. 10
+                            {data?.name}
                         </div>
                         <div tabIndex={0} role="button" className="btn btn-circle w-15">
                             <div className="w-10 rounded-full">
