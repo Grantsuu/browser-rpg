@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faSeedling, faKitchenSet } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useCharacter } from '../../lib/stateMangers';
+import { experience_table } from '../constants/game/experience_table';
 
 const CharacterStats = () => {
     const { data } = useCharacter();
@@ -30,15 +31,15 @@ const CharacterStats = () => {
                         <h3 className="text-lg font-semibold">Farming</h3>
                     </div>
                     <p>Level: {data?.farming_level}</p>
-                    <p>Experience: {data?.farming_experience}/82</p>
+                    <p>Experience: {data?.farming_experience}/{experience_table[data?.farming_level + 1 as keyof typeof experience_table]}</p>
                 </div>
                 <div>
                     <div className="flex flex-row items-center gap-2">
                         <FontAwesomeIcon icon={faKitchenSet as IconProp} />
                         <h3 className="text-lg font-semibold">Cooking</h3>
                     </div>
-                    <p>Level: {data?.farming_level}</p>
-                    <p>Experience: {data?.cooking_experience}/82</p>
+                    <p>Level: {data?.cooking_level}</p>
+                    <p>Experience: {data?.cooking_experience}/{experience_table[data?.cooking_level + 1 as keyof typeof experience_table]}</p>
                 </div>
             </div>
         </div>
