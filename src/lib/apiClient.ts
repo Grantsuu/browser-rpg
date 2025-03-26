@@ -23,18 +23,7 @@ export const getCharacter = async () => {
     return await response.json();
 }
 
-// Get Gold
-export const getCharacterGold = async () => {
-    const response = await fetch(`${apiUrl}/characters/gold`, {
-        headers: {
-            'Authorization': `Bearer ${getJwt()}`
-        }
-    });
-    if (!response.ok) {
-        throw new Error(response.statusText);
-    }
-    return await response.json();
-}
+// POST
 
 export const postCreateCharacter = async (name: string) => {
     const params = new URLSearchParams();
@@ -235,6 +224,23 @@ export const postHarvestPlot = async (plotId: number) => {
     if (!response.ok) {
         const body = await response.json();
         throw new Error(body);
+    }
+    return await response.json();
+}
+
+// Crops
+
+// GET
+
+// Get crops
+export const getCrops = async () => {
+    const response = await fetch(`${apiUrl}/crops`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
     }
     return await response.json();
 }
