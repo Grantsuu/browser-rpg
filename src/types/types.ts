@@ -20,6 +20,7 @@ export type Recipe = {
     amount: number
     category: string
     experience: number
+    required_level: number
 }
 
 export type Crop = {

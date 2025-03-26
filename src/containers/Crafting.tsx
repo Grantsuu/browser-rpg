@@ -62,6 +62,7 @@ const Crafting = () => {
                         <tr className="bg-secondary">
                             <th></th>
                             <th>Name</th>
+                            <th>Level</th>
                             <th>Category</th>
                             <th>Value</th>
                             <th>Description</th>
@@ -86,6 +87,9 @@ const Crafting = () => {
                                         </td>
                                         <td>
                                             {recipe.item.name}
+                                        </td>
+                                        <td>
+                                            {recipe.required_level}
                                         </td>
                                         <td>
                                             <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
