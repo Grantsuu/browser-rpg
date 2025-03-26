@@ -170,7 +170,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                                             <p>Error loading crops: {cropError?.message}</p>
                                         </div> :
                                         <div className="flex flex-col gap-2 w-full">
-                                            {cropData?.map((crop: Crop) => (
+                                            {cropData?.sort((a: Crop, b: Crop) => a.required_level - b.required_level).map((crop: Crop) => (
                                                 <div key={crop?.id} className="card card-md w-full bg-base-100 shadow-md">
                                                     <div className="card-body">
                                                         <div className="flex items-center justify-between">

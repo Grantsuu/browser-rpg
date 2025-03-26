@@ -6,10 +6,13 @@ import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient"
 import { useConfetti } from '../contexts/ConfettiContext';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
+import { useCharacter } from '../lib/stateMangers';
 
 const Crafting = () => {
     const queryClient = useQueryClient();
     const { startConfetti, stopConfetti } = useConfetti();
+
+    const { data: character } = useCharacter();
 
     const { data, error, isLoading } = useQuery({
         queryKey: ['craftingRecipes'],
@@ -79,7 +82,7 @@ const Crafting = () => {
                                     </div>
                                 </td>
                             </tr> :
-                            data.map((recipe: Recipe, id: number) => {
+                            data.sort((a: Recipe, b: Recipe) => a.required_level - b.required_level).map((recipe: Recipe, id: number) => {
                                 return (
                                     <tr className="flex table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="m-0 w-1/16">
@@ -110,7 +113,7 @@ const Crafting = () => {
                                             })}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-primary" onClick={() => mutate(recipe)} disabled={isPending}>
+                                            <button className="btn btn-soft btn-primary" onClick={() => mutate(recipe)} disabled={isPending || (character.cooking_level < recipe.required_level)}>
                                                 {isPending ? <span className="loading loading-spinner loading-sm"></span> :
                                                     `Craft`}
                                             </button>
