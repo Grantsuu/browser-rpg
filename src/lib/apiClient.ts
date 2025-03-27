@@ -94,10 +94,10 @@ export const getShopInventory = async () => {
 // POST
 
 // Buy
-export const postBuyFromShop = async (itemId: number) => {
+export const postBuyFromShop = async (itemId: number, amount: number) => {
     const params = new URLSearchParams();
     params.set('id', itemId.toString());
-    params.set('amount', '1');
+    params.set('amount', amount.toString());
     const response = await fetch(`${apiUrl}/shop/buy?${params.toString()}`, {
         method: 'POST',
         headers: {
@@ -112,10 +112,10 @@ export const postBuyFromShop = async (itemId: number) => {
 }
 
 // Sell
-export const postSellToShop = async (itemId: number) => {
+export const postSellToShop = async (itemId: number, amount: number) => {
     const params = new URLSearchParams();
     params.set('id', itemId.toString());
-    params.set('amount', '1');
+    params.set('amount', amount.toString());
     const response = await fetch(`${apiUrl}/shop/sell?${params.toString()}`, {
         method: 'POST',
         headers: {

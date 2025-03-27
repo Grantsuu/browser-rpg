@@ -24,15 +24,15 @@ const Shop = () => {
     })
 
     const { mutate: buy, isPending: isBuyPending } = useMutation({
-        mutationFn: (item: item) => postBuyFromShop(item.id),
-        onSuccess: (_, variables: item) => {
+        mutationFn: (variables: { item: item, amount: number }) => postBuyFromShop(variables.item.id, variables.amount),
+        onSuccess: (_, variables: { item: item, amount: number }) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
-                        Bought 1 x {variables.name}!
+                        Bought {variables.amount} x {variables.item.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={variables.image.base64} />
+                        <img src={variables.item.image.base64} />
                     </div>
                 </div>
             )
@@ -45,15 +45,15 @@ const Shop = () => {
     })
 
     const { mutate: sell, isPending: isSellPending } = useMutation({
-        mutationFn: (item: item) => postSellToShop(item.id),
-        onSuccess: (_, variables: item) => {
+        mutationFn: (variables: { item: item, amount: number }) => postSellToShop(variables.item.id, variables.amount),
+        onSuccess: (_, variables: { item: item, amount: number }) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
-                        Sold 1 x {variables.name}!
+                        Sold {variables.amount} x {variables.item.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={variables.image.base64} />
+                        <img src={variables.item.image.base64} />
                     </div>
                 </div>
             )
@@ -128,9 +128,14 @@ const Shop = () => {
                                                 {item.description}
                                             </td>
                                             <td>
-                                                <button className="btn btn-soft btn-primary" onClick={() => { buy(item) }} disabled={isBuyPending}>
-                                                    {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy'}
-                                                </button>
+                                                <div className="flex flex-row gap-2">
+                                                    <button className="btn btn-soft btn-primary" onClick={() => { buy({ item: item, amount: 1 }) }} disabled={isBuyPending}>
+                                                        {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy'}
+                                                    </button>
+                                                    <button className="btn btn-soft btn-primary" onClick={() => { buy({ item: item, amount: 5 }) }} disabled={isBuyPending}>
+                                                        {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy x5'}
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     )
@@ -157,9 +162,14 @@ const Shop = () => {
                                                 {item.description}
                                             </td>
                                             <td>
-                                                <button className="btn btn-soft btn-error" onClick={() => { sell(item) }} disabled={isSellPending}>
-                                                    {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell'}
-                                                </button>
+                                                <div className="flex flex-row gap-2">
+                                                    <button className="btn btn-soft btn-error" onClick={() => { sell({ item: item, amount: 5 }) }} disabled={isSellPending}>
+                                                        {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell'}
+                                                    </button>
+                                                    <button className="btn btn-soft btn-error" onClick={() => { sell({ item: item, amount: 5 }) }} disabled={isSellPending}>
+                                                        {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell x5'}
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     )
