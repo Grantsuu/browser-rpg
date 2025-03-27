@@ -6,7 +6,7 @@ import { FarmPlotData } from '../types/types';
 import { toast } from 'react-toastify';
 import { getFarmPlots } from '../lib/apiClient';
 
-const MAX_PLOTS = 3;
+// const MAX_PLOTS = 3;
 
 const Farming = () => {
     const { data, error, isLoading } = useQuery({
@@ -27,12 +27,6 @@ const Farming = () => {
                 {data.map((plot: FarmPlotData, index: number) => {
                     return (
                         <FarmPlot key={index} plotData={plot} />
-                    )
-                })}
-                {/* Render inactive farm plots */}
-                {[...Array(MAX_PLOTS - data.length)].map((_, index) => {
-                    return (
-                        <FarmPlot key={index} plotData={{} as FarmPlotData} />
                     )
                 })}
             </div>

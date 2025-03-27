@@ -5,7 +5,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faSeedling, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { Crop, FarmPlotData } from "../../types/types";
-import { deletePlot, postHarvestPlot, postPlantPlot, getCrops } from '../../lib/apiClient';
+import { putClearPlot, postHarvestPlot, postPlantPlot, getCrops } from '../../lib/apiClient';
 import { useConfetti } from '../../contexts/ConfettiContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCharacter } from '../../lib/stateMangers';
@@ -20,6 +20,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const { startConfetti, stopConfetti } = useConfetti();
 
     const [status, setStatus] = useState('Inactive');
+    const [progress, setProgress] = useState(0);
     const [seedDrawerOpen, setSeedDrawerOpen] = useState(false);
 
     const handleConfetti = () => {
@@ -34,13 +35,13 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
         const plotEndTime = plotData.end_time ? parseISO(plotData.end_time).toLocaleString() : '';
         // console.log('time', time);
         // console.log('plot end time', plotEndTime);
-        setStatus((Object.values(plotData).length === 0) ? 'Inactive' : (plotEndTime > time) ? 'Growing' : 'Ready to Harvest');
+        setStatus((plotData.crop === null) ? 'Inactive' : (plotEndTime > time) ? 'Growing' : 'Ready to Harvest');
     }, [plotData]);
 
-    const [progress, setProgress] = useState(0);
-
     useEffect(() => {
-        if (status === 'Growing') {
+        if (status === 'Inactive') {
+            setProgress(0);
+        } else if (status === 'Growing') {
             const startTime = parseISO(plotData.start_time);
             const endTime = parseISO(plotData.end_time);
             const interval = setInterval(() => {
@@ -68,24 +69,27 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     });
 
     const { mutate: plantSeeds, isPending: isPlantSeedsPending } = useMutation({
-        mutationFn: (seedId: number) => postPlantPlot(seedId),
-        onSuccess: () => {
-            toast.success('Planted 1x Wheat Seeds!');
+        mutationFn: (variables: { plotId: number, crop: Crop }) => postPlantPlot(variables.plotId, variables.crop.seed.id),
+        onSuccess: (_, variables) => {
+            // TODO: Need to get the name of the crop here
+            toast.success(`Planted ${variables.crop.seed.name}!`);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
+            queryClient.invalidateQueries({ queryKey: ['inventory'] });
         },
         onError: (error: Error) => {
             toast.error(`Failed to plant seeds: ${(error as Error).message}`);
         }
     });
 
-    const { mutate: deleteFarmPlot, isPending: isDeletePlotPending } = useMutation({
-        mutationFn: (plotId: number) => deletePlot(plotId),
+    const { mutate: clearFarmPlot, isPending: isDeletePlotPending } = useMutation({
+        mutationFn: (plotId: number) => putClearPlot(plotId),
         onSuccess: () => {
-            toast.success('Deleted plot!');
+            toast.success('Cancelled plot successfully!');
+            setProgress(0);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
         },
         onError: (error: Error) => {
-            toast.error(`Failed to delete plot: ${(error as Error).message}`);
+            toast.error(`Failed to cancel plot: ${(error as Error).message}`);
         }
     });
 
@@ -107,8 +111,8 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
         }
     });
 
-    const handlePlantSeed = (seedId: number) => {
-        plantSeeds(seedId);
+    const handlePlantSeed = (plotId: number, crop: Crop) => {
+        plantSeeds({ plotId, crop });
         setSeedDrawerOpen(false);
     }
 
@@ -140,7 +144,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                             </>
                         }
                         {status === 'Growing' &&
-                            <button className="btn btn-secondary btn-wide" onClick={() => deleteFarmPlot(plotData.id)} disabled={isDeletePlotPending}>
+                            <button className="btn btn-secondary btn-wide" onClick={() => clearFarmPlot(plotData.id)} disabled={isDeletePlotPending}>
                                 {isDeletePlotPending ? <span className="loading loading-spinner loading-xl"></span> : 'Cancel'}
                             </button>}
                         {status === 'Ready to Harvest' &&
@@ -180,7 +184,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                                                                 <div><b>Lvl. {crop?.required_level}</b></div>
                                                                 <div>{crop?.seed?.name}</div>
                                                             </div>
-                                                            <button className="btn btn-primary" onClick={() => handlePlantSeed(crop.seed.id)} disabled={isPlantSeedsPending || (character?.farming_level < crop?.required_level)}>Plant</button>
+                                                            <button className="btn btn-primary" onClick={() => handlePlantSeed(plotData.id, crop)} disabled={isPlantSeedsPending || (character?.farming_level < crop?.required_level)}>Plant</button>
                                                         </div>
                                                     </div>
                                                 </div>

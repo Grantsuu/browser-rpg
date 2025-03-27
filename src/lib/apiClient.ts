@@ -196,9 +196,14 @@ export const getFarmPlots = async () => {
     return await response.json();
 }
 
-export const postPlantPlot = async (seedId: number) => {
+
+// POST
+
+// Plant seed in specified plot id
+export const postPlantPlot = async (plotId: number, seedId: number) => {
     const params = new URLSearchParams();
-    params.set('id', seedId.toString());
+    params.set('plot_id', plotId.toString());
+    params.set('seed_id', seedId.toString());
     params.set('tz_offset', (new Date().getTimezoneOffset()).toString());
     const response = await fetch(`${apiUrl}/farming/plant?${params.toString()}`, {
         method: 'POST',
@@ -213,11 +218,12 @@ export const postPlantPlot = async (seedId: number) => {
     return await response.json();
 }
 
-export const deletePlot = async (plotId: number) => {
+// Harvest crop from specified plot id
+export const postHarvestPlot = async (plotId: number) => {
     const params = new URLSearchParams();
     params.set('id', plotId.toString());
-    const response = await fetch(`${apiUrl}/farming?${params.toString()}`, {
-        method: 'DELETE',
+    const response = await fetch(`${apiUrl}/farming/harvest?${params.toString()}`, {
+        method: 'POST',
         headers: {
             'Authorization': `Bearer ${getJwt()}`
         }
@@ -229,11 +235,15 @@ export const deletePlot = async (plotId: number) => {
     return await response.json();
 }
 
-export const postHarvestPlot = async (plotId: number) => {
+// PUT
+
+// Cancel currently growing crop from specified plot id
+
+export const putClearPlot = async (plotId: number) => {
     const params = new URLSearchParams();
     params.set('id', plotId.toString());
-    const response = await fetch(`${apiUrl}/farming/harvest?${params.toString()}`, {
-        method: 'POST',
+    const response = await fetch(`${apiUrl}/farming?${params.toString()}`, {
+        method: 'PUT',
         headers: {
             'Authorization': `Bearer ${getJwt()}`
         }
