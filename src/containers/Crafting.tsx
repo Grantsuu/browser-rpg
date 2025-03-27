@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { faHammer } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHammer, faKitchenSet } from "@fortawesome/free-solid-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { item, ItemCategory, Recipe } from '../types/types';
-import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient"
+import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient";
 import { useConfetti } from '../contexts/ConfettiContext';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
@@ -13,6 +16,8 @@ const Crafting = () => {
     const { startConfetti, stopConfetti } = useConfetti();
 
     const { data: character } = useCharacter();
+
+    const [activeTab, setActiveTab] = useState<string>('All');
 
     const { data, error, isLoading } = useQuery({
         queryKey: ['craftingRecipes'],
@@ -58,6 +63,16 @@ const Crafting = () => {
 
     return (
         <PageCard title="Crafting" icon={faHammer}>
+            {/* Crafting categories */}
+            <div role="tablist" className="tabs tabs-lift">
+                <a role="tab" className={activeTab === 'All' ? `tab tab-active` : `tab`} onClick={() => setActiveTab('All')}>
+                    <div className="flex flex-row items-center gap-2">
+                        <FontAwesomeIcon icon={faKitchenSet as IconProp} />
+                        Cooking
+                    </div>
+                </a>
+            </div>
+            {/* Crafting table */}
             <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8">
                 <table className={`table table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
                     {/* head */}
