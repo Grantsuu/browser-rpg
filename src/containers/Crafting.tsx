@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { dataTagErrorSymbol, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { faHammer } from "@fortawesome/free-solid-svg-icons";
 import { item, ItemCategory, Recipe } from '../types/types';
@@ -27,19 +27,19 @@ const Crafting = () => {
     }
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (recipe: Recipe) => postCraftRecipe(recipe.item.id),
-        onSuccess: (data, variables: Recipe) => {
+        mutationFn: (variables: { recipe: Recipe, amount: number }) => postCraftRecipe(variables.recipe.item.id, variables.amount),
+        onSuccess: (data, variables: { recipe: Recipe, amount: number }) => {
             toast.success(
                 <div className='flex flex-row w-full items-center gap-3'>
                     <div>
-                        Successfully crafted 1 x {variables.item.name}!
+                        Successfully crafted {data.amount} x {variables.recipe.item.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={variables.item.image.base64} />
+                        <img src={variables.recipe.item.image.base64} />
                     </div>
                 </div>
             );
-            toast.info(`Gained ${variables.experience} cooking experience!`);
+            toast.info(`Gained ${variables.recipe.experience * data.amount} cooking experience!`);
             if (data.level > 0) {
                 handleConfetti();
                 toast.success(`Congratulations! You've reached level ${data.level} Cooking!`);
@@ -47,8 +47,8 @@ const Crafting = () => {
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
             queryClient.invalidateQueries({ queryKey: ['character'] });
         },
-        onError: (error: Error, variables: Recipe) => {
-            toast.error(`Failed to craft ${variables.item.name}: ${(error as Error).message}`);
+        onError: (error: Error, variables: { recipe: Recipe, amount: number }) => {
+            toast.error(`Failed to craft ${variables.recipe.item.name}: ${(error as Error).message}`);
         }
     })
 
@@ -113,10 +113,16 @@ const Crafting = () => {
                                             })}
                                         </td>
                                         <td>
-                                            <button className="btn btn-soft btn-primary" onClick={() => mutate(recipe)} disabled={isPending || (character.cooking_level < recipe.required_level)}>
-                                                {isPending ? <span className="loading loading-spinner loading-sm"></span> :
-                                                    `Craft`}
-                                            </button>
+                                            <div className="flex flex-row gap-2">
+                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 1 })} disabled={isPending || (character.cooking_level < recipe.required_level)}>
+                                                    {isPending ? <span className="loading loading-spinner loading-sm"></span> :
+                                                        `Craft`}
+                                                </button>
+                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 5 })} disabled={isPending || (character.cooking_level < recipe.required_level)}>
+                                                    {isPending ? <span className="loading loading-spinner loading-sm"></span> :
+                                                        `Craft x5`}
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 )

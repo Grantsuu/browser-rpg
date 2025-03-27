@@ -18,6 +18,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const { data: character } = useCharacter();
     const queryClient = useQueryClient();
     const { startConfetti, stopConfetti } = useConfetti();
+
     const [status, setStatus] = useState('Inactive');
     const [seedDrawerOpen, setSeedDrawerOpen] = useState(false);
 

@@ -145,9 +145,10 @@ export const getCraftingRecipes = async () => {
 }
 
 // POST
-export const postCraftRecipe = async (itemId: number) => {
+export const postCraftRecipe = async (itemId: number, amount: number) => {
     const params = new URLSearchParams();
     params.set('id', itemId.toString());
+    params.set('amount', amount.toString());
     const response = await fetch(`${apiUrl}/crafting?${params.toString()}`, {
         method: 'POST',
         headers: {
