@@ -5,22 +5,37 @@ import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { item } from '../types/types';
+import { toTitleCase } from '../utils/strings';
 import { useCharacter, useInventory } from '../lib/stateMangers';
-import { getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
+import { getItemCategories, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
+
 
 type ShopModes = 'buy' | 'sell';
 
 const Shop = () => {
     const queryClient = useQueryClient();
     const [shopMode, setShopMode] = useState<ShopModes>('buy');
+    const [activeTab, setActiveTab] = useState<string>('All');
 
     const { data: character } = useCharacter();
     const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useInventory();
+
     const { data: shop, error: shopError, isLoading: isShopLoading } = useQuery({
-        queryKey: ['shopInventory'],
-        queryFn: getShopInventory,
+        queryKey: ['shopInventory', { activeTab }],
+        queryFn: async () => {
+            if (activeTab === 'All') {
+                return await getShopInventory();
+            } else {
+                return await getShopInventory(activeTab);
+            }
+        }
+    })
+
+    const { data: categories, error: categoriesError, isLoading: isCategoriesLoading } = useQuery({
+        queryKey: ['itemCategories'],
+        queryFn: getItemCategories,
     })
 
     const { mutate: buy, isPending: isBuyPending } = useMutation({
@@ -73,6 +88,10 @@ const Shop = () => {
         toast.error(`Something went wrong fetching the Shop inventory: ${(shopError as Error).message}`);
     }
 
+    if (categoriesError) {
+        toast.error(`Something went wrong fetching the item categories: ${(categoriesError as Error).message}`);
+    }
+
     return (
         <PageCard title="Shop" icon={faShop}>
             <div className="flex flex-row items-center justify-between">
@@ -84,6 +103,15 @@ const Shop = () => {
                     <FontAwesomeIcon icon={faCoins as IconProp} className="mr-1" />
                     Gold: {character?.gold}
                 </div>
+            </div>
+            <div role="tablist" className="tabs tabs-lift">
+                <a role="tab" className={activeTab === 'All' ? `tab tab-active` : `tab`} onClick={() => setActiveTab('All')}>All</a>
+                {isCategoriesLoading ? <span className="loading loading-spinner loading-sm"></span> :
+                    categories?.map((category: string, id: number) => {
+                        return (
+                            <a role="tab" className={activeTab === category ? `tab tab-active` : `tab`} onClick={() => setActiveTab(category)} key={id}>{toTitleCase(category)}</a>
+                        )
+                    })}
             </div>
             <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
                 <table className={`table table-pin-rows bg-base-100 ${(isInventoryLoading || isShopLoading) ? 'flex-1' : ''}`}>

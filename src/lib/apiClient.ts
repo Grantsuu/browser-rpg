@@ -79,8 +79,24 @@ export const removeItemFromInventory = async (itemId: number, amount?: number) =
 // Shop
 
 // GET
-export const getShopInventory = async () => {
-    const response = await fetch(`${apiUrl}/shop`, {
+export const getShopInventory = async (category?: string) => {
+    const params = new URLSearchParams();
+    if (category) {
+        params.set('category', category.toString());
+    }
+    const response = await fetch(`${apiUrl}/shop` + (category ? `?${params.toString()}` : ''), {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
+export const getItemCategories = async () => {
+    const response = await fetch(`${apiUrl}/shop/categories`, {
         headers: {
             'Authorization': `Bearer ${getJwt()}`
         }

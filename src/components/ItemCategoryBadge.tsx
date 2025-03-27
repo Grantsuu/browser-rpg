@@ -1,15 +1,8 @@
 import { useEffect, useState } from 'react';
+import { toTitleCase } from '../utils/strings';
 
 interface ItemCategoryBadgeProps {
     category: string;
-};
-
-// https://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
-const toTitleCase = (str: string) => {
-    return str.replace(
-        /\w\S*/g,
-        text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
-    );
 };
 
 const ItemCategoryBadge = ({ category }: ItemCategoryBadgeProps) => {
