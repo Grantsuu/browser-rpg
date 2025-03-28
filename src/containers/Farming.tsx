@@ -6,7 +6,7 @@ import PageCard from '../layouts/PageCard';
 import FarmPlot from '../components/Farming/FarmPlot';
 import { FarmPlotData } from '../types/types';
 import { toast } from 'react-toastify';
-import { getFarmPlots, postBuyPlot } from '../lib/apiClient';
+import { getFarmPlots, getFarmPlotCost, postBuyPlot } from '../lib/apiClient';
 
 // const MAX_PLOTS = 3;
 
@@ -16,6 +16,11 @@ const Farming = () => {
     const { data, error, isLoading } = useQuery({
         queryKey: ['farmPlots'],
         queryFn: getFarmPlots
+    });
+
+    const { data: costData, error: costError, isLoading: costIsLoading } = useQuery({
+        queryKey: ['farmPlotCost'],
+        queryFn: getFarmPlotCost
     });
 
     const { mutate, isPending } = useMutation({
@@ -36,6 +41,10 @@ const Farming = () => {
         return toast.error(`Something went wrong fetching farm plots: ${(error as Error).message}`);
     }
 
+    if (costError) {
+        return toast.error(`Something went wrong fetching farm plot cost: ${(costError as Error).message}`);
+    }
+
     return (
         <PageCard title="Farming" icon={faSeedling}>
             <div className="grid grid-cols-3 gap-4">
@@ -50,7 +59,7 @@ const Farming = () => {
                         <div></div>
                         <div className="prose">
                             <h1>
-                                500 <FontAwesomeIcon icon={faCoins as IconProp} />
+                                {costIsLoading ? <span className="loading loading-spinner loading-sm"></span> : costData.cost} <FontAwesomeIcon icon={faCoins as IconProp} />
                             </h1>
                         </div>
                         <button className="btn btn-primary btn-wide" onClick={() => mutate()} disabled={isPending}>
@@ -59,7 +68,7 @@ const Farming = () => {
                     </div>
                 </div>
             </div>
-        </PageCard>
+        </PageCard >
     )
 }
 
