@@ -159,13 +159,13 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                         setSubmitting(false);
                     }}
                 >
-                    <Form className="w-full">
+                    <Form className="w-full items-center">
                         {/* Email: login, register, reset */}
                         {mode !== "update" && <FormTextInput
                             name="email"
                             type="email"
                             placeholder="Email"
-                            className="input"
+                            className="input w-full"
                             disabled={loading}
                         />}
                         {/* Password: login, register, update */}
@@ -173,7 +173,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                             name="password"
                             type="password"
                             placeholder="Password"
-                            className="input"
+                            className="input w-full"
                             disabled={loading}
                         />}
                         {/* Confirm Password: register, update */}
@@ -182,7 +182,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                                 name="confirmPassword"
                                 type="password"
                                 placeholder="Confirm password"
-                                className="input"
+                                className="input w-full"
                                 disabled={loading}
                             />}
                         <div className="flex justify-center">

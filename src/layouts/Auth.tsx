@@ -12,7 +12,7 @@ const Auth = () => {
                         Browser RPG <FontAwesomeIcon icon={faShieldHalved as IconProp} />
                     </h1>
                 </div>
-                <div className="lg:w-1/5 sm:w-100">
+                <div className="w-full md:w-1/2 lg:w-1/3">
                     <div className="card rounded-box shadow-xl bg-base-200">
                         <div className="card-body">
                             <Outlet />
