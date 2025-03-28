@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useCharacter } from '../lib/stateMangers';
 
@@ -7,6 +7,10 @@ const Navbar = () => {
     const { data } = useCharacter();
     return (
         <div className="navbar bg-primary flex justify-between">
+            {/* Drawer for mobile/tablet view */}
+            <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">
+                <FontAwesomeIcon icon={faBars as IconProp} size="2x" />
+            </label>
             {/* Title */}
             <div>
                 <a className="btn btn-ghost text-xl" href="/">Browser RPG <FontAwesomeIcon icon={faShieldHalved as IconProp} /></a>
@@ -34,7 +38,7 @@ const Navbar = () => {
                 </div> */}
                 <div className="dropdown dropdown-end">
                     <div className="flex flex-row gap-2 items-center justify-center">
-                        <div>
+                        <div className="hidden sm:inline-block">
                             {data?.name}
                         </div>
                         <div tabIndex={0} role="button" className="btn btn-circle w-15">

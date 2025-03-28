@@ -13,12 +13,8 @@ const Dashboard = () => {
                 <Sidebar />
                 {/* Content */}
                 <div className="drawer-content flex flex-col items-center justify-center bg-base-200 shadow-inner p-5 max-h-[calc(100vh-4rem)]">
-                    <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">
-                        Open drawer
-                    </label>
                     <Outlet />
                 </div>
-
             </div>
         </div >
     )
