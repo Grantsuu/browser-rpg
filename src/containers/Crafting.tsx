@@ -129,11 +129,11 @@ const Crafting = () => {
                                         </td>
                                         <td>
                                             <div className="flex flex-row gap-2">
-                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 1 })} disabled={isPending || (character.cooking_level < recipe.required_level)}>
+                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 1 })} disabled={isPending || (character?.cooking_level < recipe.required_level)}>
                                                     {isPending ? <span className="loading loading-spinner loading-sm"></span> :
                                                         `Craft`}
                                                 </button>
-                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 5 })} disabled={isPending || (character.cooking_level < recipe.required_level)}>
+                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 5 })} disabled={isPending || (character?.cooking_level < recipe.required_level)}>
                                                     {isPending ? <span className="loading loading-spinner loading-sm"></span> :
                                                         `Craft x5`}
                                                 </button>

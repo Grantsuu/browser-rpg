@@ -9,7 +9,7 @@ type ProtectedRouteProps = {
 const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
     const location = useLocation();
     const { supabaseUser } = useSupabase();
-    const { data, error, isLoading } = useCharacter();
+    const { data, isLoading } = useCharacter();
 
     if (isLoading) return <span className="loading loading-spinner loading-sm"></span>;
 
@@ -19,8 +19,7 @@ const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
     }
 
     // If user is logged in but no character, redirect to character create page
-    if (error) {
-        console.log('no characer found redirecting...')
+    if (!data && (location.pathname !== '/character/create')) {
         return <Navigate to="/character/create" />;
     }
 
@@ -28,6 +27,8 @@ const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
     if (data && location.pathname === '/character/create') {
         return <Navigate to="/character" />;
     }
+
+    console.log('no redirect to character');
 
     return <Outlet />;
 };

@@ -30,8 +30,8 @@ createRoot(document.getElementById('root')!).render(
         <ToastContainer position="top-center" autoClose={2500} />
         <QueryClientProvider client={queryClient}>
             <SupabaseProvider>
-                <BrowserRouter>
-                    <ConfettiProvider>
+                <ConfettiProvider>
+                    <BrowserRouter>
                         <Routes>
                             <Route element={<ProtectedRoute redirectPath='login' />}>
                                 <Route element={<Dashboard />} >
@@ -53,8 +53,8 @@ createRoot(document.getElementById('root')!).render(
                                 <Route path="reset-password" element={<ResetPassword />} />
                             </Route>
                         </Routes>
-                    </ConfettiProvider>
-                </BrowserRouter>
+                    </BrowserRouter>
+                </ConfettiProvider>
             </SupabaseProvider>
         </QueryClientProvider>
         {/* </StrictMode> */}
