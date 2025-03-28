@@ -71,7 +71,6 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const { mutate: plantSeeds, isPending: isPlantSeedsPending } = useMutation({
         mutationFn: (variables: { plotId: number, crop: Crop }) => postPlantPlot(variables.plotId, variables.crop.seed.id),
         onSuccess: (_, variables) => {
-            // TODO: Need to get the name of the crop here
             toast.success(`Planted ${variables.crop.seed.name}!`);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
             queryClient.invalidateQueries({ queryKey: ['inventory'] });

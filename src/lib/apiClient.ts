@@ -199,6 +199,21 @@ export const getFarmPlots = async () => {
 
 // POST
 
+// Buy new farm plot
+export const postBuyPlot = async () => {
+    const response = await fetch(`${apiUrl}/farming/buy`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
 // Plant seed in specified plot id
 export const postPlantPlot = async (plotId: number, seedId: number) => {
     const params = new URLSearchParams();
