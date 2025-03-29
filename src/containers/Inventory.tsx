@@ -29,14 +29,14 @@ const Inventory = () => {
 
     return (
         <PageCard title="Inventory" icon={faBox}>
-            <div className="flex flex-col overflow-x-hidden overflow-y-scroll w-max-full h-full rounded border border-base-content/8 ">
+            <div className="flex flex-col overflow-y-scroll w-max-full h-full rounded border border-base-content/8 ">
                 <table className={`md:table table-compact table-pin-rows border-collapse bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
                         <tr className="bg-secondary md:bg-secondary">
-                            <th></th>
+                            <th className="w-10"></th>
                             <th className="text-left p-1">Name</th>
-                            <th className="text-left p-1">Category</th>
+                            <th className="hidden xs:inline-block text-left p-1">Category</th>
                             <th className="text-left p-1">Amount</th>
                             <th className="text-left p-1">Value</th>
                             <th className="hidden xl:inline-block">Description</th>
@@ -55,13 +55,13 @@ const Inventory = () => {
                             data.map((item: item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
-                                        <td className="p-1 w-15 xl:w-20">
+                                        <td className="p-2 xs:p-1 w-15 xl:w-20">
                                             <img src={item.image.base64} />
                                         </td>
                                         <td className="p-1">
                                             {item.name}
                                         </td>
-                                        <td className="p-1">
+                                        <td className="hidden xs:table-cell p-1">
                                             <ItemCategoryBadge category={item.category} />
                                         </td>
                                         <td className="p-1">
@@ -70,7 +70,7 @@ const Inventory = () => {
                                         <td className="p-1">
                                             {item.value}
                                         </td>
-                                        <td className="hidden xl:inline-block">
+                                        <td className="hidden xl:table-cell">
                                             {item.description}
                                         </td>
                                         <td className="p-1">
