@@ -47,14 +47,14 @@ const Farming = () => {
 
     return (
         <PageCard title="Farming" icon={faSeedling}>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {/* Render active farm plots */}
                 {data.map((plot: FarmPlotData, index: number) => {
                     return (
                         <FarmPlot key={index} plotData={plot} />
                     )
                 })}
-                <div className="card w-full bg-base-100 card-lg shadow-sm">
+                <div className="card w-full aspect-square xl:aspect-auto bg-base-100 card-lg shadow-sm">
                     <div className="card-body items-center justify-between">
                         <div></div>
                         <div className="prose">

@@ -117,8 +117,8 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
 
     return (
         <div>
-            <div className="card w-full bg-base-100 card-lg shadow-sm">
-                <div className="card-body">
+            <div className="card w-full aspect-square xl:aspect-auto bg-base-100 card-lg shadow-sm">
+                <div className="card-body justify-between">
                     <div className="flex w-full items-center justify-center">
                         <h2 className="card-title text-center">Farm Plot</h2>
                     </div>
