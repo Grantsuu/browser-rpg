@@ -29,17 +29,17 @@ const Inventory = () => {
 
     return (
         <PageCard title="Inventory" icon={faBox}>
-            <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8 ">
-                <table className={`table table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
+            <div className="flex flex-col overflow-x-hidden overflow-y-scroll w-max-full h-full rounded border border-base-content/8 ">
+                <table className={`md:table table-compact table-pin-rows border-collapse bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
                     {/* head */}
                     <thead>
-                        <tr className="bg-secondary">
+                        <tr className="bg-secondary md:bg-secondary">
                             <th></th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Amount</th>
-                            <th>Value</th>
-                            <th>Description</th>
+                            <th className="text-left p-1">Name</th>
+                            <th className="text-left p-1">Category</th>
+                            <th className="text-left p-1">Amount</th>
+                            <th className="text-left p-1">Value</th>
+                            <th className="hidden xl:inline-block">Description</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -54,27 +54,27 @@ const Inventory = () => {
                             </tr> :
                             data.map((item: item, id: number) => {
                                 return (
-                                    <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                        <td className="m-0 w-1/16">
+                                    <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
+                                        <td className="p-1 w-15 xl:w-20">
                                             <img src={item.image.base64} />
                                         </td>
-                                        <td>
+                                        <td className="p-1">
                                             {item.name}
                                         </td>
-                                        <td>
+                                        <td className="p-1">
                                             <ItemCategoryBadge category={item.category} />
                                         </td>
-                                        <td>
+                                        <td className="p-1">
                                             {item.amount}
                                         </td>
-                                        <td>
+                                        <td className="p-1">
                                             {item.value}
                                         </td>
-                                        <td>
+                                        <td className="hidden xl:inline-block">
                                             {item.description}
                                         </td>
-                                        <td>
-                                            <button className="btn btn-soft btn-error" onClick={() => { mutate(item.id) }} disabled={isPending}>Delete</button>
+                                        <td className="p-1">
+                                            <button className="btn btn-soft btn-error btn-sm md:btn-md" onClick={() => { mutate(item.id) }} disabled={isPending}>Delete</button>
                                         </td>
                                     </tr>
                                 )

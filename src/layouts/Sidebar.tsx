@@ -32,7 +32,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
             />
             {/* Content */}
             {/* Navbar is 4rem so the rest of the content, determined by sidebar, should be 100vh - rem high */}
-            <div className="drawer-content flex flex-col h-[calc(100dvh-4rem)] items-center justify-center bg-base-200 shadow-inner p-5 overflow-scroll">
+            <div className="drawer-content flex flex-col h-[calc(100dvh-4rem)] items-center justify-center bg-base-200 shadow-inner p-1 md:p-3 overflow-scroll">
                 {children}
             </div>
             {/* Side Navigation Bar */}

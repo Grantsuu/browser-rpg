@@ -10,13 +10,13 @@ interface PageCardProps {
 const PageCard = ({ title, icon, children }: PageCardProps) => {
     return (
         <div className="card w-full h-full bg-base-100 shadow-md overflow-auto">
-            <div className="card-body">
-                <div className="prose">
-                    <h1>
+            <div className="card-body p-2 md:p-4 lg:p-6">
+                <div className="prose w-screen">
+                    <h1 className="text-center sm:text-left">
                         <FontAwesomeIcon icon={icon as IconProp} /> {title}
                     </h1>
                 </div>
-                <div className="divider"></div>
+                <div className="divider my-0"></div>
                 {children}
             </div>
         </div>
