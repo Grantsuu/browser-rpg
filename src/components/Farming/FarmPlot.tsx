@@ -159,7 +159,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                 <input id="my-drawer-4" type="checkbox" className="drawer-toggle" checked={seedDrawerOpen} onChange={() => { }} />
                 <div className="drawer-side z-1">
                     <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={() => setSeedDrawerOpen(false)} />
-                    <ul className="menu bg-base-200 text-base-content min-h-full w-1/3 p-4">
+                    <ul className="menu bg-base-200 text-base-content h-full w-85 lg:w-1/3 p-4 overflow-y-scroll">
                         {/* Sidebar content here */}
                         <div className="flex items-start justify-between prose">
                             <h2 className="flex-1 text-center">Choose a Seed</h2>
