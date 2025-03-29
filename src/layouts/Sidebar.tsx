@@ -38,9 +38,9 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
                 {/* </div> */}
             </div>
             {/* Side Navigation Bar */}
-            <div className="drawer-side w-full h-full lg:h-[calc(100vh-4rem)] z-1">
+            <div className="drawer-side w-full h-dvh lg:h-[calc(100dvh-4rem)] z-1">
                 <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
-                <ul className="menu bg-base-100 text-base-content h-dvh w-80 lg:w-70 p-2 justify-between text-xl md:text-lg lg:text-base">
+                <ul className="menu bg-base-100 text-base-content h-full w-80 lg:w-70 p-2 justify-between text-xl md:text-lg lg:text-base">
                     <div>
                         <li><Link to="/" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faHouse as IconProp} className="w-5" />Home</Link></li>
                         <li><Link to="/character" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faUserShield as IconProp} className="w-5" />Character</Link></li>
