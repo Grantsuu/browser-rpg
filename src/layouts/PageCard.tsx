@@ -11,7 +11,7 @@ const PageCard = ({ title, icon, children }: PageCardProps) => {
     return (
         <div className="card w-full h-full bg-base-100 shadow-md overflow-auto">
             <div className="card-body p-2 md:p-4 lg:p-6">
-                <div className="prose w-screen">
+                <div className="prose w-full">
                     <h1 className="text-center sm:text-left">
                         <FontAwesomeIcon icon={icon as IconProp} /> {title}
                     </h1>
