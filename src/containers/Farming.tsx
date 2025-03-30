@@ -28,6 +28,7 @@ const Farming = () => {
         onSuccess: () => {
             toast.success(`Plot bought succesfully!`);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
+            queryClient.invalidateQueries({ queryKey: ['farmPlotCost'] });
             queryClient.invalidateQueries({ queryKey: ['character'] });
         },
         onError: (error: Error) => {
