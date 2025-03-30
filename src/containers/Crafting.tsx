@@ -73,78 +73,76 @@ const Crafting = () => {
                 </a>
             </div>
             {/* Crafting table */}
-            <div className="flex flex-col overflow-y-scroll w-full h-full rounded border border-base-content/8">
-                <table className={`table table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
-                    {/* head */}
-                    <thead>
-                        <tr className="bg-secondary">
-                            <th></th>
-                            <th>Name</th>
-                            <th>Level</th>
-                            <th>Category</th>
-                            <th>Value</th>
-                            <th>Description</th>
-                            <th>Ingredients</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {isLoading ?
-                            <tr>
-                                <td colSpan={7}>
-                                    <div className="flex items-center justify-center">
-                                        <span className="loading loading-spinner loading-xl"></span>
-                                    </div>
-                                </td>
-                            </tr> :
-                            data.sort((a: Recipe, b: Recipe) => a.required_level - b.required_level).map((recipe: Recipe, id: number) => {
-                                return (
-                                    <tr className="flex table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                        <td className="m-0 w-1/16">
-                                            <img src={recipe.item.image.base64} />
-                                        </td>
-                                        <td>
-                                            {recipe.item.name}
-                                        </td>
-                                        <td>
-                                            {recipe.required_level}
-                                        </td>
-                                        <td>
-                                            <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
-                                        </td>
-                                        <td>
-                                            {recipe.item.value}
-                                        </td>
-                                        <td>
-                                            {recipe.item.description}
-                                        </td>
-                                        <td>
-                                            {recipe.ingredients.map((ingredient: item, id: number) => {
-                                                return (
-                                                    <div key={id}>
-                                                        {ingredient.amount} x {ingredient.name}
-                                                    </div>
-                                                )
-                                            })}
-                                        </td>
-                                        <td>
-                                            <div className="flex flex-row gap-2">
-                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 1 })} disabled={isPending || (character?.cooking_level < recipe.required_level)}>
-                                                    {isPending ? <span className="loading loading-spinner loading-sm"></span> :
-                                                        `Craft`}
-                                                </button>
-                                                <button className="btn btn-soft btn-primary" onClick={() => mutate({ recipe: recipe, amount: 5 })} disabled={isPending || (character?.cooking_level < recipe.required_level)}>
-                                                    {isPending ? <span className="loading loading-spinner loading-sm"></span> :
-                                                        `Craft x5`}
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                    </tbody>
-                </table>
-            </div>
+            <table className={`xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
+                {/* head */}
+                <thead>
+                    <tr className="bg-secondary md:bg-secondary">
+                        <th className="w-10"></th>
+                        <th className="text-left p-1">Name</th>
+                        <th className="text-left p-1">Level</th>
+                        <th className="hidden sm:table-cell text-left p-1">Category</th>
+                        <th className="hidden sm:table-cell text-left p-1">Value</th>
+                        <th className="hidden xl:table-cell text-left">Description</th>
+                        <th className="text-left p-1">Ingredients</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {isLoading ?
+                        <tr>
+                            <td colSpan={8}>
+                                <div className="flex items-center justify-center">
+                                    <span className="loading loading-spinner loading-xl"></span>
+                                </div>
+                            </td>
+                        </tr> :
+                        data.sort((a: Recipe, b: Recipe) => a.required_level - b.required_level).map((recipe: Recipe, id: number) => {
+                            return (
+                                <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
+                                    <td className="p-2 xs:p-1 w-15 xl:w-20">
+                                        <img src={recipe.item.image.base64} />
+                                    </td>
+                                    <td>
+                                        {recipe.item.name}
+                                    </td>
+                                    <td>
+                                        {recipe.required_level}
+                                    </td>
+                                    <td className="hidden sm:table-cell">
+                                        <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
+                                    </td>
+                                    <td className="hidden sm:table-cell">
+                                        {recipe.item.value}
+                                    </td>
+                                    <td className="hidden xl:table-cell">
+                                        {recipe.item.description}
+                                    </td>
+                                    <td>
+                                        {recipe.ingredients.map((ingredient: item, id: number) => {
+                                            return (
+                                                <div key={id}>
+                                                    {ingredient.amount} x {ingredient.name}
+                                                </div>
+                                            )
+                                        })}
+                                    </td>
+                                    <td>
+                                        <div className="flex flex-col xs:flex-row gap-1">
+                                            <button className="btn btn-soft btn-primary btn-xs md:btn-sm" onClick={() => mutate({ recipe: recipe, amount: 1 })} disabled={isPending || (character?.cooking_level < recipe.required_level)}>
+                                                {isPending ? <span className="loading loading-spinner loading-sm"></span> :
+                                                    `Craft`}
+                                            </button>
+                                            <button className="btn btn-soft btn-primary btn-xs md:btn-sm" onClick={() => mutate({ recipe: recipe, amount: 5 })} disabled={isPending || (character?.cooking_level < recipe.required_level)}>
+                                                {isPending ? <span className="loading loading-spinner loading-sm"></span> :
+                                                    `Craft x5`}
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )
+                        })}
+                </tbody>
+            </table>
         </PageCard>
     )
 }
