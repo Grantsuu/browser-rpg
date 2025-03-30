@@ -47,4 +47,5 @@ export type FarmPlotData = {
     crop: Crop,
     start_time: string,
     end_time: string
+    previous_crop: Crop
 }

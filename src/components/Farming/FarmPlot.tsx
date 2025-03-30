@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { parseISO } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faSeedling, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faRotateRight, faSeedling, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { Crop, FarmPlotData } from "../../types/types";
 import { putClearPlot, postHarvestPlot, postPlantPlot, getCrops } from '../../lib/apiClient';
@@ -128,19 +128,23 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                     <div className="prose">
                         <div><b>Status:</b> {status}</div>
                         <div><b>Contents:</b> {plotData.crop ? plotData.crop.seed.name : 'None'}</div>
+                        <div><b>Previous Crop:</b> {plotData.previous_crop ? plotData.previous_crop.seed.name : 'None'}</div>
                         <div className="flex flew-row items-baseline gap-2">
                             <div><b>Progress:</b></div>
                             <progress className="progress progress-success w-full" value={progress} max="100"></progress>
                         </div>
                     </div>
-                    <div className="justify-center card-actions">
+                    <div className="card-actions justify-center">
                         {status === 'Inactive' &&
-                            <>
+                            <div className="flex flex-row gap-1 justify-center">
+                                {plotData.previous_crop && <button className="btn btn-primary btn-square" onClick={() => handlePlantSeed(plotData.id, plotData.previous_crop)} disabled={isPlantSeedsPending}>
+                                    {isPlantSeedsPending ? <span className="loading loading-spinner loading-xl"></span> : <FontAwesomeIcon icon={faRotateRight as IconProp} />}
+                                </button>}
                                 <button className="btn btn-primary btn-wide" onClick={() => setSeedDrawerOpen(true)} disabled={isPlantSeedsPending}>
                                     {isPlantSeedsPending ? <span className="loading loading-spinner loading-xl"></span> : 'Plant Seeds'}
                                 </button>
 
-                            </>
+                            </div>
                         }
                         {status === 'Growing' &&
                             <button className="btn btn-secondary btn-wide" onClick={() => clearFarmPlot(plotData.id)} disabled={isDeletePlotPending}>

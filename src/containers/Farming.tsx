@@ -49,7 +49,7 @@ const Farming = () => {
         <PageCard title="Farming" icon={faSeedling}>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {/* Render active farm plots */}
-                {data.map((plot: FarmPlotData, index: number) => {
+                {data.sort((a: FarmPlotData, b: FarmPlotData) => { return a.id - b.id }).map((plot: FarmPlotData, index: number) => {
                     return (
                         <FarmPlot key={index} plotData={plot} />
                     )

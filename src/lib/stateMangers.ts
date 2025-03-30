@@ -5,9 +5,9 @@ export const useCharacter = () => useQuery({
     queryKey: ['character'],
     queryFn: getCharacter,
     retryOnMount: false,
-    retry: (failureCount, error) => {
+    retry: (failureCount) => {
         // Don't retry if character is not found the first time
-        if (error.message === 'Not Found') return false;
+        // if (error.message === 'Not Found') return false;
         return failureCount < 3;
     }
 });
