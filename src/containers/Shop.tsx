@@ -190,7 +190,7 @@ const Shop = () => {
                                         </td>
                                         <td>
                                             <div className="flex flex-col xs:flex-row gap-1">
-                                                <button className="btn btn-soft btn-error btn-xs md:btn-sm" onClick={() => { sell({ item: item, amount: 5 }) }} disabled={isSellPending}>
+                                                <button className="btn btn-soft btn-error btn-xs md:btn-sm" onClick={() => { sell({ item: item, amount: 1 }) }} disabled={isSellPending}>
                                                     {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell'}
                                                 </button>
                                                 <button className="btn btn-soft btn-error btn-xs md:btn-sm" onClick={() => { sell({ item: item, amount: 5 }) }} disabled={isSellPending}>
