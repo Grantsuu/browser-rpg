@@ -21,6 +21,7 @@ import Inventory from './containers/Inventory.tsx';
 import Crafting from './containers/Crafting.tsx';
 import Farming from './containers/Farming.tsx';
 import Login from './components/Auth/Login.tsx';
+import Fishing from './containers/Fishing.tsx';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ createRoot(document.getElementById('root')!).render(
                                     <Route path="inventory" element={<Inventory />} />
                                     <Route path="crafting" element={<Crafting />} />
                                     <Route path="farming" element={<Farming />} />
+                                    <Route path="fishing" element={<Fishing />} />
                                     <Route path="/account/update-password" element={<UpdatePassword />} />
                                 </Route>
                             </Route>

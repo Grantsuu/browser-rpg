@@ -137,6 +137,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                     <div className="card-actions justify-center">
                         {status === 'Inactive' &&
                             <div className="flex flex-row gap-1 justify-center">
+                                {/* TODO: Add a tool tip when hovering this button to explain what it does */}
                                 {plotData.previous_crop && <button className="btn btn-outline btn-primary btn-square" onClick={() => handlePlantSeed(plotData.id, plotData.previous_crop)} disabled={isPlantSeedsPending}>
                                     {isPlantSeedsPending ? <span className="loading loading-spinner loading-xl"></span> : <FontAwesomeIcon icon={faRotateRight as IconProp} />}
                                 </button>}

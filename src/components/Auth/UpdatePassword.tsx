@@ -4,15 +4,17 @@ import AuthForm from "./AuthForm";
 const UpdatePassword = () => {
 
     return (
-        <div className="w-1/5">
+        <div className="w-full md:w-1/2 xl:w-1/4">
             <div className="card rounded-box shadow-xl bg-base-200">
-                <div className="card-body">
-                    <div className="flex flex-col items-center prose">
+                <div className="card-body items-center">
+                    <div className="prose">
                         <h2>
                             Update Password
                         </h2>
-                        <AuthForm mode="update" />
-                        <Link to="/login" className="text-xs">
+                    </div>
+                    <AuthForm mode="update" />
+                    <div className="prose">
+                        <Link to="/login" className="text-xs xl:text-sm xxl:text-base">
                             Return to login
                         </Link>
                     </div>

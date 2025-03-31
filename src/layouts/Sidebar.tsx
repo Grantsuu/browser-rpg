@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBox, faHammer, faHouse, faRightFromBracket, faSeedling, faShop, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faFish, faHammer, faHouse, faRightFromBracket, faSeedling, faShop, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useSupabase } from "../contexts/SupabaseContext"
 
@@ -46,6 +46,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
                         <li><Link to="/inventory" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faBox as IconProp} className="w-5" />Inventory</Link></li>
                         <li><Link to="/crafting" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faHammer as IconProp} className="w-5" />Crafting</Link></li>
                         <li><Link to="/farming" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faSeedling as IconProp} className="w-5" />Farming</Link></li>
+                        <li><Link to="/fishing" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faFish as IconProp} className="w-5" />Fishing</Link></li>
                     </div>
                     <button type="submit" className="btn btn-error w-full" onClick={() => { handleSignout() }}>
                         <FontAwesomeIcon icon={faRightFromBracket as IconProp} /> Sign Out
