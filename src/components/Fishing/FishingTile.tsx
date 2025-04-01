@@ -12,7 +12,7 @@ const FishingTile = ({ label, color }: FishingTileProps) => {
     const [isDiscovered, setIsDiscovered] = useState(false);
 
     return (
-        <div onClick={() => { setIsDiscovered(true) }} className="card w-full aspect-square bg-blue-500 shadow-sm hover:bg-blue-400">
+        <div onClick={() => { setIsDiscovered(true) }} className="card w-full aspect-square bg-blue-500 shadow-sm hover:bg-blue-400 border-r-4 border-b-4 border-blue-700 hover:border-blue-500 transition-all duration-300 ease-in-out">
             <div className={`card-body justify-center items-center text-2xl xs:text-3xl xl:text-4xl font-semibold cursor-pointer ${isDiscovered && color ? color : "text-white"}`}>
                 {/* If tile is not yet discovered display a '?' */}
                 {!isDiscovered ? (

@@ -28,8 +28,6 @@ const ProtectedRoute = ({ redirectPath = "/" }: ProtectedRouteProps) => {
         return <Navigate to="/character" />;
     }
 
-    console.log('no redirect to character');
-
     return <Outlet />;
 };
 
