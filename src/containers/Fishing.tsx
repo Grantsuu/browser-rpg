@@ -58,7 +58,7 @@ const Farming = () => {
                                 <div className="">
                                     <div className="text-lg">Attempts Left</div>
                                     {/* TODO: Changed color based on number of attempts left */}
-                                    <div className="text-4xl md:text-5xl text-blue-500">
+                                    <div className={`text-4xl md:text-5xl ${data.turns > 4 ? "text-red-500" : data.turns > 2 ? "text-yellow-500" : "text-blue-500"}`}>
                                         {5 - data.turns}/5
                                     </div>
                                 </div>
