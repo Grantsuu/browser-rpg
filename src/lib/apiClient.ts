@@ -299,3 +299,58 @@ export const getCrops = async () => {
     }
     return await response.json();
 }
+
+// Fishing
+
+// GET
+
+// Get fishing game state for user
+export const getFishingGame = async () => {
+    const response = await fetch(`${apiUrl}/fishing`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
+// POST
+
+// Start fishing game
+export const postStartFishingGame = async (area: string) => {
+    const params = new URLSearchParams();
+    params.set('area', area);
+    const response = await fetch(`${apiUrl}/fishing/start?${params.toString()}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
+// PUT
+
+// Update fishing game state
+export const putUpdateFishingGame = async () => {
+    // const params = new URLSearchParams();
+    // params.set('turns', turns.toString());
+    // params.set('game_state', JSON.stringify(gameState)); ?${params.toString()}
+    const response = await fetch(`${apiUrl}/fishing`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+

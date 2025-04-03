@@ -49,3 +49,17 @@ export type FarmPlotData = {
     end_time: string
     previous_crop: Crop
 }
+
+export type FishingData = {
+    id: number,
+    character_id: string,
+    turns: number | null,
+    game_state: object | null
+    area: FishingArea | null,
+    previous_area: FishingArea | null
+}
+
+export type FishingArea = {
+    name: string,
+    required_level: number,
+}
