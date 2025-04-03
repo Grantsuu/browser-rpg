@@ -18,7 +18,7 @@ const Farming = () => {
         queryFn: () => getFishingGame(),
     });
 
-    const { mutate: startFishing, isPending: isStarting } = useMutation({
+    const { mutateAsync: startFishing, isPending: isStarting } = useMutation({
         mutationFn: () => postStartFishingGame('Shallow Waters'),
         onSuccess: () => {
             toast.success(`Fishing game started!`);
@@ -35,9 +35,10 @@ const Farming = () => {
         return toast.error(`Something went wrong fetching farm plots: ${(error as Error).message}`);
     }
 
-    const handleReset = () => {
+    const handleReset = async () => {
+        setDisableTiles(true);
+        await startFishing();
         setDisableTiles(false);
-        startFishing();
     }
 
     return (
