@@ -317,6 +317,19 @@ export const getFishingGame = async () => {
     return await response.json();
 }
 
+// Get fishing areas
+export const getFishingAreas = async () => {
+    const response = await fetch(`${apiUrl}/fishing/areas`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
 // POST
 
 // Start fishing game
