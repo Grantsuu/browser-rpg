@@ -45,6 +45,9 @@ const Farming = () => {
         <PageCard title="Fishing" icon={faFish}>
             {/* Fishing Game Board */}
             <div>
+                <div>
+
+                </div>
                 {/* Info */}
                 <div className="flex flex-col w-full text-center items-center justify-between lg:mb-4">
                     <div className="flex flex-row items-center gap-2 text-2xl font-bold">
@@ -68,12 +71,11 @@ const Farming = () => {
                                 Start Fishing
                             </button>
                         }
-                        {/* <button className="btn btn-secondary btn-wide">Reset</button> */}
                     </div>
                 </div>
                 <div className="flex flex-col justify-around sm:flex-row gap-1 md:gap-2">
                     {/* Fishing Board */}
-                    <div className="w-full w-full sm:w-1/2 lg:w-1/2 xl:w-1/4">
+                    <div className="relative w-full sm:w-1/2 lg:w-1/2 xl:w-1/4">
                         <div className="grid grid-cols-3 gap-1">
                             <FishingTile label={faFishFins} disabled={disableTiles} setDisabled={setDisableTiles} />
                             <FishingTile label="3" disabled={disableTiles} setDisabled={setDisableTiles} />
@@ -84,6 +86,12 @@ const Farming = () => {
                             <FishingTile label="1" disabled={disableTiles} setDisabled={setDisableTiles} />
                             <FishingTile label="2" disabled={disableTiles} setDisabled={setDisableTiles} />
                             <FishingTile label={faExclamation} disabled={disableTiles} setDisabled={setDisableTiles} />
+                        </div>
+                        <div className={`invisible absolute bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 ${data?.turns === 5 ? "visible opacity-100" : "opacity-0"}`}>
+                            <div className="flex flex-col items-center justify-center h-full gap-2">
+                                <button className="btn btn-primary btn-lg"><FontAwesomeIcon icon={faArrowLeft as IconProp} /><div className="hidden sm:inline-block">Select Area</div></button>
+                                <button className="btn btn-secondary btn-lg" onClick={() => { handleReset() }} disabled={isStarting}>{isStarting ? <span className="loading loading-spinner loading-sm"></span> : <><FontAwesomeIcon icon={faRotateLeft as IconProp} /><div className="hidden sm:inline-block">Reset</div></>}</button>
+                            </div>
                         </div>
                     </div>
                     {/* Legend */}
