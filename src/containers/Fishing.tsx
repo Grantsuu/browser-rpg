@@ -15,7 +15,7 @@ const Farming = () => {
 
     const { data, error, isLoading } = useQuery({
         queryKey: ['fishing'],
-        queryFn: () => getFishingGame()
+        queryFn: () => getFishingGame(),
     });
 
     const { mutate: startFishing, isPending: isStarting } = useMutation({
@@ -33,6 +33,11 @@ const Farming = () => {
 
     if (error) {
         return toast.error(`Something went wrong fetching farm plots: ${(error as Error).message}`);
+    }
+
+    const handleReset = () => {
+        setDisableTiles(false);
+        startFishing();
     }
 
     return (
@@ -56,7 +61,7 @@ const Farming = () => {
                                         {5 - data.turns}/5
                                     </div>
                                 </div>
-                                <button className="btn btn-secondary" onClick={() => { startFishing() }} disabled={isStarting}>{isStarting ? <span className="loading loading-spinner loading-sm"></span> : <><FontAwesomeIcon icon={faRotateLeft as IconProp} /><div className="hidden sm:inline-block">Reset</div></>}</button>
+                                <button className="btn btn-secondary" onClick={() => { handleReset() }} disabled={isStarting}>{isStarting ? <span className="loading loading-spinner loading-sm"></span> : <><FontAwesomeIcon icon={faRotateLeft as IconProp} /><div className="hidden sm:inline-block">Reset</div></>}</button>
                             </div> :
                             <button className="btn btn-primary btn-wide" onClick={() => { startFishing() }}>
                                 Start Fishing
