@@ -18,7 +18,6 @@ const Farming = () => {
     // AreaSelection: Select the area to fish in
     // Fishing: The fishing game board
     const [display, setDisplay] = useState<FishingScreen>('AreaSelection');
-    const [area, setArea] = useState<string>('');
 
     const [disableTiles, setDisableTiles] = useState(false);
 
@@ -27,10 +26,12 @@ const Farming = () => {
         queryFn: () => getFishingGame(),
     });
 
+    const [area, setArea] = useState<string>(data?.area?.name || '');
+
     const { mutateAsync: startFishing, isPending: isStarting } = useMutation({
         mutationFn: () => postStartFishingGame(area),
         onSuccess: () => {
-            // toast.success(`Fishing game started!`);
+            toast.success(`Fishing game started!`);
             setDisableTiles(false);
             queryClient.invalidateQueries({ queryKey: ['fishing'] });
         },
@@ -60,8 +61,8 @@ const Farming = () => {
 
     return (
         <PageCard title="Fishing" icon={faFish}>
-            {/* Area Selection Screen */}
             {display === 'AreaSelection' ?
+                // Area Selection Screen
                 <div>
                     <FishingAreaSelection setDisplay={setDisplay} setArea={setArea} setDisableTiles={setDisableTiles} startFishing={startFishing} />
                 </div>
@@ -74,37 +75,29 @@ const Farming = () => {
                             {data?.area?.name}
                         </div>
                         <div className="flex flex-col mb-2 items-center">
-                            {data?.game_state ?
-                                <div className="flex grid grid-cols-3 items-end justify-center gap-4">
-                                    <button className="btn btn-primary" onClick={() => setDisplay('AreaSelection')}><FontAwesomeIcon icon={faArrowLeft as IconProp} /><div className="hidden sm:inline-block">Select Area</div></button>
-                                    {isStarting ? <span className="justify-center loading loading-spinner loading-xl"></span> : <div className="">
-                                        <div className="text-lg">Attempts Left</div>
-                                        {/* TODO: Changed color based on number of attempts left */}
-                                        <div className={`text-4xl md:text-5xl ${data.turns > 4 ? "text-red-500" : data.turns > 2 ? "text-yellow-500" : "text-blue-500"}`}>
-                                            {data?.area.max_turns - data.turns}/{data?.area.max_turns}
-                                        </div>
-                                    </div>}
-                                    <button className="btn btn-secondary" onClick={() => { handleReset() }} disabled={isStarting}>{isStarting ? <span className="loading loading-spinner loading-sm"></span> : <><FontAwesomeIcon icon={faRotateLeft as IconProp} /><div className="hidden sm:inline-block">Reset</div></>}</button>
-                                </div> :
-                                <button className="btn btn-primary btn-wide" onClick={() => { startFishing() }}>
-                                    Start Fishing
-                                </button>
-                            }
+                            <div className="flex grid grid-cols-3 items-end justify-center gap-4">
+                                <button className="btn btn-primary" onClick={() => setDisplay('AreaSelection')}><FontAwesomeIcon icon={faArrowLeft as IconProp} /><div className="hidden sm:inline-block">Select Area</div></button>
+                                {isStarting ? <span className="justify-center loading loading-spinner loading-xl"></span> : <div className="">
+                                    <div className="text-lg">Attempts Left</div>
+                                    <div className={`text-4xl md:text-5xl ${data.turns > 4 ? "text-red-500" : data.turns > 2 ? "text-yellow-500" : "text-blue-500"}`}>
+                                        {data?.area.max_turns - data.turns}/{data?.area.max_turns}
+                                    </div>
+                                </div>}
+                                <button className="btn btn-secondary" onClick={() => { handleReset() }} disabled={isStarting}>{isStarting ? <span className="loading loading-spinner loading-sm"></span> : <><FontAwesomeIcon icon={faRotateLeft as IconProp} /><div className="hidden sm:inline-block">Reset</div></>}</button>
+                            </div>
                         </div>
                     </div>
                     <div className="flex flex-col justify-around sm:flex-row gap-1 md:gap-2">
                         {/* Fishing Board */}
                         <div className="relative w-full sm:w-1/2 lg:w-1/2 xl:w-1/4">
                             <div className="grid grid-cols-3 gap-1">
-                                <FishingTile label={faFishFins} disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label="3" disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label={faFishFins} disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label="2" disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label={faFishFins} disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label="3" disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label="1" disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label="2" disabled={disableTiles} setDisabled={setDisableTiles} />
-                                <FishingTile label={faExclamation} disabled={disableTiles} setDisabled={setDisableTiles} />
+                                {data?.game_state.tiles.map((row: string[], rowIndex: number) => {
+                                    return row.map((label: string, colIndex: number) => {
+                                        return (
+                                            <FishingTile key={`${rowIndex}-${colIndex}`} label={label} row={rowIndex} col={colIndex} disabled={disableTiles} setDisabled={setDisableTiles} />
+                                        )
+                                    })
+                                })}
                             </div>
                             <div className={`invisible absolute bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 ${data?.turns === 5 ? "visible opacity-100" : "opacity-0"}`}>
                                 <div className="flex flex-col items-center justify-center h-full gap-2">

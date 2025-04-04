@@ -351,11 +351,11 @@ export const postStartFishingGame = async (area: string) => {
 // PUT
 
 // Update fishing game state
-export const putUpdateFishingGame = async () => {
-    // const params = new URLSearchParams();
-    // params.set('turns', turns.toString());
-    // params.set('game_state', JSON.stringify(gameState)); ?${params.toString()}
-    const response = await fetch(`${apiUrl}/fishing`, {
+export const putUpdateFishingGame = async (row: number, col: number) => {
+    const params = new URLSearchParams();
+    params.set('row', row.toString());
+    params.set('col', col.toString());
+    const response = await fetch(`${apiUrl}/fishing?${params.toString()}`, {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${getJwt()}`

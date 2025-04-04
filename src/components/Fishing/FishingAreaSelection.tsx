@@ -42,8 +42,8 @@ const FishingAreaSelection = ({ setDisplay, setArea, setDisableTiles, startFishi
                         <div key={index} className="card border border-gray-300 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out cursor-pointer" onClick={() => handleSelectArea(area)}>
                             <div className="card-body text-center items-center">
                                 <h2 className="text-xl font-semibold"><FontAwesomeIcon icon={faWater as IconProp} className="text-blue-500" /> {area.name}</h2>
-                                <p className="text-sm text-gray-700"><div className="flex flex-row gap-1">Required Level: <div className="font-medium"><i>{area.required_level}</i></div></div></p>
-                                <p className="text-sm text-gray-700"><div className="flex flex-row gap-1">Size: <div className="font-medium"><i>{area.size}</i></div></div></p>
+                                <div className="text-sm text-gray-700"><div className="flex flex-row gap-1">Required Level: <div className="font-medium"><i>{area.required_level}</i></div></div></div>
+                                <div className="text-sm text-gray-700"><div className="flex flex-row gap-1">Size: <div className="font-medium"><i>{area.size}</i></div></div></div>
                                 <p>{area.description}</p>
                             </div>
                         </div>
