@@ -55,7 +55,7 @@ const Farming = () => {
                         <FarmPlot key={index} plotData={plot} />
                     )
                 })}
-                <div className="card w-full aspect-square xl:aspect-auto bg-base-100 card-lg shadow-md">
+                <div className="card border border-gray-200 w-full aspect-square xl:aspect-auto bg-base-100 card-lg shadow-md">
                     <div className="card-body items-center justify-between">
                         <div></div>
                         <div className="prose">

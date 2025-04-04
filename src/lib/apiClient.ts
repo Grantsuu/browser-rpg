@@ -343,7 +343,8 @@ export const postStartFishingGame = async (area: string) => {
         }
     });
     if (!response.ok) {
-        throw new Error(response.statusText);
+        const body = await response.json();
+        throw new Error(body);
     }
     return await response.json();
 }

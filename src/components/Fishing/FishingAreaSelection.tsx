@@ -3,18 +3,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWater } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import { FishingScreen } from "../../containers/Fishing";
 import { getFishingAreas } from "../../lib/apiClient";
 import { type FishingArea } from "../../types/types";
+import { useCharacter } from "../../lib/stateMangers";
+import { FishingScreen } from "../../containers/Fishing";
 
 interface FishingAreaSelectionProps {
     setDisplay: (display: FishingScreen) => void;
-    setArea: (area: string) => void;
+    setArea: (area: FishingArea) => void;
     setDisableTiles: (disable: boolean) => void;
     startFishing: () => Promise<void>;
 }
 
 const FishingAreaSelection = ({ setDisplay, setArea, setDisableTiles, startFishing }: FishingAreaSelectionProps) => {
+    const { data: character } = useCharacter();
     const { data, error, isLoading } = useQuery({
         queryKey: ['fishingAreas'],
         queryFn: () => getFishingAreas(),
@@ -25,10 +27,10 @@ const FishingAreaSelection = ({ setDisplay, setArea, setDisableTiles, startFishi
     }
 
     const handleSelectArea = async (area: FishingArea) => {
-        setDisplay('Fishing');
-        setArea(area.name);
+        setArea(area);
         setDisableTiles(true);
         await startFishing();
+        setDisplay('Fishing');
         setDisableTiles(false);
     }
 
@@ -39,7 +41,7 @@ const FishingAreaSelection = ({ setDisplay, setArea, setDisableTiles, startFishi
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     {data.map((area: FishingArea, index: number) => (
-                        <div key={index} className="card border border-gray-300 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out cursor-pointer" onClick={() => handleSelectArea(area)}>
+                        <div key={index} className={`card border border-gray-300 hover:bg-gray-100 transition-all duration-300 ease-in-out ${character.fishing_level < area.required_level ? 'pointer-events-none bg-gray-300' : 'shadow-md cursor-pointer'}`} onClick={() => handleSelectArea(area)}>
                             <div className="card-body text-center items-center">
                                 <h2 className="text-xl font-semibold"><FontAwesomeIcon icon={faWater as IconProp} className="text-blue-500" /> {area.name}</h2>
                                 <div className="text-sm text-gray-700"><div className="flex flex-row gap-1">Required Level: <div className="font-medium"><i>{area.required_level}</i></div></div></div>
