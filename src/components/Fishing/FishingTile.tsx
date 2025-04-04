@@ -24,11 +24,8 @@ const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProp
     const { mutateAsync: updateFishing, isPending } = useMutation({
         mutationFn: async () => putUpdateFishingGame(row, col),
         onSuccess: (data) => {
-            if (data.fish) {
-                toast.success(`Caught ${data.fish_amount}x ${data.fish.name}!`);
-            }
-            if (data.experience) {
-                toast.success(`Gained ${data.experience} fishing experience!`);
+            if (data.fish && data.experience) {
+                toast.success(`Caught ${data.fish_amount}x ${data.fish.name} and gained ${data.experience} fishing experience!`);
             }
             if (data.level) {
                 handleConfetti();

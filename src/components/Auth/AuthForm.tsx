@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router';
@@ -30,7 +29,6 @@ interface UserFormProps {
 const redirectUrl = import.meta.env.VITE_SUPABASE_REDIRECT;
 
 const AuthForm = ({ mode = "login" }: UserFormProps) => {
-    const queryClient = useQueryClient();
     const { supabaseClient } = useSupabase();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -68,7 +66,6 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             }
             // Only redirect if a valid user is logged in
             if (user) {
-                queryClient.invalidateQueries({ queryKey: ["character"] });
                 navigate("/");
             }
             setLoading(false);
