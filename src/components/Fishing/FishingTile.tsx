@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFish, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
+import { useConfetti } from '../../contexts/ConfettiContext';
 import { putUpdateFishingGame } from '../../lib/apiClient';
 
 interface FishingTileProps {
@@ -16,16 +17,26 @@ interface FishingTileProps {
 
 const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProps) => {
     const queryClient = useQueryClient();
+    const { startConfetti, stopConfetti } = useConfetti();
     const [isDiscovered, setIsDiscovered] = useState(false);
     const [tileLabel, setTileLabel] = useState(label);
 
     const { mutateAsync: updateFishing, isPending } = useMutation({
         mutationFn: async () => putUpdateFishingGame(row, col),
         onSuccess: (data) => {
-            // toast.success(`Fishing game updated!`);
+            if (data.fish) {
+                toast.success(`Caught ${data.fish_amount}x ${data.fish.name}!`);
+            }
+            if (data.experience) {
+                toast.success(`Gained ${data.experience} fishing experience!`);
+            }
+            if (data.level) {
+                handleConfetti();
+                toast.success(`Congratulations! You've reached level ${data.level} Fishing!`);
+            }
             setIsDiscovered(true);
-            queryClient.invalidateQueries({ queryKey: ['fishing'] });
-            if (data.turns < 5) {
+            queryClient.setQueryData(['fishing'], data);
+            if (data.turns < data.area.max_turns) {
                 setDisabled(false);
             }
         },
@@ -39,7 +50,7 @@ const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProp
         setDisabled(true);
         setTileLabel("loading");
         await updateFishing();
-    }
+    };
 
     const determineLabel = (label: string) => {
         switch (label) {
@@ -59,13 +70,20 @@ const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProp
                 return <div className="aspect-square border-4 text-center">
                     {label}
                 </div>
-        }
+        };
+    };
+
+    const handleConfetti = () => {
+        startConfetti();
+        setTimeout(() => {
+            stopConfetti();
+        }, 10000);
     }
 
     useEffect(() => {
         if (label === "undiscovered") {
             setIsDiscovered(false);
-        }
+        };
         setTileLabel(label);
     }, [label]);
 

@@ -31,7 +31,7 @@ const Farming = () => {
     const { mutateAsync: startFishing, isPending: isStarting } = useMutation({
         mutationFn: () => postStartFishingGame(area),
         onSuccess: () => {
-            toast.success(`Fishing game started!`);
+            // toast.success(`Fishing game started!`);
             setDisableTiles(false);
             queryClient.invalidateQueries({ queryKey: ['fishing'] });
         },
