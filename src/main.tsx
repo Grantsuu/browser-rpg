@@ -28,7 +28,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
     <>
         {/* <StrictMode> */}
-        <ToastContainer position="top-center" autoClose={2500} />
+        <ToastContainer position="top-center" autoClose={2000} />
         <QueryClientProvider client={queryClient}>
             <SupabaseProvider>
                 <ConfettiProvider>

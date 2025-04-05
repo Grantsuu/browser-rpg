@@ -6,6 +6,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { useConfetti } from '../../contexts/ConfettiContext';
 import { putUpdateFishingGame } from '../../lib/apiClient';
+import SuccessToastItem from '../Toasts/SuccessToastItem';
 
 interface FishingTileProps {
     label: string;
@@ -25,7 +26,14 @@ const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProp
         mutationFn: async () => putUpdateFishingGame(row, col),
         onSuccess: (data) => {
             if (data.fish && data.experience) {
-                toast.success(`Caught ${data.fish_amount}x ${data.fish.name} and gained ${data.experience} fishing experience!`);
+                toast.success(
+                    <SuccessToastItem
+                        action="Caught"
+                        name={data.fish.name}
+                        amount={data.fish_amount}
+                        experience={data.experience}
+                        image={data.fish.item.image}
+                    />)
             }
             if (data.level) {
                 handleConfetti();

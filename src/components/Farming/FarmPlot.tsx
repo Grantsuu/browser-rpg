@@ -33,8 +33,6 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     useEffect(() => {
         const time = new Date().toLocaleString();
         const plotEndTime = plotData.end_time ? parseISO(plotData.end_time).toLocaleString() : '';
-        // console.log('time', time);
-        // console.log('plot end time', plotEndTime);
         setStatus((plotData.crop === null) ? 'Inactive' : (plotEndTime > time) ? 'Growing' : 'Ready to Harvest');
     }, [plotData]);
 
