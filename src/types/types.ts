@@ -2,11 +2,14 @@ export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'ma
 
 export type RecipeCategory = 'cooking';
 
+export type ItemImage = {
+    base64: string
+    alt: string
+}
+
 export type item = {
     id: number
-    image: {
-        base64: string
-    },
+    image: ItemImage,
     name: string,
     category: string,
     value: number,

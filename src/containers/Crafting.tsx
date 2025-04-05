@@ -40,7 +40,7 @@ const Crafting = () => {
                         Successfully crafted {data.amount} x {variables.recipe.item.name}!
                     </div>
                     <div className='w-6'>
-                        <img src={variables.recipe.item.image.base64} />
+                        <img src={variables.recipe.item.image.base64} alt={variables.recipe.item.image.alt} title={variables.recipe.item.image.alt} />
                     </div>
                 </div>
             );
@@ -100,7 +100,7 @@ const Crafting = () => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
                                     <td className="p-2 xs:p-1 w-15 xl:w-20">
-                                        <img src={recipe.item.image.base64} />
+                                        <img src={recipe.item.image.base64} alt={recipe.item.image.alt} title={recipe.item.image.alt} />
                                     </td>
                                     <td>
                                         {recipe.item.name}

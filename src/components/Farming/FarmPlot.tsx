@@ -123,7 +123,14 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                         <h2 className="card-title text-center">Farm Plot</h2>
                     </div>
                     <div className="flex justify-center">
-                        {status === 'Inactive' ? <FontAwesomeIcon icon={faSeedling as IconProp} size="3x" color="green" /> : <img src={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image.base64 : plotData.crop.product.image.base64)} alt="crop" className="w-15" />}
+                        {status === 'Inactive' ?
+                            <FontAwesomeIcon icon={faSeedling as IconProp} size="3x" color="green" /> :
+                            <img
+                                src={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image.base64 : plotData.crop.product.image.base64)}
+                                alt={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image.alt : plotData.crop.product.image.alt)}
+                                title={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image.alt : plotData.crop.product.image.alt)}
+                                className="w-15"
+                            />}
                     </div>
                     <div className="prose">
                         <div><b>Status:</b> {status}</div>
@@ -184,7 +191,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                                                     <div className="card-body">
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex flex-row gap-2 items-center">
-                                                                <img src={crop?.seed?.image.base64} alt="seed" className="w-10" />
+                                                                <img src={crop?.seed?.image.base64} alt={crop?.seed?.image?.alt} title={crop?.seed?.image?.alt} className="w-10" />
                                                                 <div><b>Lvl. {crop?.required_level}</b></div>
                                                                 <div>{crop?.seed?.name}</div>
                                                             </div>
