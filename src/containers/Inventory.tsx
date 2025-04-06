@@ -61,7 +61,7 @@ const Inventory = () => {
                         data.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
-                                    <td className="p-2 xs:p-1 w-15 xl:w-20">
+                                    <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
                                         <img src={item.image.base64} alt={item.image.alt} title={item.image.alt} />
                                     </td>
                                     <td className="p-1">

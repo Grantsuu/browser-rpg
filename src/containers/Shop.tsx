@@ -4,12 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import { item } from '../types/types';
+import { Character, item } from '../types/types';
 import { toTitleCase } from '../utils/strings';
 import { useCharacter, useInventory } from '../lib/stateMangers';
 import { getItemCategories, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
+import SuccessToast from '../components/Toasts/SuccessToast';
 
 
 type ShopModes = 'buy' | 'sell';
@@ -40,19 +41,23 @@ const Shop = () => {
 
     const { mutate: buy, isPending: isBuyPending } = useMutation({
         mutationFn: (variables: { item: item, amount: number }) => postBuyFromShop(variables.item.id, variables.amount),
-        onSuccess: (_, variables: { item: item, amount: number }) => {
+        onSuccess: (data, variables: { item: item, amount: number }) => {
             toast.success(
-                <div className='flex flex-row w-full items-center gap-3'>
-                    <div>
-                        Bought {variables.amount} x {variables.item.name}!
-                    </div>
-                    <div className='w-6'>
-                        <img src={variables.item.image.base64} alt={variables.item.image.alt} title={variables.item.image.alt} />
-                    </div>
-                </div>
+                <SuccessToast
+                    action="Bought"
+                    name={variables.item.name}
+                    amount={variables.amount}
+                    image={variables.item.image}
+                    extendedMessage={<> for <span className="text-red-600"><b>{data.goldSpent}</b></span> gold.</>}
+                />
             )
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
-            queryClient.invalidateQueries({ queryKey: ['character'] });
+            queryClient.setQueryData(['character'], (oldData: Character) => {
+                return {
+                    ...oldData,
+                    gold: data.characterGold
+                }
+            })
         },
         onError: (error: Error) => {
             toast.error(`Failed to buy item from shop: ${(error as Error).message}`);
@@ -61,19 +66,23 @@ const Shop = () => {
 
     const { mutate: sell, isPending: isSellPending } = useMutation({
         mutationFn: (variables: { item: item, amount: number }) => postSellToShop(variables.item.id, variables.amount),
-        onSuccess: (_, variables: { item: item, amount: number }) => {
+        onSuccess: (data, variables: { item: item, amount: number }) => {
             toast.success(
-                <div className='flex flex-row w-full items-center gap-3'>
-                    <div>
-                        Sold {variables.amount} x {variables.item.name}!
-                    </div>
-                    <div className='w-6'>
-                        <img src={variables.item.image.base64} alt={variables.item.image.alt} title={variables.item.image.alt} />
-                    </div>
-                </div>
+                <SuccessToast
+                    action="Sold"
+                    name={variables.item.name}
+                    amount={variables.amount}
+                    image={variables.item.image}
+                    extendedMessage={<> for <span className="text-green-600"><b>{data.goldGained}</b></span> gold.</>}
+                />
             )
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
-            queryClient.invalidateQueries({ queryKey: ['character'] });
+            queryClient.setQueryData(['character'], (oldData: Character) => {
+                return {
+                    ...oldData,
+                    gold: data.characterGold
+                }
+            })
         },
         onError: (error: Error) => {
             toast.error(`Failed to sell item to shop: ${(error as Error).message}`);
@@ -139,7 +148,7 @@ const Shop = () => {
                             shop.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                        <td className="p-2 xs:p-1 w-15 xl:w-20">
+                                        <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
                                             <img src={item.image.base64} alt={item.image.alt} title={item.image.alt} />
                                         </td>
                                         <td className="p-1">
@@ -170,7 +179,7 @@ const Shop = () => {
                             inventory.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                        <td className="p-2 xs:p-1 w-15 xl:w-20">
+                                        <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
                                             <img src={item.image.base64} alt={item.image.alt} title={item.image.alt} />
                                         </td>
                                         <td>

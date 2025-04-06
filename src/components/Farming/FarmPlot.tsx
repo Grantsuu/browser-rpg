@@ -9,6 +9,8 @@ import { putClearPlot, postHarvestPlot, postPlantPlot, getCrops } from '../../li
 import { useConfetti } from '../../contexts/ConfettiContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCharacter } from '../../lib/stateMangers';
+import SuccessToast from '../Toasts/SuccessToast';
+import LevelUpToast from '../Toasts/LevelUpToast';
 
 interface FarmPlotProps {
     plotData: FarmPlotData;
@@ -17,18 +19,11 @@ interface FarmPlotProps {
 const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const { data: character } = useCharacter();
     const queryClient = useQueryClient();
-    const { startConfetti, stopConfetti } = useConfetti();
+    const { levelUpConfetti } = useConfetti();
 
     const [status, setStatus] = useState('Inactive');
     const [progress, setProgress] = useState(0);
     const [seedDrawerOpen, setSeedDrawerOpen] = useState(false);
-
-    const handleConfetti = () => {
-        startConfetti();
-        setTimeout(() => {
-            stopConfetti();
-        }, 10000);
-    }
 
     useEffect(() => {
         const time = new Date().toLocaleString();
@@ -93,11 +88,21 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const { mutate: harvest, isPending: isHarvestPending } = useMutation({
         mutationFn: (plotId: number) => postHarvestPlot(plotId),
         onSuccess: (data) => {
-            toast.success(`Harvested ${data.amount}x ${plotData.crop.product.name}!`);
-            toast.info(`Gained ${plotData.crop.experience} farming experience!`);
-            if (data.level > 0) {
-                handleConfetti();
-                toast.success(`Congratulations! You've reached level ${data.level} Farming!`);
+            toast.success(
+                <SuccessToast
+                    action="Harvested"
+                    name={plotData.crop.product.name}
+                    amount={data.amount}
+                    experience={plotData.crop.experience}
+                    image={plotData.crop.product.image}
+                />);
+            if (data.level) {
+                levelUpConfetti();
+                toast.info(
+                    <LevelUpToast
+                        level={data.level}
+                        skill="Farming"
+                    />);
             }
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
             queryClient.invalidateQueries({ queryKey: ['inventory'] });

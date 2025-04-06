@@ -10,10 +10,12 @@ import { useConfetti } from '../contexts/ConfettiContext';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
 import { useCharacter } from '../lib/stateMangers';
+import SuccessToast from '../components/Toasts/SuccessToast';
+import LevelUpToast from '../components/Toasts/LevelUpToast';
 
 const Crafting = () => {
     const queryClient = useQueryClient();
-    const { startConfetti, stopConfetti } = useConfetti();
+    const { levelUpConfetti } = useConfetti();
 
     const { data: character } = useCharacter();
 
@@ -24,30 +26,25 @@ const Crafting = () => {
         queryFn: getCraftingRecipes,
     })
 
-    const handleConfetti = () => {
-        startConfetti();
-        setTimeout(() => {
-            stopConfetti();
-        }, 10000);
-    }
-
     const { mutate, isPending } = useMutation({
         mutationFn: (variables: { recipe: Recipe, amount: number }) => postCraftRecipe(variables.recipe.item.id, variables.amount),
         onSuccess: (data, variables: { recipe: Recipe, amount: number }) => {
             toast.success(
-                <div className='flex flex-row w-full items-center gap-3'>
-                    <div>
-                        Successfully crafted {data.amount} x {variables.recipe.item.name}!
-                    </div>
-                    <div className='w-6'>
-                        <img src={variables.recipe.item.image.base64} alt={variables.recipe.item.image.alt} title={variables.recipe.item.image.alt} />
-                    </div>
-                </div>
+                <SuccessToast
+                    action="Cooked"
+                    name={variables.recipe.item.name}
+                    amount={data.amount}
+                    experience={data.experience}
+                    image={variables.recipe.item.image}
+                />
             );
-            toast.info(`Gained ${variables.recipe.experience * data.amount} cooking experience!`);
-            if (data.level > 0) {
-                handleConfetti();
-                toast.success(`Congratulations! You've reached level ${data.level} Cooking!`);
+            if (data.level) {
+                levelUpConfetti();
+                toast.info(
+                    <LevelUpToast
+                        level={data.level}
+                        skill="Cooking"
+                    />);
             }
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
             queryClient.invalidateQueries({ queryKey: ['character'] });
@@ -99,7 +96,7 @@ const Crafting = () => {
                         data.sort((a: Recipe, b: Recipe) => a.required_level - b.required_level).map((recipe: Recipe, id: number) => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
-                                    <td className="p-2 xs:p-1 w-15 xl:w-20">
+                                    <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
                                         <img src={recipe.item.image.base64} alt={recipe.item.image.alt} title={recipe.item.image.alt} />
                                     </td>
                                     <td>
