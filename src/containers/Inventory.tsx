@@ -6,6 +6,7 @@ import { useInventory } from '../lib/stateMangers';
 import { removeItemFromInventory } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/ItemCategoryBadge';
+import SuccessToast from '../components/Toasts/SuccessToast';
 
 const Inventory = () => {
     const queryClient = useQueryClient();
@@ -13,9 +14,15 @@ const Inventory = () => {
     const { data, error, isLoading } = useInventory();
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (itemId: number) => removeItemFromInventory(itemId),
-        onSuccess: () => {
-            toast.success('Item removed from inventory');
+        mutationFn: (item: item) => removeItemFromInventory(item.id),
+        onSuccess: (data) => {
+            toast.success(
+                <SuccessToast
+                    action="Deleted"
+                    name={data.item.item.name}
+                    amount={data.amount}
+                    image={data.item.item.image}
+                />);
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
         },
         onError: (error: Error) => {
@@ -73,7 +80,7 @@ const Inventory = () => {
                                         {item.description}
                                     </td>
                                     <td className="p-1">
-                                        <button className="btn btn-soft btn-error btn-sm md:btn-md" onClick={() => { mutate(item.id) }} disabled={isPending}>Delete</button>
+                                        <button className="btn btn-soft btn-error btn-sm md:btn-md" onClick={() => { mutate(item) }} disabled={isPending}>Delete</button>
                                     </td>
                                 </tr>
                             )

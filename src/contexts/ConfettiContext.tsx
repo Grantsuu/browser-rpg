@@ -5,6 +5,7 @@ interface ConfettiContextProps {
     isRunning: boolean;
     startConfetti: () => void;
     stopConfetti: () => void;
+    levelUpConfetti: () => void;
 }
 
 const ConfettiContext = createContext<ConfettiContextProps | undefined>(undefined);
@@ -20,10 +21,18 @@ const ConfettiProvider = ({ children }: { children: React.ReactNode }) => {
         setIsRunning(false);
     };
 
+    const levelUpConfetti = () => {
+        startConfetti();
+        setTimeout(() => {
+            stopConfetti();
+        }, 10000);
+    }
+
     const value: ConfettiContextProps = {
         isRunning,
         startConfetti,
-        stopConfetti
+        stopConfetti,
+        levelUpConfetti
     };
 
     return (
