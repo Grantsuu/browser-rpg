@@ -6,6 +6,7 @@ import { useSupabase } from "../../contexts/SupabaseContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { toast } from 'react-toastify';
 
 const FormTextInput = ({ ...props }) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
@@ -32,7 +33,6 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
     const { supabaseClient } = useSupabase();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     const [registerSuccess, setRegisterSuccess] = useState(false);
 
     const handleRegister = async (email: string, password: string) => {
@@ -46,7 +46,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                 },
             })
             if (error) {
-                setErrorMessage(`Error registering: ${error.message}. Please try again later.`);
+                toast.error(`Error registering: ${error.message}. Please try again later.`);
             } else {
                 setRegisterSuccess(true);
             }
@@ -62,7 +62,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                 password: password,
             })
             if (error) {
-                setErrorMessage(`Error logging in: ${error.message}. Please try again later.`);
+                toast.error(`Error logging in: ${error.message}. Please try again later.`);
             }
             // Only redirect if a valid user is logged in
             if (user) {
@@ -79,9 +79,9 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                 redirectTo: `${redirectUrl}/account/update-password`,
             })
             if (error) {
-                setErrorMessage(`Error requesting password reset: ${error.message}`);
+                toast.error(`Error requesting password reset: ${error.message}`);
             } else {
-                setErrorMessage(`Password reset request succesful. Please check your email.`)
+                toast.success(`Password reset request successful. Please check your email.`);
             }
             setLoading(false);
         }
@@ -92,9 +92,9 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             setLoading(true);
             const { error } = await supabaseClient.auth.updateUser({ password: password })
             if (error) {
-                setErrorMessage(`Error updating password: ${error.message}`);
+                toast.error(`Error updating password: ${error.message}`);
             } else {
-                setErrorMessage(`Password update successful.`)
+                toast.success(`Password update successful.`);
             }
             setLoading(false);
         }
@@ -195,11 +195,6 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
                                 }
                             </button>
                         </div>
-                        {errorMessage &&
-                            <div className="text-md text-center mb-1 text-red-700">
-                                {errorMessage}
-                            </div>
-                        }
                     </Form>
                 </Formik >}
         </>
