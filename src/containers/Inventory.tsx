@@ -51,7 +51,7 @@ const Inventory = () => {
                                 </div>
                             </td>
                         </tr> :
-                        data.map((item: item, id: number) => {
+                        data.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
                                     <td className="p-2 xs:p-1 w-15 xl:w-20">

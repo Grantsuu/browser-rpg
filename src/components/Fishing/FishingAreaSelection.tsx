@@ -17,6 +17,7 @@ interface FishingAreaSelectionProps {
 
 const FishingAreaSelection = ({ setDisplay, setArea, setDisableTiles, startFishing }: FishingAreaSelectionProps) => {
     const { data: character } = useCharacter();
+
     const { data, error, isLoading } = useQuery({
         queryKey: ['fishingAreas'],
         queryFn: () => getFishingAreas(),

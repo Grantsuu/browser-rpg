@@ -136,7 +136,7 @@ const Shop = () => {
                             </td>
                         </tr> :
                         shopMode === 'buy' ?
-                            shop.map((item: item, id: number) => {
+                            shop.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="p-2 xs:p-1 w-15 xl:w-20">
@@ -167,7 +167,7 @@ const Shop = () => {
                                     </tr>
                                 )
                             }) :
-                            inventory.map((item: item, id: number) => {
+                            inventory.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="p-2 xs:p-1 w-15 xl:w-20">

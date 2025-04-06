@@ -11,7 +11,7 @@ import FishingAreaSelection from '../components/Fishing/FishingAreaSelection';
 
 export type FishingScreen = 'AreaSelection' | 'Fishing';
 
-const Farming = () => {
+const Fishing = () => {
     const queryClient = useQueryClient();
 
     // Controls which screen to display
@@ -30,9 +30,9 @@ const Farming = () => {
 
     const { mutateAsync: startFishing, isPending: isStarting } = useMutation({
         mutationFn: () => postStartFishingGame(area.name),
-        onSuccess: () => {
+        onSuccess: (data) => {
             setDisableTiles(false);
-            queryClient.invalidateQueries({ queryKey: ['fishing'] });
+            queryClient.setQueryData(['fishing'], data);
         },
         onError: (error: Error) => {
             toast.error(`Failed to start fishing game: ${(error as Error).message}`);
@@ -49,7 +49,7 @@ const Farming = () => {
     if (isLoading || isStarting) return <span className="loading loading-spinner loading-xl"></span>;
 
     if (error) {
-        return toast.error(`Something went wrong fetching farm plots: ${(error as Error).message}`);
+        return toast.error(`Something went wrong fetching fishing: ${(error as Error).message}`);
     };
 
     const handleReset = async () => {
@@ -80,7 +80,7 @@ const Farming = () => {
                                 <div className="">
                                     <div className="text-lg">Attempts Left</div>
                                     <div className={`text-4xl md:text-5xl ${data.turns > 4 ? "text-red-500" : data.turns > 2 ? "text-yellow-500" : "text-blue-500"}`}>
-                                        {data?.area.max_turns - data.turns}/{data?.area.max_turns}
+                                        {data?.area?.max_turns - data.turns}/{data?.area?.max_turns}
                                     </div>
                                 </div>
                                 <button className="btn btn-secondary" onClick={() => { handleReset() }} disabled={isStarting}><FontAwesomeIcon icon={faRotateLeft as IconProp} /><div className="hidden sm:inline-block">Reset</div></button>
@@ -91,7 +91,7 @@ const Farming = () => {
                         {/* Fishing Board */}
                         <div className="relative w-full sm:w-1/2 lg:w-1/2 xl:w-1/4">
                             <div className={`grid grid-cols-${area?.size === 'Small' ? 3 : area?.size === 'Medium' ? 4 : 5} gap-1`}>
-                                {data?.game_state.tiles.map((row: string[], rowIndex: number) => {
+                                {data?.game_state?.tiles.map((row: string[], rowIndex: number) => {
                                     return row.map((label: string, colIndex: number) => {
                                         return (
                                             <FishingTile key={`${rowIndex}-${colIndex}`} label={label} row={rowIndex} col={colIndex} disabled={disableTiles} setDisabled={setDisableTiles} />
@@ -150,4 +150,4 @@ const Farming = () => {
     )
 }
 
-export default Farming;
+export default Fishing;
