@@ -63,7 +63,7 @@ const Farming = () => {
                                 {costIsLoading ? <span className="loading loading-spinner loading-sm"></span> : costData.cost} <FontAwesomeIcon icon={faCoins as IconProp} />
                             </h1>
                         </div>
-                        <button className="btn btn-primary btn-wide" onClick={() => mutate()} disabled={isPending}>
+                        <button className="btn btn-primary btn-wide btn-lg lg:btn-md" onClick={() => mutate()} disabled={isPending}>
                             {isPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy new plot'}
                         </button>
                     </div>

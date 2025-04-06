@@ -148,21 +148,21 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                         {status === 'Inactive' &&
                             <div className="flex flex-row gap-1 justify-center">
                                 {/* TODO: Add a tool tip when hovering this button to explain what it does */}
-                                {plotData.previous_crop && <button className="btn btn-outline btn-primary btn-square" onClick={() => handlePlantSeed(plotData.id, plotData.previous_crop)} disabled={isPlantSeedsPending}>
+                                {plotData.previous_crop && <button className="btn btn-outline btn-primary btn-square btn-lg lg:btn-md" onClick={() => handlePlantSeed(plotData.id, plotData.previous_crop)} disabled={isPlantSeedsPending}>
                                     {isPlantSeedsPending ? <span className="loading loading-spinner loading-xl"></span> : <FontAwesomeIcon icon={faRotateRight as IconProp} />}
                                 </button>}
-                                <button className="btn btn-primary btn-wide" onClick={() => setSeedDrawerOpen(true)} disabled={isPlantSeedsPending}>
+                                <button className="btn btn-primary btn-wide btn-lg lg:btn-md" onClick={() => setSeedDrawerOpen(true)} disabled={isPlantSeedsPending}>
                                     {isPlantSeedsPending ? <span className="loading loading-spinner loading-xl"></span> : 'Plant Seeds'}
                                 </button>
 
                             </div>
                         }
                         {status === 'Growing' &&
-                            <button className="btn btn-secondary btn-wide" onClick={() => clearFarmPlot(plotData.id)} disabled={isDeletePlotPending}>
+                            <button className="btn btn-secondary btn-wide btn-lg lg:btn-md" onClick={() => clearFarmPlot(plotData.id)} disabled={isDeletePlotPending}>
                                 {isDeletePlotPending ? <span className="loading loading-spinner loading-xl"></span> : 'Cancel'}
                             </button>}
                         {status === 'Ready to Harvest' &&
-                            <button className="btn btn-success btn-wide" onClick={() => (harvest(plotData.id))} disabled={isHarvestPending}>
+                            <button className="btn btn-success btn-wide btn-lg lg:btn-md" onClick={() => (harvest(plotData.id))} disabled={isHarvestPending}>
                                 {isHarvestPending ? <span className="loading loading-spinner loading-xl"></span> : 'Harvest'}
                             </button>
                         }
