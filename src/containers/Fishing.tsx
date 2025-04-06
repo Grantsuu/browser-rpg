@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { clsx } from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faExclamation, faFish, faFishFins, faHashtag, faRotateLeft, faWater, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -90,7 +91,12 @@ const Fishing = () => {
                     <div className="flex flex-col justify-around sm:flex-row gap-1 md:gap-2">
                         {/* Fishing Board */}
                         <div className="relative w-full sm:w-1/2 lg:w-1/2 xl:w-1/4">
-                            <div className={`grid grid-cols-${area?.size === 'Small' ? 3 : area?.size === 'Medium' ? 4 : 5} gap-1`}>
+                            <div className={clsx("grid", {
+                                "grid-cols-3": data?.area?.size === 'Small',
+                                "grid-cols-4": data?.area?.size === 'Medium',
+                                "grid-cols-5": data?.area?.size === 'Large',
+                            }, "gap-1")}>
+                                {/* Tiles */}
                                 {data?.game_state?.tiles.map((row: string[], rowIndex: number) => {
                                     return row.map((label: string, colIndex: number) => {
                                         return (
