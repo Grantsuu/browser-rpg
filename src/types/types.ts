@@ -66,6 +66,12 @@ export type FishingArea = {
     name: string,
     description: string,
     max_turns: number,
-    size: string,
+    size: FishingAreaSize,
     required_level: number,
+}
+
+export type FishingAreaSize = {
+    name: string,
+    rows: number,
+    cols: number
 }
