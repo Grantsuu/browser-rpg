@@ -91,7 +91,13 @@ const Fishing = () => {
                     <div className="flex flex-col justify-around sm:flex-row gap-1 md:gap-2">
                         {/* Fishing Board */}
                         <div className="relative w-full sm:w-1/2 lg:w-1/2 xl:w-1/4">
-                            <div className={clsx("grid", `grid-cols-${data?.area.size.cols}`, "gap-1")}>
+                            <div className={clsx(
+                                "grid",
+                                "gap-1",
+                                { "grid-cols-3": data?.area?.size?.cols === 3 },
+                                { "grid-cols-4": data?.area?.size?.cols === 4 },
+                                { "grid-cols-5": data?.area?.size?.cols === 5 }
+                            )}>
                                 {/* Tiles */}
                                 {data?.game_state?.tiles.map((row: string[], rowIndex: number) => {
                                     return row.map((label: string, colIndex: number) => {
