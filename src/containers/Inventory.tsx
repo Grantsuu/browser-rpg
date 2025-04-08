@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
+import { clsx } from 'clsx';
 import { item } from '../types/types';
 import { useInventory } from '../lib/stateMangers';
 import { removeItemFromInventory } from '../lib/apiClient';
@@ -36,7 +37,7 @@ const Inventory = () => {
 
     return (
         <PageCard title="Inventory" icon={faBox}>
-            <table className={`xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
+            <table className={clsx('xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100', { 'flex-1': isLoading })}>
                 {/* head */}
                 <thead>
                     <tr className="bg-secondary md:bg-secondary">

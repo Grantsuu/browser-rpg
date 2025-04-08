@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHammer, faKitchenSet } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { clsx } from 'clsx';
 import { item, ItemCategory, Recipe } from '../types/types';
 import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient";
 import { useConfetti } from '../contexts/ConfettiContext';
@@ -62,7 +63,10 @@ const Crafting = () => {
         <PageCard title="Crafting" icon={faHammer}>
             {/* Crafting categories */}
             <div role="tablist" className="tabs tabs-lift">
-                <a role="tab" className={activeTab === 'All' ? `tab tab-active` : `tab`} onClick={() => setActiveTab('All')}>
+                <a
+                    role="tab"
+                    className={clsx({ 'tab tab-active': activeTab === 'All' }, { 'tab': activeTab !== 'All' })}
+                    onClick={() => setActiveTab('All')}>
                     <div className="flex flex-row items-center gap-2">
                         <FontAwesomeIcon icon={faKitchenSet as IconProp} />
                         Cooking
@@ -70,7 +74,11 @@ const Crafting = () => {
                 </a>
             </div>
             {/* Crafting table */}
-            <table className={`xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100 ${isLoading ? 'flex-1' : ''}`}>
+            <table className={
+                clsx(
+                    'xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100',
+                    { 'flex-1': isLoading }
+                )}>
                 {/* head */}
                 <thead>
                     <tr className="bg-secondary md:bg-secondary">
@@ -140,7 +148,7 @@ const Crafting = () => {
                         })}
                 </tbody>
             </table>
-        </PageCard>
+        </PageCard >
     )
 }
 

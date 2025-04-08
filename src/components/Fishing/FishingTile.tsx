@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFish, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
+import { clsx } from 'clsx';
 import { useConfetti } from '../../contexts/ConfettiContext';
 import { putUpdateFishingGame } from '../../lib/apiClient';
 import SuccessToast from '../Toasts/SuccessToast';
@@ -93,16 +94,17 @@ const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProp
     return (
         <div
             onClick={() => { handleClick() }}
-            className={
-                `card w-full aspect-square bg-blue-500 border-blue-700 shadow-sm border-r-4 border-b-4
-                ${isDiscovered ? "" : "hover:bg-blue-400 hover:border-blue-500 transition-all duration-300 ease-in-out"}
-                ${disabled || isDiscovered ? "" : "cursor-pointer"} 
-                ${disabled && !isPending && !isDiscovered ? "pointer-events-none bg-gray-500 border-gray-700" : ""}`
+            className={clsx(
+                'card w-full aspect-square bg-blue-500 border-blue-700 shadow-sm border-r-4 border-b-4',
+                { "hover:bg-blue-400 hover:border-blue-500 transition-all duration-300 ease-in-out": !isDiscovered },
+                { "cursor-pointer": !disabled && !isDiscovered },
+                { "pointer-events-none bg-gray-500 border-gray-700": disabled && !isPending && !isDiscovered }
+            )
             }>
             <div className={`card-body justify-center items-center p-0 text-2xl xs:text-3xl xl:text-4xl font-semibold text-white`}>
                 {determineLabel(tileLabel)}
             </div>
-        </div>
+        </div >
     )
 }
 

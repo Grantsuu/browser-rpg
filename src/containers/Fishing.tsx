@@ -80,7 +80,12 @@ const Fishing = () => {
                                     <button className="btn btn-primary" onClick={() => setDisplay('AreaSelection')}><FontAwesomeIcon icon={faArrowLeft as IconProp} /><div className="hidden sm:inline-block">Select Area</div></button>
                                     <div className="">
                                         <div className="text-lg">Attempts Left</div>
-                                        <div className={`text-4xl md:text-5xl ${(data?.turns === data?.area.max_turns) ? "text-red-500" : (data?.turns > Math.floor(data?.area.max_turns * 0.5)) ? "text-yellow-500" : "text-blue-500"}`}>
+                                        <div className={clsx(
+                                            'text-4xl md:text-5xl',
+                                            { "text-red-500": data?.turns === data?.area.max_turns },
+                                            { "text-yellow-500": data?.turns < data?.area.max_turns && data?.turns > Math.floor(data?.area.max_turns * 0.5) },
+                                            { "text-blue-500": data?.turns <= Math.floor(data?.area.max_turns * 0.5) }
+                                        )}>
                                             {data?.area?.max_turns - data.turns}/{data?.area?.max_turns}
                                         </div>
                                     </div>
@@ -108,10 +113,12 @@ const Fishing = () => {
                                     })}
                                 </div>
                                 {isPending &&
-                                    <div className={`absolute text-center text-white bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 visible opacity-100`}>
+                                    <div className="absolute text-center text-white bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 visible opacity-100">
                                         <span className="w-1/6 h-full loading loading-spinner loading-xl self-center"></span>
                                     </div>}
-                                <div className={`invisible absolute text-center bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 ${(data?.turns === data?.area.max_turns && !isPending) ? "visible opacity-100" : "opacity-0"}`}>
+                                <div className={clsx(
+                                    'invisible absolute text-center bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 opacity-0',
+                                    { "visible opacity-100": (data?.turns === data?.area.max_turns && !isPending) })}>
                                     <div className="flex flex-col items-center justify-center h-full gap-2">
                                         <button className="btn btn-primary btn-lg" onClick={() => setDisplay('AreaSelection')}><FontAwesomeIcon icon={faArrowLeft as IconProp} />Select Area</button>
                                         <button className="btn btn-secondary btn-lg" onClick={() => { handleReset() }} disabled={isPending}><FontAwesomeIcon icon={faRotateLeft as IconProp} />New Game</button>
