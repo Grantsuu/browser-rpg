@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router';
 import { parseISO } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -7,6 +8,7 @@ import { toast } from 'react-toastify';
 import { Crop, FarmPlotData } from "../../types/types";
 import { putClearPlot, postHarvestPlot, postPlantPlot, getCrops } from '../../lib/apiClient';
 import { useConfetti } from '../../contexts/ConfettiContext';
+import { useTimers } from '../../contexts/TimersContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCharacter } from '../../lib/stateMangers';
 import SuccessToast from '../Toasts/SuccessToast';
@@ -17,9 +19,10 @@ interface FarmPlotProps {
 }
 
 const FarmPlot = ({ plotData }: FarmPlotProps) => {
-    const { data: character } = useCharacter();
     const queryClient = useQueryClient();
     const { levelUpConfetti } = useConfetti();
+    const { data: character } = useCharacter();
+    const { createTimer, removeTimer } = useTimers();
 
     const [status, setStatus] = useState('Inactive');
     const [progress, setProgress] = useState(0);
@@ -64,9 +67,24 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const { mutate: plantSeeds, isPending: isPlantSeedsPending } = useMutation({
         mutationFn: (variables: { plotId: number, crop: Crop }) => postPlantPlot(variables.plotId, variables.crop.seed.id),
         onSuccess: (_, variables) => {
-            toast.success(`Planted ${variables.crop.seed.name}!`);
+            // toast.success(`Planted ${variables.crop.seed.name}!`);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
             queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            // Set a timer to notify the user when the crop is ready to harvest if they're not on the farming page
+            createTimer(plotData.id.toString(), () => {
+                if (window.location.pathname !== '/farming') {
+                    toast.info(
+                        <div className="flex flex-row w-full items-center justify-center gap-1">
+                            <div>
+                                Your {variables.crop.product.name} is ready to harvest!
+                                Click <Link to='/farming' className="text-blue-500 hover:text-blue-800 underline">here</Link> to go to the Farming page.
+                            </div>
+                            <div className="w-1/3">
+                                <img src={variables.crop.product.image.base64} alt={variables.crop.product.image.alt} title={variables.crop.product.image.alt} />
+                            </div>
+                        </div>);
+                }
+            }, variables.crop.grow_time * 1000);
         },
         onError: (error: Error) => {
             toast.error(`Failed to plant seeds: ${(error as Error).message}`);
@@ -76,6 +94,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
     const { mutate: clearFarmPlot, isPending: isDeletePlotPending } = useMutation({
         mutationFn: (plotId: number) => putClearPlot(plotId),
         onSuccess: () => {
+            removeTimer(plotData.id.toString());
             toast.success('Cancelled plot successfully!');
             setProgress(0);
             queryClient.invalidateQueries({ queryKey: ['farmPlots'] });
