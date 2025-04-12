@@ -198,7 +198,7 @@ export const getFarmPlots = async () => {
 
 // Get cost of next farm plot
 export const getFarmPlotCost = async () => {
-    const response = await fetch(`${apiUrl}/farming/buy`, {
+    const response = await fetch(`${apiUrl}/farming/plot-cost`, {
         headers: {
             'Authorization': `Bearer ${getJwt()}`
         }
