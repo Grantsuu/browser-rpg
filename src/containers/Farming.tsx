@@ -57,13 +57,13 @@ const Farming = () => {
                 })}
                 {/* Buy next farm plot */}
                 {costIsLoading ? <span className="loading loading-spinner loading-sm"></span> :
-                    costData.cost > 0 &&
+                    costData?.cost > 0 &&
                     <div className="card border border-gray-200 w-full aspect-square xl:aspect-auto bg-base-100 card-lg shadow-md">
                         <div className="card-body items-center justify-between">
                             <div></div>
                             <div className="prose">
                                 <h1>
-                                    {costData.cost} <FontAwesomeIcon icon={faCoins as IconProp} />
+                                    {costData?.cost} <FontAwesomeIcon icon={faCoins as IconProp} />
                                 </h1>
                             </div>
                             <button className="btn btn-primary btn-wide btn-lg lg:btn-md" onClick={() => mutate()} disabled={isPending}>
