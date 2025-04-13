@@ -47,7 +47,7 @@ const CharacterCreate = () => {
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col w-full'>
             {/* Name */}
             <input
-                className='input w-full p-2 border border-gray-300 rounded'
+                className='input w-full p-2 border border-gray-300'
                 type='text'
                 placeholder='Character Name'
                 disabled={isSubmitting}
@@ -57,7 +57,7 @@ const CharacterCreate = () => {
             {errors.name && <span className="ml-1 text-xs text-error">{errors.name.message}</span>}
             {/* Submit Button */}
             <button
-                className='btn btn-primary w-full p-2 mt-2 text-white rounded'
+                className='btn btn-primary w-full p-2 mt-2 text-white'
                 type='submit'
                 disabled={isSubmitting}
             >

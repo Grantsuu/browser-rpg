@@ -1,27 +1,13 @@
 import { useState } from 'react';
-import { Formik, Form, useField } from 'formik';
-import * as Yup from 'yup';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from 'react-router';
 import { useSupabase } from "../../contexts/SupabaseContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-
-const FormTextInput = ({ ...props }) => {
-    // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-    // which we can spread on <input>. We can use field meta to show an error
-    // message if the field is invalid and it has been touched (i.e. visited)
-    const [field, meta] = useField(props);
-    return (
-        <div className='mb-2'>
-            <input className={props.className} {...field} {...props} />
-            {meta.touched && meta.error ? (
-                <div className="ml-1 text-xs text-red-600">{meta.error}</div>
-            ) : null}
-        </div>
-    );
-};
 
 interface UserFormProps {
     mode: "login" | "register" | "reset" | "update";
@@ -32,12 +18,58 @@ const redirectUrl = import.meta.env.VITE_SUPABASE_REDIRECT;
 const AuthForm = ({ mode = "login" }: UserFormProps) => {
     const { supabaseClient } = useSupabase();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
     const [registerSuccess, setRegisterSuccess] = useState(false);
+
+    const AuthFormSchema = z.object({
+        email: ((mode === "login" || mode === "register" || mode === "reset") ?
+            z.string()
+                .email('Please enter a valid email address')
+                .nonempty('Please enter your email address') :
+            z.string().optional()),
+        password: ((mode === "login" || mode === "register" || mode === "update") ?
+            z.string()
+                .min(8, 'Please enter at least 8 characters')
+                .nonempty('Please enter your password') :
+            z.string().optional()),
+        confirmPassword: ((mode === "register" || mode === "update") ?
+            z.string()
+                .nonempty('Please confirm your password') :
+            z.string().optional()),
+    })
+        .superRefine((val, ctx) => {
+            if ((mode === "register" || mode === "update") && (val.password !== val.confirmPassword)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'Passwords must match',
+                    path: ['confirmPassword'],
+                })
+            }
+        })
+
+    type AuthFormValues = z.infer<typeof AuthFormSchema>;
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting }
+    } = useForm<AuthFormValues>({
+        resolver: zodResolver(AuthFormSchema),
+    });
+
+    const onSubmit: SubmitHandler<AuthFormValues> = async (data) => {
+        if (mode === 'register') {
+            await handleRegister(data.email as string, data.password as string);
+        } else if (mode === 'login') {
+            await handleLogin(data.email as string, data.password as string);
+        } else if (mode === 'reset') {
+            await handleResetPassword(data.email as string);
+        } else if (mode === 'update') {
+            await handleUpdatePassword(data.password as string);
+        }
+    }
 
     const handleRegister = async (email: string, password: string) => {
         if (supabaseClient) {
-            setLoading(true);
             const { error } = await supabaseClient.auth.signUp({
                 email: email,
                 password: password,
@@ -50,13 +82,11 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             } else {
                 setRegisterSuccess(true);
             }
-            setLoading(false);
         }
     }
 
     const handleLogin = async (email: string, password: string) => {
         if (supabaseClient) {
-            setLoading(true);
             const { data: { user }, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
@@ -68,13 +98,11 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             if (user) {
                 navigate("/");
             }
-            setLoading(false);
         }
     }
 
     const handleResetPassword = async (email: string) => {
         if (supabaseClient) {
-            setLoading(true);
             const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
                 redirectTo: `${redirectUrl}/account/update-password`,
             })
@@ -83,121 +111,95 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             } else {
                 toast.success(`Password reset request successful. Please check your email.`);
             }
-            setLoading(false);
         }
     }
 
     const handleUpdatePassword = async (password: string) => {
         if (supabaseClient) {
-            setLoading(true);
             const { error } = await supabaseClient.auth.updateUser({ password: password })
             if (error) {
                 toast.error(`Error updating password: ${error.message}`);
             } else {
                 toast.success(`Password update successful.`);
             }
-            setLoading(false);
         }
     }
 
+    // Display success message if registration is successful
+    if (registerSuccess) {
+        return (
+            <div className="flex flex-col text-center justify-center prose">
+                <FontAwesomeIcon icon={faCircleCheck as IconProp} size="5x" color="green" />
+                <h2 className="mt-4">
+                    Registration successful!
+                </h2>
+                <p>Please check your email to confirm your account.</p>
+            </div>
+        )
+    }
+
     return (
-        <>
-            {registerSuccess ?
-                <div className="flex flex-col text-center justify-center prose">
-                    <FontAwesomeIcon icon={faCircleCheck as IconProp} size="5x" color="green" />
-                    <h2 className="mt-4">
-                        Registration successful!
-                    </h2>
-                    <p>Please check your email to confirm your account.</p>
-                </div>
-                :
-                <Formik
-                    initialValues={{
-                        email: '', password: '', confirmPassword: ''
-                    }}
-                    validationSchema={
-                        Yup.object({
-                            // Email: login, register, reset
-                            email: Yup.string()
-                                .when([], {
-                                    is: () => !mode.includes("update"),
-                                    then: (schema) => schema
-                                        .email('Please enter a valid email address')
-                                        .required('Please enter your email address')
-                                }),
-                            // Password: login, register, update
-                            password: Yup.string()
-                                .when([], {
-                                    is: () => !mode.includes("reset"),
-                                    then: (schema) => schema.required('Please enter a valid password')
-                                })
-                                // Only need to validate minimum password length on registration
-                                .when([], {
-                                    is: () => mode.includes("register"),
-                                    then: (schema) => schema.min(8, "Please enter at least 8 characters"),
-                                }),
-                            // Password: register, update
-                            confirmPassword: Yup.string()
-                                .when([], {
-                                    is: () => mode.includes("register") || mode.includes("update"),
-                                    then: (schema) => schema
-                                        .required('Please confirm your password')
-                                        .oneOf([Yup.ref('password')], 'Passwords must match')
-                                })
-                        })}
-                    onSubmit={async (values, { setSubmitting }) => {
-                        setSubmitting(true);
-                        if (mode === 'register') {
-                            await handleRegister(values.email, values.password);
-                        } else if (mode === 'login') {
-                            await handleLogin(values.email, values.password);
-                        } else if (mode === 'reset') {
-                            await handleResetPassword(values.email);
-                        } else if (mode === 'update') {
-                            await handleUpdatePassword(values.password);
-                        }
-                        setSubmitting(false);
-                    }}
-                >
-                    <Form className="w-full items-center">
-                        {/* Email: login, register, reset */}
-                        {mode !== "update" && <FormTextInput
-                            name="email"
-                            type="email"
-                            placeholder="Email"
-                            className="input w-full"
-                            disabled={loading}
-                        />}
-                        {/* Password: login, register, update */}
-                        {mode !== "reset" && <FormTextInput
-                            name="password"
-                            type="password"
-                            placeholder="Password"
-                            className="input w-full"
-                            disabled={loading}
-                        />}
-                        {/* Confirm Password: register, update */}
-                        {(mode === "register" || mode === "update") &&
-                            <FormTextInput
-                                name="confirmPassword"
-                                type="password"
-                                placeholder="Confirm password"
-                                className="input w-full"
-                                disabled={loading}
-                            />}
-                        <div className="flex justify-center">
-                            <button type="submit" className="btn btn-primary mb-2" disabled={loading}>
-                                {
-                                    loading ? <span className="loading loading-spinner loading-sm"></span> :
-                                        mode === "login" ? "Login" :
-                                            mode === "register" ? "Register" :
-                                                "Reset Password"
-                                }
-                            </button>
-                        </div>
-                    </Form>
-                </Formik >}
-        </>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full">
+            {/* Email */}
+            {(mode === "login" || mode === "register" || mode === "reset") &&
+                <>
+                    <input
+                        className='input w-full p-2 border border-gray-300'
+                        type='email'
+                        placeholder='Email'
+                        disabled={isSubmitting}
+                        {...register('email')}
+                    />
+                    {/* Email Error Output */}
+                    {errors.email && <span className="ml-1 text-xs text-error">{errors.email.message}</span>}
+                </>
+            }
+
+            {/* Password */}
+            {(mode === "login" || mode === "register" || mode === "update") &&
+                <>
+                    <input
+                        className='input w-full p-2 mt-2 border border-gray-300'
+                        type='password'
+                        placeholder='Password'
+                        disabled={isSubmitting}
+                        {...register('password')}
+                    />
+                    {/* Password Error Output */}
+                    {errors.password && <span className="ml-1 text-xs text-error">{errors.password.message}</span>}
+                </>
+            }
+
+            {/* Confirm Password */}
+            {(mode === "register" || mode === "update") &&
+                <>
+                    <input
+                        className='input w-full p-2 mt-2 border border-gray-300'
+                        type='password'
+                        placeholder='Confirm password'
+                        disabled={isSubmitting}
+                        {...register('confirmPassword')}
+                    />
+                    {/* Confirm Password Error Output */}
+                    {errors.confirmPassword &&
+                        <span className="ml-1 text-xs text-error">{errors.confirmPassword.message}</span>}
+                </>
+            }
+
+            {/* Submit Button */}
+            <button
+                className='btn btn-primary w-full p-2 my-2 text-white'
+                type='submit'
+                disabled={isSubmitting}
+            >
+                {isSubmitting ? <span className="loading loading-spinner loading-sm"></span> :
+                    mode === 'login' ? 'Login' :
+                        mode === 'register' ? 'Register' :
+                            mode === 'reset' ? 'Reset Password' :
+                                mode === 'update' ? 'Update Password' : ''
+                }
+            </button>
+        </form>
     )
 }
 
