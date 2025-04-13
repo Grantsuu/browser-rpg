@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface UserFormProps {
     mode: "login" | "register" | "reset" | "update";
@@ -17,6 +18,7 @@ const redirectUrl = import.meta.env.VITE_SUPABASE_REDIRECT;
 
 const AuthForm = ({ mode = "login" }: UserFormProps) => {
     const { supabaseClient } = useSupabase();
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
     const [registerSuccess, setRegisterSuccess] = useState(false);
 
@@ -96,6 +98,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             }
             // Only redirect if a valid user is logged in
             if (user) {
+                queryClient.resetQueries({ queryKey: ['character'] });
                 navigate("/");
             }
         }
