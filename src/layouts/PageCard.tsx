@@ -8,7 +8,6 @@ interface PageCardProps {
 }
 
 const PageCard = ({ title, icon, children }: PageCardProps) => {
-    console.log(typeof icon)
     return (
         <div className="card w-full h-full bg-base-100 shadow-md overflow-auto">
             <div className="card-body p-2 md:p-4 lg:p-6 gap-0">

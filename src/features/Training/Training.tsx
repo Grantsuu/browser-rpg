@@ -1,39 +1,50 @@
-import { clsx } from 'clsx';
+import { useQuery } from "@tanstack/react-query";
+import { toast } from 'react-toastify';
+import { getTrainingAreas } from "../../lib/apiClient";
+import { useCharacterLevels } from "../../lib/stateMangers";
 import PageCard from "../../layouts/PageCard";
 import ResponsiveCardGrid from "../../components/Responsive/ResponsiveCardGrid";
+import ResponsiveCard from "../../components/Responsive/ResponsiveCard";
+import DifficultyBadge from "../../components/Badges/DifficultyBadge";
 
-// interface TrainingProps {
-// { }: TrainingProps
-// }
+export type TrainingArea = {
+    name: string;
+    description: string;
+    image: string;
+    required_level: number;
+    difficulty: 'easy' | 'normal' | 'hard';
+}
 
 const Training = () => {
+    const { data: characterLevels } = useCharacterLevels();
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['trainingAreas'],
+        queryFn: getTrainingAreas,
+    });
+
+    if (error) {
+        return toast.error(`Something went wrong fetching fishing areas: ${(error as Error).message}`);
+    }
+
     return (
         <PageCard title="Training" icon={"images/swords.png"}>
-            {/* <h1>Training</h1>
-            <p>Train your skills here!</p> */}
             <ResponsiveCardGrid>
-                <div className={clsx("card w-full bg-base-100 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out")}>
-                    <div className="card-body">
-                        <h2 className="card-title self-center">Farmstead  <div className="badge bg-green-500 text-white">Easy</div></h2>
-                        <img src="images/barn.png" className="w-1/3 self-center" />
-                        {/* <p className="text-sm text-center font-normal">Though the threats are minor, the farmstead is the perfect place for fresh heroes to test their steel, hone their reflexes, and earn their first taste of glory.</p> */}
-                        <button className="btn btn-primary">Train</button>
-                    </div>
-                </div>
-                <div className={clsx("card w-full bg-base-100 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out")}>
-                    <div className="card-body">
-                        <h2 className="card-title self-center">Haunted Graveyard  <div className="badge bg-yellow-400 text-white">Normal</div></h2>
-                        <img src="images/cemetery.png" className="w-1/3 self-center" />
-                        <button className="btn btn-primary">Train</button>
-                    </div>
-                </div>
-                <div className={clsx("card w-full bg-base-100 shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out pointer-events-none bg-gray-300")}>
-                    <div className="card-body">
-                        <h2 className="card-title self-center">Dreadspire Keep  <div className="badge bg-red-600 text-white">Hard</div></h2>
-                        <img src="images/castle.png" className="w-1/3 self-center" />
-                        <button className="btn btn-primary" disabled>Required Level: 25</button>
-                    </div>
-                </div>
+                {isLoading ? <span className="loading loading-spinner loading-xl"></span>
+                    : data?.map((area: TrainingArea, index: number) => (
+                        <ResponsiveCard key={index} isDisabled={characterLevels?.combat_level < area?.required_level}>
+                            <div className="card-body">
+                                <h2 className="card-title self-center">
+                                    {area?.name}
+                                    <DifficultyBadge difficulty={area?.difficulty} disabled={(characterLevels?.combat_level < area?.required_level)} />
+                                </h2>
+                                <img src={area?.image} className="w-1/3 self-center" />
+                                <button className="btn btn-primary" disabled={characterLevels?.combat_level < area?.required_level}>
+                                    {(characterLevels?.combat_level < area?.required_level) ? `Required Level: ${area?.required_level}` : 'Train'}
+                                </button>
+                            </div>
+                        </ResponsiveCard>
+                    ))}
             </ResponsiveCardGrid>
         </PageCard>
     );

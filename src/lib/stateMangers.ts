@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCharacter, getCharacterInventory } from './apiClient';
+import { getCharacter, getCharacterLevels, getCharacterInventory } from './apiClient';
 
 export const useCharacter = () => useQuery({
     queryKey: ['character'],
@@ -10,6 +10,11 @@ export const useCharacter = () => useQuery({
         if (error.message === 'Not Found') return false;
         return failureCount < 3;
     }
+});
+
+export const useCharacterLevels = () => useQuery({
+    queryKey: ['characterLevels'],
+    queryFn: getCharacterLevels
 });
 
 export const useInventory = () => useQuery({

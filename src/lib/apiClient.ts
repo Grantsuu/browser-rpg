@@ -23,6 +23,19 @@ export const getCharacter = async () => {
     return await response.json();
 }
 
+// Get Character Levels
+export const getCharacterLevels = async () => {
+    const response = await fetch(`${apiUrl}/characters/levels`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
 // POST
 
 export const postCreateCharacter = async (name: string) => {
@@ -358,6 +371,24 @@ export const putUpdateFishingGame = async (row: number, col: number) => {
     params.set('col', col.toString());
     const response = await fetch(`${apiUrl}/fishing?${params.toString()}`, {
         method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
+// Combat
+
+// Training
+
+// GET
+
+export const getTrainingAreas = async () => {
+    const response = await fetch(`${apiUrl}/combat/training/areas`, {
         headers: {
             'Authorization': `Bearer ${getJwt()}`
         }
