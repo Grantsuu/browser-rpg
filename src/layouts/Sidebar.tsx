@@ -47,6 +47,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
                         <li><Link to="/character" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faUserShield as IconProp} className="w-5" />Character</Link></li>
                         <li><Link to="/shop" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faShop as IconProp} className="w-5" />Shop</Link></li>
                         <li><Link to="/inventory" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faBox as IconProp} className="w-5" />Inventory</Link></li>
+                        <li><Link to="/training" onClick={() => setIsOpen(false)}><img src="images/swords.png" className="w-5" />Training</Link></li>
                         <li><Link to="/crafting" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faHammer as IconProp} className="w-5" />Crafting</Link></li>
                         <li><Link to="/farming" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faSeedling as IconProp} className="w-5" />Farming</Link></li>
                         <li><Link to="/fishing" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faFish as IconProp} className="w-5" />Fishing</Link></li>

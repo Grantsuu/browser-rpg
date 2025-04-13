@@ -18,6 +18,7 @@ import CharacterCreate from './components/Character/CharacterCreate.tsx';
 import CharacterStats from './components/Character/CharacterStats.tsx';
 import Shop from './containers/Shop.tsx';
 import Inventory from './containers/Inventory.tsx';
+import Training from './features/Training/Training.tsx';
 import Crafting from './containers/Crafting.tsx';
 import Farming from './containers/Farming.tsx';
 import Login from './components/Auth/Login.tsx';
@@ -45,6 +46,7 @@ createRoot(document.getElementById('root')!).render(
                                         </Route>
                                         <Route path="shop" element={<Shop />} />
                                         <Route path="inventory" element={<Inventory />} />
+                                        <Route path="training" element={<Training />} />
                                         <Route path="crafting" element={<Crafting />} />
                                         <Route path="farming" element={<Farming />} />
                                         <Route path="fishing" element={<Fishing />} />
