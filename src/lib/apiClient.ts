@@ -383,6 +383,24 @@ export const putUpdateFishingGame = async (row: number, col: number) => {
 
 // Combat
 
+// Monsters
+
+// GET
+
+export const getMonstersByArea = async (area: string) => {
+    const params = new URLSearchParams();
+    params.set('area', area);
+    const response = await fetch(`${apiUrl}/combat/monsters?${params.toString()}`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
 // Training
 
 // GET
