@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { type Monster } from "../../types/types";
-import { getMonstersByArea, getTrainingAreas } from "../../lib/apiClient";
+import { getMonstersByArea, getTrainingAreas, getCombatByCharacterId, putUpdateCombat } from "../../lib/apiClient";
 import { useCharacterLevels } from "../../lib/stateMangers";
 import PageCard from "../../layouts/PageCard";
 import ResponsiveCardGrid from "../../components/Responsive/ResponsiveCardGrid";
@@ -38,6 +38,23 @@ const Training = () => {
         enabled: monsterSelectOpen,
     });
 
+    const { data: combatData, error: combatError, isLoading: combatLoading } = useQuery({
+        queryKey: ['combat'],
+        queryFn: getCombatByCharacterId,
+    });
+
+    const { mutate: updateCombat } = useMutation({
+        mutationFn: (variables: { action: string, monsterId?: number }) => putUpdateCombat(variables.action, variables.monsterId),
+        onSuccess: (data) => {
+            console.log(data);
+            // setSelectedMonster(data);
+            // toast.success('Combat started successfully');
+        },
+        onError: (error) => {
+            toast.error(`Something went wrong starting combat: ${(error as Error).message}`);
+        }
+    });
+
     const handleSelectArea = (area: TrainingArea) => {
         setSelectedArea(area);
         setMonsterSelectOpen(true);
@@ -46,6 +63,7 @@ const Training = () => {
     const handleSelectMonster = (monster: Monster) => {
         setSelectedMonster(monster);
         setMonsterSelectOpen(false);
+        updateCombat({ action: 'start', monsterId: monster.id });
     }
 
     if (error) {

@@ -401,6 +401,38 @@ export const getMonstersByArea = async (area: string) => {
     return await response.json();
 }
 
+export const getCombatByCharacterId = async () => {
+    const response = await fetch(`${apiUrl}/combat`, {
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
+// PUT
+
+export const putUpdateCombat = async (action: string, monsterId?: number) => {
+    const params = new URLSearchParams();
+    params.set('action', action);
+    if (monsterId) {
+        params.set('monster_id', monsterId.toString());
+    }
+    const response = await fetch(`${apiUrl}/combat?${params.toString()}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
 // Training
 
 // GET
