@@ -4,10 +4,11 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 interface PageCardProps {
     title: string;
     icon: IconProp | string;
+    loading?: boolean;
     children: React.ReactNode
 }
 
-const PageCard = ({ title, icon, children }: PageCardProps) => {
+const PageCard = ({ title, icon, loading = false, children }: PageCardProps) => {
     return (
         <div className="card w-full h-full bg-base-100 shadow-md overflow-auto">
             <div className="card-body p-2 md:p-4 lg:p-6 gap-0">
@@ -19,7 +20,7 @@ const PageCard = ({ title, icon, children }: PageCardProps) => {
                     </h1>
                 </div>
                 <div className="divider my-0"></div>
-                {children}
+                {loading ? <div className="flex w-full h-full justify-around"><span className="loading loading-spinner loading-xl"></span></div> : children}
             </div>
         </div>
     )

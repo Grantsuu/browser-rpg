@@ -191,7 +191,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
             {/* Seed Drawer */}
             <div className="drawer drawer-end">
                 <input id="my-drawer-4" type="checkbox" className="drawer-toggle" checked={seedDrawerOpen} onChange={() => { }} />
-                <div className="drawer-side z-1">
+                <div className="drawer-side z-2">
                     <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={() => setSeedDrawerOpen(false)} />
                     <ul className="menu bg-base-200 text-base-content h-full w-85 lg:w-1/3 p-4 overflow-y-scroll">
                         {/* Sidebar content here */}
