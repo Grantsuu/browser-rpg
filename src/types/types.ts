@@ -75,3 +75,17 @@ export type FishingAreaSize = {
     rows: number,
     cols: number
 }
+
+export type Monster = {
+    id: number;
+    name: string;
+    description: string;
+    area: string;
+    level: number;
+    health: number;
+    power: number;
+    toughness: number;
+    experience: number;
+    gold: number;
+    image: string;
+}
