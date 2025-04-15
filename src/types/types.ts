@@ -89,3 +89,11 @@ export type Monster = {
     gold: number;
     image: string;
 }
+
+export type CombatData = {
+    id: number;
+    character_id: string;
+    state: object;
+    monster: Monster;
+    player: object;
+}

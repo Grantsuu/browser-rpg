@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import { type Monster } from "../../types/types";
+import type { CombatData, Monster } from "../../types/types";
 import { getMonstersByArea, getTrainingAreas, getCombatByCharacterId, putUpdateCombat } from "../../lib/apiClient";
 import { useCharacterLevels } from "../../lib/stateMangers";
 import PageCard from "../../layouts/PageCard";
@@ -22,12 +22,13 @@ export type TrainingArea = {
 }
 
 const Training = () => {
-    const { data: characterLevels, isLoading: isLevelsLoading } = useCharacterLevels();
+    const queryClient = useQueryClient();
+    const { data: characterLevels, isLoading: levelsLoading } = useCharacterLevels();
+
     const [monsterSelectOpen, setMonsterSelectOpen] = useState(false);
     const [selectedArea, setSelectedArea] = useState<TrainingArea | undefined>(undefined);
-    const [selectedMonster, setSelectedMonster] = useState<Monster | undefined>(undefined);
 
-    const { data, error, isLoading } = useQuery({
+    const { data: areas, error: areasError, isLoading: areasLoading } = useQuery({
         queryKey: ['trainingAreas'],
         queryFn: getTrainingAreas,
     });
@@ -46,9 +47,12 @@ const Training = () => {
     const { mutate: updateCombat } = useMutation({
         mutationFn: (variables: { action: string, monsterId?: number }) => putUpdateCombat(variables.action, variables.monsterId),
         onSuccess: (data) => {
-            console.log(data);
-            // setSelectedMonster(data);
-            // toast.success('Combat started successfully');
+            queryClient.setQueryData(['combat'], (oldData: CombatData) => {
+                return {
+                    ...oldData,
+                    monster: data.monster
+                };
+            })
         },
         onError: (error) => {
             toast.error(`Something went wrong starting combat: ${(error as Error).message}`);
@@ -61,13 +65,16 @@ const Training = () => {
     }
 
     const handleSelectMonster = (monster: Monster) => {
-        setSelectedMonster(monster);
-        setMonsterSelectOpen(false);
         updateCombat({ action: 'start', monsterId: monster.id });
+        setMonsterSelectOpen(false);
     }
 
-    if (error) {
-        return toast.error(`Something went wrong fetching training areas: ${(error as Error).message}`);
+    if (areasError) {
+        return toast.error(`Something went wrong fetching training areas: ${(areasError as Error).message}`);
+    }
+
+    if (combatError) {
+        toast.error(`Something went wrong fetching combat data: ${(combatError as Error).message}`);
     }
 
     if (monstersError) {
@@ -76,11 +83,12 @@ const Training = () => {
 
     return (
         <PageCard title="Training" icon={"images/swords.png"}>
-            {selectedMonster ? <Combat monster={selectedMonster} /> :
-                isLoading || isLevelsLoading ?
-                    <span className="h-full loading loading-spinner loading-xl self-center"></span> :
+            {(areasLoading || levelsLoading || combatLoading) ?
+                <span className="h-full loading loading-spinner loading-xl self-center"></span> :
+                combatData?.monster ?
+                    <Combat monster={combatData.monster} /> :
                     <ResponsiveCardGrid>
-                        {data?.map((area: TrainingArea, index: number) => (
+                        {areas?.map((area: TrainingArea, index: number) => (
                             <ResponsiveCard key={index} isDisabled={characterLevels?.combat_level < area?.required_level}>
                                 <div className="card-body">
                                     <h2 className="card-title self-center">
