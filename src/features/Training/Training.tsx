@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import type { CombatData, Monster } from "../../types/types";
+import type { Monster } from "../../types/types";
 import { getMonstersByArea, getTrainingAreas, getCombatByCharacterId, putUpdateCombat } from "../../lib/apiClient";
 import { useCharacterLevels } from "../../lib/stateMangers";
 import PageCard from "../../layouts/PageCard";
@@ -47,12 +47,7 @@ const Training = () => {
     const { mutate: updateCombat } = useMutation({
         mutationFn: (variables: { action: string, monsterId?: number }) => putUpdateCombat(variables.action, variables.monsterId),
         onSuccess: (data) => {
-            queryClient.setQueryData(['combat'], (oldData: CombatData) => {
-                return {
-                    ...oldData,
-                    monster: data.monster
-                };
-            })
+            queryClient.setQueryData(['combat'], data);
         },
         onError: (error) => {
             toast.error(`Something went wrong starting combat: ${(error as Error).message}`);
@@ -86,7 +81,7 @@ const Training = () => {
             {(areasLoading || levelsLoading || combatLoading) ?
                 <span className="h-full loading loading-spinner loading-xl self-center"></span> :
                 combatData?.monster ?
-                    <Combat monster={combatData.monster} /> :
+                    <Combat combat={combatData} /> :
                     <ResponsiveCardGrid>
                         {areas?.map((area: TrainingArea, index: number) => (
                             <ResponsiveCard key={index} isDisabled={characterLevels?.combat_level < area?.required_level}>

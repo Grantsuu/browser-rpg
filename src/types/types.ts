@@ -90,10 +90,34 @@ export type Monster = {
     image: string;
 }
 
+export type CombatState = {
+    last_actions: {
+        player: {
+            action: string;
+            amount: number;
+        };
+        monster: {
+            action: string;
+            amount: number;
+        };
+    };
+}
+
+export type CombatDataMonster = Monster & {
+    max_health: number;
+}
+
+export type CombatDataPlayer = {
+    health: number;
+    max_health: number;
+    power: number;
+    toughness: number;
+}
+
 export type CombatData = {
     id: number;
     character_id: string;
-    state: object;
-    monster: Monster;
-    player: object;
+    state: CombatState;
+    monster: CombatDataMonster;
+    player: CombatDataPlayer;
 }
