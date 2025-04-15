@@ -38,18 +38,18 @@ const Combat = ({ combat }: CombatProps) => {
                 </div>
             </div>
             {combat?.state?.last_actions && <>
-                <div className="flex flex-row gap-1">
+                {combat?.state?.last_actions?.monster && <div className="flex flex-row gap-1">
                     <img src="images/sword.png" className="w-5" />
                     <span>
-                        <span className="font-semibold">{combat.monster.name}</span> <span className="text-red-500 italic">attacks</span> for <span className="text-red-500 font-bold">1</span> damage!
+                        <span className="font-semibold">{combat.monster.name}</span> <span className="text-red-500 italic">{combat?.state?.last_actions?.monster.action}</span> for <span className="text-red-500 font-bold">{combat?.state?.last_actions?.monster?.amount}</span> damage!
                     </span>
-                </div>
-                <div className="flex flex-row gap-1">
+                </div>}
+                {combat?.state?.last_actions?.player && <div className="flex flex-row gap-1">
                     <img src="images/sword.png" className="w-5" />
                     <span>
-                        <span className="font-semibold">{character.name}</span> <span className="text-red-500 italic">attacks</span> for <span className="text-red-500 font-bold">99</span> damage!
+                        <span className="font-semibold">{character.name}</span> <span className="text-red-500 italic">{combat?.state?.last_actions?.player?.action}</span> for <span className="text-red-500 font-bold">{combat?.state?.last_actions?.player?.amount}</span> damage!
                     </span>
-                </div>
+                </div>}
             </>}
             <div className="card card-lg border border-gray-100 shadow-md w-full lg:w-1/3">
                 <div className="card-body p-3 items-center">
@@ -77,6 +77,7 @@ const Combat = ({ combat }: CombatProps) => {
                         </button>
                         <button
                             className="btn btn-warning"
+                            onClick={() => { updateCombat({ action: 'defend' }); }}
                             disabled={combatLoading}>
                             {combatLoading ?
                                 <span className="loading loading-spinner loading-sm self-center"></span> :
