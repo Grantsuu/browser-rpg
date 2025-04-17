@@ -90,8 +90,24 @@ export type Monster = {
     image: string;
 }
 
+export type CombatDataMonster = Monster & {
+    max_health: number;
+}
+
+export type CombatOutcomes = "player_wins" | "player_loses" | "player_flees";
+
+export type CombatOutcome = {
+    status: CombatOutcomes;
+    rewards?: {
+        gold: number;
+        experience: number;
+        loot: item[];
+    }
+}
+
 export type CombatState = {
-    last_actions: {
+    outcome?: CombatOutcome,
+    last_actions?: {
         player: {
             action: string;
             amount: number;
@@ -101,10 +117,6 @@ export type CombatState = {
             amount: number;
         };
     };
-}
-
-export type CombatDataMonster = Monster & {
-    max_health: number;
 }
 
 export type CombatDataPlayer = {

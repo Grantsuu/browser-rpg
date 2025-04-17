@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from 'react-toastify';
 import type { CombatData } from "../../types/types";
 import { useCharacter } from "../../lib/stateMangers";
-import { putUpdateCombat } from "../../lib/apiClient";
+import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
 
 interface CombatProps {
     combat: CombatData;
@@ -22,6 +22,16 @@ const Combat = ({ combat }: CombatProps) => {
         }
     });
 
+    const { mutateAsync: resetCombat, isPending: resetLoading } = useMutation({
+        mutationFn: () => putResetCombat(),
+        onSuccess: (data) => {
+            queryClient.setQueryData(['combat'], data);
+        },
+        onError: (error) => {
+            toast.error(`Something went wrong resetting combat: ${(error as Error).message}`);
+        }
+    });
+
     return (
         <div className="flex flex-col items-center gap-2">
             <div className="card card-lg border border-gray-100 shadow-md w-full lg:w-1/3">
@@ -38,18 +48,60 @@ const Combat = ({ combat }: CombatProps) => {
                 </div>
             </div>
             {combat?.state?.last_actions && <>
+                {(combat?.state?.last_actions?.player) &&
+                    <div className="flex flex-row gap-1">
+                        {combat?.state?.last_actions?.player?.action === 'attack' &&
+                            <>
+                                <img src="images/sword.png" className="w-5" />
+                                <span>
+                                    <span className="font-semibold">{character.name}</span> <span className="text-red-500 italic">attacks</span> for <span className="text-red-500 font-bold">{combat?.state?.last_actions?.player?.amount}</span> damage!
+                                </span>
+                            </>}
+                        {combat?.state?.last_actions?.player?.action === 'defend' &&
+                            <>
+                                <img src="images/shield.png" className="w-5" />
+                                <span>
+                                    <span className="font-semibold">{character.name}</span> <span className="text-green-500 italic">defends</span> and recovers <span className="text-green-500 font-bold">{combat?.state?.last_actions?.player?.amount}</span> health!
+                                </span>
+                            </>}
+                        {((combat?.state?.last_actions?.player?.action === 'flee') && !combat?.state?.outcome) &&
+                            <>
+                                <img src="images/running.png" className="w-5" />
+                                <span>
+                                    <span className="font-semibold">{character.name}</span> <span className="text-red-500 italic">failed</span> to <span className="text-blue-500">flee</span>!
+                                </span>
+                            </>}
+                    </div>}
                 {combat?.state?.last_actions?.monster && <div className="flex flex-row gap-1">
                     <img src="images/sword.png" className="w-5" />
                     <span>
                         <span className="font-semibold">{combat.monster.name}</span> <span className="text-red-500 italic">{combat?.state?.last_actions?.monster.action}</span> for <span className="text-red-500 font-bold">{combat?.state?.last_actions?.monster?.amount}</span> damage!
                     </span>
                 </div>}
-                {combat?.state?.last_actions?.player && <div className="flex flex-row gap-1">
-                    <img src="images/sword.png" className="w-5" />
-                    <span>
-                        <span className="font-semibold">{character.name}</span> <span className="text-red-500 italic">{combat?.state?.last_actions?.player?.action}</span> for <span className="text-red-500 font-bold">{combat?.state?.last_actions?.player?.amount}</span> damage!
-                    </span>
-                </div>}
+                {combat?.state?.outcome && <>
+                    {combat?.state?.outcome?.status === 'player_wins' && <div className="flex flex-row gap-1">
+                        <img src="images/sword.png" className="w-5" />
+                        <span>
+                            <span className="font-semibold">{character.name}</span> <span className="text-green-500 italic">defeated</span> <span className="font-semibold">{combat.monster.name}</span>!
+                        </span>
+                    </div>}
+                    {combat?.state?.outcome?.status === 'player_loses' && <div className="flex flex-row gap-1">
+                        <img src="images/sword.png" className="w-5" />
+                        <span>
+                            <span className="font-semibold">{combat.monster.name}</span> <span className="text-red-500 italic">defeated</span> <span className="font-semibold">{character.name}</span>!
+                        </span>
+                    </div>}
+                    {combat?.state?.outcome?.status === 'player_flees' && <div className="flex flex-row gap-1">
+                        <img src="images/running.png" className="w-5" />
+                        <span>
+                            <span className="font-semibold">{character.name}</span> <span className="text-blue-500 italic">fled</span> from <span className="font-semibold">{combat.monster.name}</span>!
+                        </span>
+                    </div>}
+                    {combat?.state?.outcome?.rewards && <>
+                        {combat?.state?.outcome?.rewards}
+                    </>}
+                </>
+                }
             </>}
             <div className="card card-lg border border-gray-100 shadow-md w-full lg:w-1/3">
                 <div className="card-body p-3 items-center">
@@ -66,39 +118,50 @@ const Combat = ({ combat }: CombatProps) => {
                             <div className="font-semibold">5/5</div>
                         </div>
                     </div>
-                    <div className="grid grid-cols-4 w-full gap-1">
-                        <button
-                            className="btn btn-primary"
-                            onClick={() => { updateCombat({ action: 'attack' }); }}
-                            disabled={combatLoading}>
-                            {combatLoading ?
-                                <span className="loading loading-spinner loading-sm self-center"></span> :
-                                <><img src="images/sword.png" className="w-5" />Attack</>}
-                        </button>
-                        <button
-                            className="btn btn-warning"
-                            onClick={() => { updateCombat({ action: 'defend' }); }}
-                            disabled={combatLoading}>
-                            {combatLoading ?
-                                <span className="loading loading-spinner loading-sm self-center"></span> :
-                                <><img src="images/shield.png" className="w-5" />Defend</>}
-                        </button>
-                        <button
-                            className="btn btn-success"
-                            disabled={combatLoading}>
-                            {combatLoading ?
-                                <span className="loading loading-spinner loading-sm self-center"></span> :
-                                <><img src="images/backpack.png" className="w-5" />Items</>}
-                        </button>
-                        <button
-                            className="btn btn-secondary"
-                            onClick={() => { updateCombat({ action: 'flee' }); }}
-                            disabled={combatLoading}>
-                            {combatLoading ?
-                                <span className="loading loading-spinner loading-sm self-center"></span> :
-                                <><img src="images/running.png" className="w-5" />Flee</>}
-                        </button>
-                    </div>
+                    {combat.state.outcome ?
+                        <div className="w-full">
+                            <button
+                                className="btn btn-primary text-white w-full"
+                                onClick={() => { resetCombat(); }}
+                                disabled={combatLoading || resetLoading}>
+                                {combatLoading || resetLoading ?
+                                    <span className="loading loading-spinner loading-sm self-center"></span> :
+                                    <>Return to Training Areas</>}
+                            </button>
+                        </div> :
+                        <div className="grid grid-cols-4 w-full gap-1">
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => { updateCombat({ action: 'attack' }); }}
+                                disabled={combatLoading}>
+                                {combatLoading ?
+                                    <span className="loading loading-spinner loading-sm self-center"></span> :
+                                    <><img src="images/sword.png" className="w-5" />Attack</>}
+                            </button>
+                            <button
+                                className="btn btn-warning"
+                                onClick={() => { updateCombat({ action: 'defend' }); }}
+                                disabled={combatLoading}>
+                                {combatLoading ?
+                                    <span className="loading loading-spinner loading-sm self-center"></span> :
+                                    <><img src="images/shield.png" className="w-5" />Defend</>}
+                            </button>
+                            <button
+                                className="btn btn-success"
+                                disabled={combatLoading}>
+                                {combatLoading ?
+                                    <span className="loading loading-spinner loading-sm self-center"></span> :
+                                    <><img src="images/backpack.png" className="w-5" />Items</>}
+                            </button>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => { updateCombat({ action: 'flee' }); }}
+                                disabled={combatLoading}>
+                                {combatLoading ?
+                                    <span className="loading loading-spinner loading-sm self-center"></span> :
+                                    <><img src="images/running.png" className="w-5" />Flee</>}
+                            </button>
+                        </div>}
                 </div>
             </div>
         </div>

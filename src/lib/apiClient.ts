@@ -383,8 +383,6 @@ export const putUpdateFishingGame = async (row: number, col: number) => {
 
 // Combat
 
-// Monsters
-
 // GET
 
 export const getMonstersByArea = async (area: string) => {
@@ -422,6 +420,19 @@ export const putUpdateCombat = async (action: string, monsterId?: number) => {
         params.set('monster_id', monsterId.toString());
     }
     const response = await fetch(`${apiUrl}/combat?${params.toString()}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${getJwt()}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return await response.json();
+}
+
+export const putResetCombat = async () => {
+    const response = await fetch(`${apiUrl}/combat/reset`, {
         method: 'PUT',
         headers: {
             'Authorization': `Bearer ${getJwt()}`
