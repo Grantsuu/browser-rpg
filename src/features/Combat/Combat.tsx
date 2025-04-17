@@ -68,7 +68,9 @@ const Combat = ({ combat }: CombatProps) => {
                         <div className="font-semibold">{combat.monster.health}/{combat.monster.max_health}</div>
                     </div>
                     <div className="flex flex-row gap-1 w-full justify-center">
-                        <progress className="progress progress-error size-lg w-4/5 h-4" value={(combat.monster.health / combat.monster.max_health) * 100} max="100"></progress>
+                        <div className="bg-gray-200 w-4/5 h-4 rounded-full">
+                            <div className="rounded-full bg-red-500 h-4 transition-[width] ease-in-out duration-300" style={{ width: `${Math.floor((combat.monster.health / combat.monster.max_health) * 100)}%` }} />
+                        </div>
                     </div>
                 </div>
             </div>
