@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion } from "motion/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +13,7 @@ import ResponsiveCardGrid from "../../components/Responsive/ResponsiveCardGrid";
 import ResponsiveCard from "../../components/Responsive/ResponsiveCard";
 import DifficultyBadge from "../../components/Badges/DifficultyBadge";
 import Combat from "../Combat/Combat";
+import ButtonPress from "../../components/Animated/Button/ButtonPress";
 
 export type TrainingArea = {
     name: string;
@@ -84,18 +86,31 @@ const Training = () => {
                     <Combat combat={combatData} /> :
                     <ResponsiveCardGrid>
                         {areas?.map((area: TrainingArea, index: number) => (
-                            <ResponsiveCard key={index} isDisabled={characterLevels?.combat_level < area?.required_level}>
-                                <div className="card-body">
-                                    <h2 className="card-title self-center">
-                                        {area?.name}
-                                        <DifficultyBadge difficulty={area?.difficulty} disabled={(characterLevels?.combat_level < area?.required_level)} />
-                                    </h2>
-                                    <img src={area?.image} alt={area?.name} title={area?.name} className="w-1/3 self-center" />
-                                    <button className="btn btn-primary" onClick={() => handleSelectArea(area)} disabled={characterLevels?.combat_level < area?.required_level}>
-                                        {(characterLevels?.combat_level < area?.required_level) ? `Required Level: ${area?.required_level}` : 'Train'}
-                                    </button>
-                                </div>
-                            </ResponsiveCard>
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.2, delay: index * 0.1 }}
+                            >
+                                <ResponsiveCard isDisabled={characterLevels?.combat_level < area?.required_level}>
+                                    <div className="card-body">
+                                        <h2 className="card-title self-center">
+                                            {area?.name}
+                                            <DifficultyBadge difficulty={area?.difficulty} disabled={(characterLevels?.combat_level < area?.required_level)} />
+                                        </h2>
+                                        <img src={area?.image} alt={area?.name} title={area?.name} className="w-1/3 self-center" />
+                                        <motion.div
+                                            whileTap={{ scale: 0.9 }}
+                                            className="w-full"
+                                        >
+                                            <button className="btn btn-primary w-full" onClick={() => handleSelectArea(area)} disabled={characterLevels?.combat_level < area?.required_level}>
+                                                {(characterLevels?.combat_level < area?.required_level) ? `Required Level: ${area?.required_level}` : 'Train'}
+                                            </button>
+                                        </motion.div>
+                                    </div>
+                                </ResponsiveCard>
+                            </motion.div>
                         ))}
                     </ResponsiveCardGrid>}
             <div className="drawer drawer-end">
@@ -109,33 +124,47 @@ const Training = () => {
                                 <h2 className="flex-1 text-center">Farmstead</h2>
                                 <button className="btn btn-circle btn-ghost" onClick={() => setMonsterSelectOpen(false)}><FontAwesomeIcon icon={faXmark as IconProp} /></button>
                             </div>
-                            <div className="flex flex-col gap-2 h-full">
+                            {monsterSelectOpen && <div className="flex flex-col gap-2 h-full">
                                 {monstersLoading ? <span className="h-full loading loading-spinner loading-xl self-center"></span> :
                                     monstersError ? <span className="h-full text-center">Something went wrong fetching monsters: {(monstersError as Error).message}</span> :
                                         monsters?.map((monster: Monster, index: number) => {
                                             return (
-                                                <div key={index} className="card w-full bg-base-100 shadow-md">
-                                                    <div className="card-body">
-                                                        <div className="flex items-center justify-between">
-                                                            <div className="flex flex-row w-full gap-3 items-center">
-                                                                <img src={monster.image} alt={monster.name} className="w-1/6" />
-                                                                <div className="flex flex-col gap-1">
-                                                                    <div className="text-lg font-bold">{monster.name}</div>
-                                                                    <div className="text-base">Combat Level {monster.level}</div>
-                                                                    <div className="flex flex-row text-base gap-1"><img src="images/heart.png" className="w-5" />{monster.health}</div>
+                                                <motion.div
+                                                    key={index}
+                                                    initial={{ opacity: 0, y: -20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -20 }}
+                                                    transition={{ duration: 0.2, delay: 0.3 + index * 0.1 }}
+                                                >
+                                                    <div className="card w-full bg-base-100 shadow-md">
+                                                        <div className="card-body">
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex flex-row w-full gap-3 items-center">
+                                                                    <img src={monster.image} alt={monster.name} className="w-1/6" />
+                                                                    <div className="flex flex-col gap-1">
+                                                                        <div className="text-lg font-bold">{monster.name}</div>
+                                                                        <div className="text-base">Combat Level {monster.level}</div>
+                                                                        <div className="flex flex-row text-base gap-1"><img src="images/heart.png" className="w-5" />{monster.health}</div>
+                                                                    </div>
                                                                 </div>
+                                                                <ButtonPress
+                                                                    className="btn-secondary"
+                                                                    onClick={() => handleSelectMonster(monster)}
+                                                                >
+                                                                    Fight
+                                                                </ButtonPress>
                                                             </div>
-                                                            <button className="btn btn-secondary" onClick={() => handleSelectMonster(monster)}>Fight</button>
                                                         </div>
                                                     </div>
-                                                </div>)
+                                                </motion.div>
+                                            )
                                         })
                                 }
-                            </div>
+                            </div>}
                         </div>
                     </ul>
                 </div>
-            </div >
+            </div>
         </PageCard >
     );
 };
