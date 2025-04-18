@@ -6,7 +6,7 @@ import { item } from '../types/types';
 import { useInventory } from '../lib/stateMangers';
 import { removeItemFromInventory } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
-import ItemCategoryBadge from '../components/ItemCategoryBadge';
+import ItemCategoryBadge from '../components/Badges/ItemCategoryBadge';
 import SuccessToast from '../components/Toasts/SuccessToast';
 
 const Inventory = () => {

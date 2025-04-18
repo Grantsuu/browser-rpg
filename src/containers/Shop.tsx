@@ -9,7 +9,7 @@ import { toTitleCase } from '../utils/strings';
 import { useCharacter, useInventory } from '../lib/stateMangers';
 import { getItemCategories, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
-import ItemCategoryBadge from '../components/ItemCategoryBadge';
+import ItemCategoryBadge from '../components/Badges/ItemCategoryBadge';
 import SuccessToast from '../components/Toasts/SuccessToast';
 
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { toTitleCase } from '../utils/strings';
+import { toTitleCase } from '../../utils/strings';
 
 interface ItemCategoryBadgeProps {
     category: string;

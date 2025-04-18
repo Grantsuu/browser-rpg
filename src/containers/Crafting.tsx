@@ -9,7 +9,7 @@ import { item, ItemCategory, Recipe } from '../types/types';
 import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient";
 import { useConfetti } from '../contexts/ConfettiContext';
 import PageCard from '../layouts/PageCard';
-import ItemCategoryBadge from '../components/ItemCategoryBadge';
+import ItemCategoryBadge from '../components/Badges/ItemCategoryBadge';
 import { useCharacter } from '../lib/stateMangers';
 import SuccessToast from '../components/Toasts/SuccessToast';
 import LevelUpToast from '../components/Toasts/LevelUpToast';
