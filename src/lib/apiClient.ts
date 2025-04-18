@@ -5,6 +5,29 @@ const getJwt = () => {
     return JSON.parse(localStorage.getItem(`sb-${supabaseUrl.split('https://')[1].split('.')[0]}-auth-token`) as string)?.access_token;
 }
 
+// Auth
+
+// Login
+export const postLogin = async (email: string, password: string) => {
+    const data = {
+        email: email,
+        password: password
+    }
+    const response = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
 
 // Character
 

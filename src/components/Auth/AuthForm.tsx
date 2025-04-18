@@ -9,6 +9,7 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
+import { postLogin } from '../../lib/apiClient';
 
 interface UserFormProps {
     mode: "login" | "register" | "reset" | "update";
@@ -96,6 +97,7 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             if (error) {
                 toast.error(`Error logging in: ${error.message}. Please try again later.`);
             }
+            await postLogin(email, password);
             // Only redirect if a valid user is logged in
             if (user) {
                 queryClient.resetQueries({ queryKey: ['character'] });
