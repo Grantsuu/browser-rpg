@@ -9,6 +9,7 @@ import type { CombatData } from "../../types/types";
 import { useCharacter } from "../../lib/stateMangers";
 import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
 import ButtonPress from "../../components/Animated/Button/ButtonPress";
+import ProgressBar from "../../components/Animated/ProgressBar";
 
 interface CombatProps {
     combat: CombatData;
@@ -79,11 +80,7 @@ const Combat = ({ combat }: CombatProps) => {
                             <img src="images/heart.png" className="w-5" />
                             <div className="font-semibold">{combat.monster.health}/{combat.monster.max_health}</div>
                         </div>
-                        <div className="flex flex-row gap-1 w-full justify-center">
-                            <div className="bg-gray-200 w-4/5 h-4 rounded-full">
-                                <div className="rounded-full bg-red-500 h-4 transition-[width] ease-in-out duration-250" style={{ width: `${Math.floor((combat.monster.health / combat.monster.max_health) * 100)}%` }} />
-                            </div>
-                        </div>
+                        <ProgressBar foregroundClassName="bg-red-500" width={Math.floor((combat.monster.health / combat.monster.max_health) * 100)} />
                     </div>
                 </div>
             </motion.div>
@@ -115,7 +112,7 @@ const Combat = ({ combat }: CombatProps) => {
                 {combat?.state?.last_actions?.monster && <div className="flex flex-row gap-1">
                     <img src="images/sword.png" className="w-5" />
                     <span>
-                        <span className="font-semibold">{combat.monster.name}</span> <span className="text-red-500 italic">{combat?.state?.last_actions?.monster.action}</span> for <span className="text-red-500 font-bold">{combat?.state?.last_actions?.monster?.amount}</span> damage!
+                        <span className="font-semibold">{combat.monster.name}</span> <span className="text-red-500 italic">{`${combat?.state?.last_actions?.monster.action}s`}</span> for <span className="text-red-500 font-bold">{combat?.state?.last_actions?.monster?.amount}</span> damage!
                     </span>
                 </div>}
                 {combat?.state?.outcome && <>
@@ -153,9 +150,27 @@ const Combat = ({ combat }: CombatProps) => {
             >
                 <div className="card card-lg border border-gray-100 shadow-md">
                     <div className="card-body p-3 items-center">
-                        <h2 className="card-title text-center">{character.name}</h2>
-                        <progress className="progress text-green-500 size-lg h-4 transition ease-in-out" value={(combat.player.health / combat.player.max_health) * 100} max="100"></progress>
-                        <progress className="progress text-blue-500 size-lg h-4 transition ease-in-out" value="100" max="100"></progress>
+
+                        <div className="relative z-0 w-full">
+                            <AnimatePresence initial={false}>
+                                {combat?.state?.last_actions?.monster?.action === 'attack' && showAnimation && (
+                                    <motion.div
+                                        initial={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0.0, y: -75 }}
+                                        transition={{ duration: 1.00, ease: "circOut" }}
+                                        key="monster-damage-animation"
+                                        className="absolute z-10 flex justify-start items-center w-full h-full top-0 left-0"
+                                    >
+                                        <div style={{ width: `${Math.floor((combat.player.health / combat.player.max_health) * 100)}%` }}></div>
+                                        <div className="text-red-500 text-2xl font-bold">{combat?.state?.last_actions?.monster?.amount}</div>
+                                    </motion.div>)}
+                            </AnimatePresence >
+                            <div className="flex justify-center">
+                                <h2 className="card-title">{character.name}</h2>
+                            </div>
+                        </div>
+                        <ProgressBar foregroundClassName="bg-green-500" width={Math.floor((combat.player.health / combat.player.max_health) * 100)} />
+                        <ProgressBar foregroundClassName="bg-blue-500" width={100} />
                         <div className="flex flex-row w-full justify-between">
                             <div className="flex flex-row gap-1">
                                 <img src="images/heart.png" className="w-5" />
@@ -185,7 +200,7 @@ const Combat = ({ combat }: CombatProps) => {
                                     <FontAwesomeIcon icon={faRotateRight as IconProp} /> Fight Again
                                 </ButtonPress>
                             </div> :
-                            <div className="grid grid-cols-4 w-full gap-1">
+                            <div className="grid grid-cols-4 w-full gap-1 lg:gap-2">
                                 {/* Attack */}
                                 <ButtonPress
                                     className="btn btn-primary w-full"
