@@ -28,6 +28,19 @@ export const postLogin = async (email: string, password: string) => {
     return await response.json();
 }
 
+// Logout
+export const getLogout = async () => {
+    const response = await fetch(`${apiUrl}/auth/logout`, {
+        method: 'GET',
+        credentials: 'include',
+    });
+    if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body);
+    }
+    return await response.json();
+}
+
 
 // Character
 
