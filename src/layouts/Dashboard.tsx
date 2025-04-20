@@ -1,15 +1,15 @@
 import { Outlet } from 'react-router';
+import Header from './Header';
 import Navbar from './Navbar';
-import Sidebar from './Sidebar';
 
 const Dashboard = () => {
     return (
         <div className="flex flex-col max-h-full">
             {/* Top Navigation Bar */}
-            <Navbar />
-            <Sidebar>
+            <Header />
+            <Navbar>
                 <Outlet />
-            </Sidebar>
+            </Navbar>
         </div>
     )
 }

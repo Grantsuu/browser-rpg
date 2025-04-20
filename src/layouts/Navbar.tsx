@@ -1,65 +1,44 @@
+import { useState } from 'react';
+import { Link } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faFish, faHammer, faHouse, faSeedling, faShop, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { useCharacter } from '../lib/stateMangers';
+import SignOutButton from '../components/Auth/SignOutButton';
 
-const Navbar = () => {
-    const { data } = useCharacter();
+const Navbar = ({ children }: { children: React.ReactNode }) => {
+
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
-        <div className="navbar bg-primary flex justify-between">
-            {/* Drawer for mobile/tablet view */}
-            <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">
-                <FontAwesomeIcon icon={faBars as IconProp} size="2x" />
-            </label>
-            {/* Title */}
-            <div>
-                <a className="btn btn-ghost text-xl" href="/">Browser RPG <FontAwesomeIcon icon={faShieldHalved as IconProp} /></a>
+        <div className="drawer lg:drawer-open">
+            <input
+                id="my-drawer-2"
+                type="checkbox"
+                checked={isOpen}
+                onChange={() => setIsOpen(!isOpen)}
+                className="drawer-toggle"
+            />
+            {/* Content */}
+            {/* Header is 4rem so the rest of the content, determined by sidebar, should be 100vh - rem high */}
+            <div className="drawer-content flex flex-col h-[calc(100dvh-4rem)] items-center justify-center bg-base-200 shadow-inner p-1 md:p-3 overflow-scroll">
+                {children}
             </div>
-            {/* Profile */}
-            <div className="flex-none">
-                {/* <div className="dropdown dropdown-end">
-                    <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                        <div className="indicator">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /> </svg>
-                            <span className="badge badge-sm indicator-item">8</span>
-                        </div>
+            {/* Side Navigation Bar */}
+            <div className="drawer-side w-full h-dvh lg:h-[calc(100dvh-4rem)] z-1">
+                <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
+                <ul className="menu bg-base-100 text-base-content h-full w-85 lg:w-70 p-2 justify-between text-xl md:text-lg lg:text-base">
+                    <div>
+                        <li><Link to="/" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faHouse as IconProp} className="w-5" />Home</Link></li>
+                        <li><Link to="/character" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faUserShield as IconProp} className="w-5" />Character</Link></li>
+                        <li><Link to="/shop" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faShop as IconProp} className="w-5" />Shop</Link></li>
+                        <li><Link to="/inventory" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faBox as IconProp} className="w-5" />Inventory</Link></li>
+                        <li><Link to="/training" onClick={() => setIsOpen(false)}><img src="images/swords.png" className="w-5" />Training</Link></li>
+                        <li><Link to="/crafting" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faHammer as IconProp} className="w-5" />Crafting</Link></li>
+                        <li><Link to="/farming" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faSeedling as IconProp} className="w-5" />Farming</Link></li>
+                        <li><Link to="/fishing" onClick={() => setIsOpen(false)}><FontAwesomeIcon icon={faFish as IconProp} className="w-5" />Fishing</Link></li>
                     </div>
-                    <div
-                        tabIndex={0}
-                        className="card card-compact dropdown-content bg-base-100 z-1 mt-3 w-52 shadow">
-                        <div className="card-body">
-                            <span className="text-lg font-bold">8 Items</span>
-                            <span className="text-info">Subtotal: $999</span>
-                            <div className="card-actions">
-                                <button className="btn btn-primary btn-block">View cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-                <div className="dropdown dropdown-end">
-                    <div className="flex flex-row gap-2 items-center justify-center">
-                        <div className="hidden sm:inline-block">
-                            {data?.name}
-                        </div>
-                        <div tabIndex={0} role="button" className="btn btn-circle w-15">
-                            <div className="w-10 rounded-full">
-                                <FontAwesomeIcon icon={faUser as IconProp} size="2x" />
-                            </div>
-                        </div>
-                    </div>
-                    <ul
-                        tabIndex={0}
-                        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                        <li>
-                            <a className="justify-between">
-                                Profile
-                                {/* <span className="badge">New</span> */}
-                            </a>
-                        </li>
-                        <li><a>Settings</a></li>
-                        <li><a>Logout</a></li>
-                    </ul>
-                </div>
+                    <SignOutButton />
+                </ul>
             </div>
         </div>
     )
