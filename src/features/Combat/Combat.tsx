@@ -6,7 +6,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faArrowLeftLong, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import type { CombatData } from "../../types/types";
-import { useCharacter } from "../../lib/stateMangers";
+import { useCharacter, useCharacterLevels } from "../../lib/stateMangers";
 import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
 import ButtonPress from "../../components/Animated/Button/ButtonPress";
 import ProgressBar from "../../components/Animated/ProgressBar";
@@ -18,7 +18,7 @@ interface CombatProps {
 const Combat = ({ combat }: CombatProps) => {
     const queryClient = useQueryClient();
     const { data: character } = useCharacter();
-
+    const { data: characterLevels } = useCharacterLevels();
     const [showAnimation, setShowAnimation] = useState(false);
 
     useEffect(() => {
@@ -32,6 +32,9 @@ const Combat = ({ combat }: CombatProps) => {
         onSuccess: (data) => {
             setShowAnimation(true);
             queryClient.setQueryData(['combat'], data);
+            if (data?.state?.outcome?.rewards) {
+                toast.success(<SuccessToast />);
+            }
         },
         onError: (error) => {
             toast.error(`Something went wrong starting combat: ${(error as Error).message}`);
@@ -166,7 +169,7 @@ const Combat = ({ combat }: CombatProps) => {
                                     </motion.div>)}
                             </AnimatePresence >
                             <div className="flex justify-center">
-                                <h2 className="card-title">{character.name}</h2>
+                                <h2 className="card-title">{character.name} Lvl. {characterLevels.combat_level}</h2>
                             </div>
                         </div>
                         <ProgressBar foregroundClassName="bg-green-500" width={Math.floor((combat.player.health / combat.player.max_health) * 100)} />
