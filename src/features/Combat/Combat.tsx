@@ -135,7 +135,7 @@ const Combat = ({ combat }: CombatProps) => {
                         </span>
                     </div>}
                     {combat?.state?.outcome?.rewards && <>
-                        {combat?.state?.outcome?.rewards}
+                        {JSON.stringify(combat?.state?.outcome?.rewards)}
                     </>}
                 </>
                 }
