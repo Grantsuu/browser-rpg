@@ -4,11 +4,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBox, faFish, faHammer, faHouse, faRightFromBracket, faSeedling, faShop, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { useSupabase } from "../contexts/SupabaseContext"
 import { getLogout } from '../lib/apiClient';
 
 const Sidebar = ({ children }: { children: React.ReactNode }) => {
-    const { supabaseClient } = useSupabase();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
@@ -16,7 +14,6 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 
     async function handleSignout() {
         try {
-            await supabaseClient?.auth.signOut();
             await getLogout();
         } catch (error) {
             console.error("Error signing out:", error);

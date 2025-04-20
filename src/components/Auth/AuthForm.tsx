@@ -3,7 +3,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from 'react-router';
-import { useSupabase } from "../../contexts/SupabaseContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -18,7 +17,6 @@ interface UserFormProps {
 const redirectUrl = import.meta.env.VITE_SUPABASE_REDIRECT;
 
 const AuthForm = ({ mode = "login" }: UserFormProps) => {
-    const { supabaseClient } = useSupabase();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const [registerSuccess, setRegisterSuccess] = useState(false);
@@ -72,62 +70,50 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
     }
 
     const handleRegister = async (email: string, password: string) => {
-        if (supabaseClient) {
-            const { error } = await supabaseClient.auth.signUp({
-                email: email,
-                password: password,
-                options: {
-                    emailRedirectTo: redirectUrl,
-                },
-            })
-            if (error) {
-                toast.error(`Error registering: ${error.message}. Please try again later.`);
-            } else {
-                setRegisterSuccess(true);
-            }
-        }
+        //     const { error } = await supabaseClient.auth.signUp({
+        //         email: email,
+        //         password: password,
+        //         options: {
+        //             emailRedirectTo: redirectUrl,
+        //         },
+        //     })
+        //     if (error) {
+        //         toast.error(`Error registering: ${error.message}. Please try again later.`);
+        //     } else {
+        //         setRegisterSuccess(true);
+        //     }
+        // }
     }
 
     const handleLogin = async (email: string, password: string) => {
-        if (supabaseClient) {
-            const { data: { user }, error } = await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password,
-            })
-            if (error) {
-                toast.error(`Error logging in: ${error.message}. Please try again later.`);
-            }
+        try {
             await postLogin(email, password);
-            // Only redirect if a valid user is logged in
-            if (user) {
-                queryClient.resetQueries({ queryKey: ['character'] });
-                navigate("/");
-            }
+            queryClient.resetQueries({ queryKey: ['character'] });
+            navigate("/");
+        } catch (error) {
+            if (error)
+                toast.error(`Unable to log in: ${error}. Please try again later.`);
         }
     }
 
     const handleResetPassword = async (email: string) => {
-        if (supabaseClient) {
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: `${redirectUrl}/account/update-password`,
-            })
-            if (error) {
-                toast.error(`Error requesting password reset: ${error.message}`);
-            } else {
-                toast.success(`Password reset request successful. Please check your email.`);
-            }
-        }
+        // const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        //     redirectTo: `${redirectUrl}/account/update-password`,
+        // })
+        // if (error) {
+        //     toast.error(`Error requesting password reset: ${error.message}`);
+        // } else {
+        //     toast.success(`Password reset request successful. Please check your email.`);
+        // }
     }
 
     const handleUpdatePassword = async (password: string) => {
-        if (supabaseClient) {
-            const { error } = await supabaseClient.auth.updateUser({ password: password })
-            if (error) {
-                toast.error(`Error updating password: ${error.message}`);
-            } else {
-                toast.success(`Password update successful.`);
-            }
-        }
+        // const { error } = await supabaseClient.auth.updateUser({ password: password })
+        // if (error) {
+        //     toast.error(`Error updating password: ${error.message}`);
+        // } else {
+        //     toast.success(`Password update successful.`);
+        // }
     }
 
     // Display success message if registration is successful

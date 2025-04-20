@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faExclamation, faFish, faFishFins, faHashtag, faRotateLeft, faWater, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import { getFishingGame, postStartFishingGame } from '../lib/apiClient';
+import { getFishingGame, putStartFishingGame } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import FishingTile from "../components/Fishing/FishingTile";
 import FishingAreaSelection from '../components/Fishing/FishingAreaSelection';
@@ -30,7 +30,7 @@ const Fishing = () => {
     const [area, setArea] = useState(data?.area);
 
     const { mutateAsync: startFishing, isPending } = useMutation({
-        mutationFn: () => postStartFishingGame(area.name),
+        mutationFn: () => putStartFishingGame(area.name),
         onSuccess: (data) => {
             setDisableTiles(false);
             queryClient.setQueryData(['fishing'], data);
@@ -76,7 +76,7 @@ const Fishing = () => {
                                 {data?.area?.name}
                             </div>
                             <div className="flex flex-col mb-2 items-center">
-                                <div className="flex grid grid-cols-3 items-end justify-center gap-4">
+                                <div className="grid grid-cols-3 items-end justify-center gap-4">
                                     <button className="btn btn-primary" onClick={() => setDisplay('AreaSelection')}><FontAwesomeIcon icon={faArrowLeft as IconProp} /><div className="hidden sm:inline-block">Select Area</div></button>
                                     <div className="">
                                         <div className="text-lg">Attempts Left</div>
@@ -114,7 +114,7 @@ const Fishing = () => {
                                 </div>
                                 {isPending &&
                                     <div className="absolute text-center text-white bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 visible opacity-100">
-                                        <span className="w-1/6 h-full loading loading-spinner loading-xl self-center"></span>
+                                        <span className="w-1/6 h-full loading loading-spinner self-center"></span>
                                     </div>}
                                 <div className={clsx(
                                     'invisible absolute text-center bg-gray-700/75 bottom-0 left-0 w-full h-full rounded-xl transition-all ease-in-out duration-300 opacity-0',
