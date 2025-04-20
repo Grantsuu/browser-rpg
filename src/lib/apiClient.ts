@@ -426,7 +426,7 @@ export const getMonstersByArea = async (area: string) => {
     }
 }
 
-export const getCombatByCharacterId = async () => {
+export const getCombat = async () => {
     try {
         return await fetchApi(`${apiUrl}/combat`);
     } catch (error) {
