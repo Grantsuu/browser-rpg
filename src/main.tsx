@@ -1,3 +1,4 @@
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -26,36 +27,38 @@ import './index.css'
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
-    <QueryClientProvider client={queryClient}>
-        <ConfettiProvider>
-            <TimersProvider>
-                <BrowserRouter>
-                    <ToastContainer position="top-center" autoClose={2250} closeOnClick={true} draggablePercent={80} />
-                    <Routes>
-                        <Route element={<CharacterRoute />}>
-                            <Route element={<Dashboard />} >
-                                <Route index element={<Home />} />
-                                <Route path="character" element={<Character />}>
-                                    <Route index element={<CharacterStats />} />
-                                    <Route path="create" element={<CharacterCreate />} />
+    <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <ConfettiProvider>
+                <TimersProvider>
+                    <BrowserRouter>
+                        <ToastContainer position="top-center" autoClose={2250} closeOnClick={true} draggablePercent={80} />
+                        <Routes>
+                            <Route element={<CharacterRoute />}>
+                                <Route element={<Dashboard />} >
+                                    <Route index element={<Home />} />
+                                    <Route path="character" element={<Character />}>
+                                        <Route index element={<CharacterStats />} />
+                                        <Route path="create" element={<CharacterCreate />} />
+                                    </Route>
+                                    <Route path="shop" element={<Shop />} />
+                                    <Route path="inventory" element={<Inventory />} />
+                                    <Route path="training" element={<Training />} />
+                                    <Route path="crafting" element={<Crafting />} />
+                                    <Route path="farming" element={<Farming />} />
+                                    <Route path="fishing" element={<Fishing />} />
+                                    <Route path="/account/update-password" element={<UpdatePassword />} />
                                 </Route>
-                                <Route path="shop" element={<Shop />} />
-                                <Route path="inventory" element={<Inventory />} />
-                                <Route path="training" element={<Training />} />
-                                <Route path="crafting" element={<Crafting />} />
-                                <Route path="farming" element={<Farming />} />
-                                <Route path="fishing" element={<Fishing />} />
-                                <Route path="/account/update-password" element={<UpdatePassword />} />
                             </Route>
-                        </Route>
-                        <Route element={<Auth />}>
-                            <Route path="login" element={<Login />} />
-                            <Route path="register" element={<Register />} />
-                            <Route path="reset-password" element={<ResetPassword />} />
-                        </Route>
-                    </Routes>
-                </BrowserRouter>
-            </TimersProvider>
-        </ConfettiProvider>
-    </QueryClientProvider>
+                            <Route element={<Auth />}>
+                                <Route path="login" element={<Login />} />
+                                <Route path="register" element={<Register />} />
+                                <Route path="reset-password" element={<ResetPassword />} />
+                            </Route>
+                        </Routes>
+                    </BrowserRouter>
+                </TimersProvider>
+            </ConfettiProvider>
+        </QueryClientProvider>
+    </React.StrictMode>
 )
