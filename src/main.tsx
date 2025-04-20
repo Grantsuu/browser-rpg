@@ -10,7 +10,6 @@ import Dashboard from './layouts/Dashboard.tsx';
 import Register from './components/Auth/Register.tsx';
 import ResetPassword from './components/Auth/ResetPassword.tsx';
 import UpdatePassword from './components/Auth/UpdatePassword.tsx';
-import LoginAccessToken from './components/Auth/LoginAccessToken.tsx';
 import Home from './containers/Home.tsx';
 import Character from './containers/Character.tsx';
 import CharacterCreate from './components/Character/CharacterCreate.tsx';
@@ -53,7 +52,6 @@ createRoot(document.getElementById('root')!).render(
                             <Route path="login" element={<Login />} />
                             <Route path="register" element={<Register />} />
                             <Route path="reset-password" element={<ResetPassword />} />
-                            <Route path="login-access-token" element={<LoginAccessToken />} />
                         </Route>
                     </Routes>
                 </BrowserRouter>
