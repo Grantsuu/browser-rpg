@@ -12,6 +12,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 
     const [isOpen, setIsOpen] = useState(false);
 
+    // TODO: Make this part of a logout button component
     async function handleSignout() {
         try {
             await getLogout();

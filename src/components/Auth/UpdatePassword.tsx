@@ -2,7 +2,6 @@ import { Link } from "react-router";
 import AuthForm from "./AuthForm";
 
 const UpdatePassword = () => {
-
     return (
         <div className="w-full md:w-1/2 xl:w-1/4">
             <div className="card rounded-box shadow-xl bg-base-200">

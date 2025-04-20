@@ -68,6 +68,62 @@ export const getLogout = async () => {
     }
 }
 
+// Register
+export const postRegister = async (email: string, password: string, redirectUrl: string) => {
+    const data = {
+        email: email,
+        password: password,
+        redirectUrl: redirectUrl
+    }
+    try {
+        return await fetchApi(`${apiUrl}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
+// Reset password request
+export const postResetPassword = async (email: string, redirectUrl: string) => {
+    const data = {
+        email: email,
+        redirectUrl: redirectUrl
+    }
+    try {
+        return await fetchApi(`${apiUrl}/auth/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
+// Update password
+export const postUpdatePassword = async (password: string) => {
+    const data = {
+        password: password
+    }
+    try {
+        return await fetchApi(`${apiUrl}/auth/update-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
 
 // Character
 

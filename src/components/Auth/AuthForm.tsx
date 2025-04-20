@@ -8,7 +8,7 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
-import { postLogin } from '../../lib/apiClient';
+import { postLogin, postRegister, postResetPassword, postUpdatePassword } from '../../lib/apiClient';
 
 interface UserFormProps {
     mode: "login" | "register" | "reset" | "update";
@@ -70,19 +70,12 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
     }
 
     const handleRegister = async (email: string, password: string) => {
-        //     const { error } = await supabaseClient.auth.signUp({
-        //         email: email,
-        //         password: password,
-        //         options: {
-        //             emailRedirectTo: redirectUrl,
-        //         },
-        //     })
-        //     if (error) {
-        //         toast.error(`Error registering: ${error.message}. Please try again later.`);
-        //     } else {
-        //         setRegisterSuccess(true);
-        //     }
-        // }
+        try {
+            await postRegister(email, password, redirectUrl);
+            setRegisterSuccess(true);
+        } catch (error) {
+            toast.error(`Unable to register: ${error}. Please try again later.`);
+        }
     }
 
     const handleLogin = async (email: string, password: string) => {
@@ -91,29 +84,26 @@ const AuthForm = ({ mode = "login" }: UserFormProps) => {
             queryClient.resetQueries({ queryKey: ['character'] });
             navigate("/");
         } catch (error) {
-            if (error)
-                toast.error(`Unable to log in: ${error}. Please try again later.`);
+            toast.error(`Unable to log in: ${error}. Please try again later.`);
         }
     }
 
     const handleResetPassword = async (email: string) => {
-        // const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        //     redirectTo: `${redirectUrl}/account/update-password`,
-        // })
-        // if (error) {
-        //     toast.error(`Error requesting password reset: ${error.message}`);
-        // } else {
-        //     toast.success(`Password reset request successful. Please check your email.`);
-        // }
+        try {
+            await postResetPassword(email, redirectUrl);
+            toast.success(`Password reset request successful. Please check your email.`);
+        } catch (error) {
+            toast.error(`Unable to send password reset email: ${error}. Please try again later.`);
+        }
     }
 
     const handleUpdatePassword = async (password: string) => {
-        // const { error } = await supabaseClient.auth.updateUser({ password: password })
-        // if (error) {
-        //     toast.error(`Error updating password: ${error.message}`);
-        // } else {
-        //     toast.success(`Password update successful.`);
-        // }
+        try {
+            await postUpdatePassword(password);
+            toast.success(`Password update successful.`);
+        } catch (error) {
+            toast.error(`Unable to update password: ${error}. Please try again later.`);
+        }
     }
 
     // Display success message if registration is successful
