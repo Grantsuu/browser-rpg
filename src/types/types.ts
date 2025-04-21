@@ -101,6 +101,7 @@ export type CombatOutcome = {
     rewards?: {
         gold: number;
         experience: number;
+        level?: number;
         loot: { item: item, quantity: number }[];
     }
 }

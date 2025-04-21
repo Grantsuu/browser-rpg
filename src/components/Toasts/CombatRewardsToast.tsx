@@ -13,9 +13,9 @@ const CombatRewardsToast = ({ combatData }: CombatRewardsToastProps) => {
                 You defeated <span className="text-red-500">{monster?.name}</span> and gained <span className="text-green-600">{outcome?.rewards?.experience}</span> experience
                 {(outcome?.rewards?.gold && outcome?.rewards?.gold > 0) ? <> and <span className="text-yellow-500">{outcome?.rewards?.gold}</span> gold!</> : '!'}
             </div>
-            {outcome?.rewards?.loot[0] ? <div className='w-1/5'>
+            <div className='w-1/5'>
                 <img src='images/swords.png' />
-            </div> : <></>}
+            </div>
         </div>
     );
 }

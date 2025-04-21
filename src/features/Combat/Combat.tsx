@@ -8,10 +8,12 @@ import { toast } from 'react-toastify';
 import type { CombatData } from "../../types/types";
 import { useCharacter, useCharacterLevels } from "../../lib/stateMangers";
 import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
+import { useConfetti } from '../../contexts/ConfettiContext';
 import ButtonPress from "../../components/Animated/Button/ButtonPress";
 import ProgressBar from "../../components/Animated/ProgressBar";
 import CombatRewardsToast from "../../components/Toasts/CombatRewardsToast";
 import SuccessToast from "../../components/Toasts/SuccessToast";
+import LevelUpToast from "../../components/Toasts/LevelUpToast";
 
 interface CombatProps {
     combat: CombatData;
@@ -19,6 +21,7 @@ interface CombatProps {
 
 const Combat = ({ combat }: CombatProps) => {
     const queryClient = useQueryClient();
+    const { levelUpConfetti } = useConfetti();
     const { data: character } = useCharacter();
     const { data: characterLevels } = useCharacterLevels();
     const [showAnimation, setShowAnimation] = useState(false);
@@ -39,6 +42,14 @@ const Combat = ({ combat }: CombatProps) => {
                 const loot = data?.state?.outcome?.rewards?.loot;
                 if (loot?.length > 0) {
                     toast.info(<SuccessToast action='Looted' name={loot[0].item.name} amount={loot[0].quantity} image={loot[0].item.image} />);
+                }
+                if (data?.state?.outcome?.rewards?.level) {
+                    levelUpConfetti();
+                    toast.info(
+                        <LevelUpToast
+                            level={data?.state?.outcome?.rewards?.level}
+                            skill="Combat"
+                        />);
                 }
             }
         },
