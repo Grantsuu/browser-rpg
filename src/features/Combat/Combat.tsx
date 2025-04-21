@@ -10,6 +10,7 @@ import { useCharacter, useCharacterLevels } from "../../lib/stateMangers";
 import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
 import ButtonPress from "../../components/Animated/Button/ButtonPress";
 import ProgressBar from "../../components/Animated/ProgressBar";
+import CombatRewardsToast from "../../components/Toasts/CombatRewardsToast";
 
 interface CombatProps {
     combat: CombatData;
@@ -33,7 +34,7 @@ const Combat = ({ combat }: CombatProps) => {
             setShowAnimation(true);
             queryClient.setQueryData(['combat'], data);
             if (data?.state?.outcome?.rewards) {
-                toast.success(<SuccessToast />);
+                toast.success(<CombatRewardsToast outcome={data?.state?.outcome} />);
             }
         },
         onError: (error) => {
