@@ -127,7 +127,7 @@ const Training = () => {
                             {monsterSelectOpen && <div className="flex flex-col gap-2 h-full">
                                 {monstersLoading ? <span className="h-full loading loading-spinner loading-xl self-center"></span> :
                                     monstersError ? <span className="h-full text-center">Something went wrong fetching monsters: {(monstersError as Error).message}</span> :
-                                        monsters?.map((monster: Monster, index: number) => {
+                                        monsters?.sort((a: Monster, b: Monster) => { return a.level - b.level }).map((monster: Monster, index: number) => {
                                             return (
                                                 <motion.div
                                                     key={index}
