@@ -1,23 +1,20 @@
-import React from "react";
-import type { CombatOutcome } from "../../types/types";
+import type { CombatData } from "../../types/types";
 
 interface CombatRewardsToastProps {
-    outcome: CombatOutcome;
+    combatData: CombatData;
 }
 
-const CombatRewardsToast = ({ outcome }: CombatRewardsToastProps) => {
-    const item = outcome?.rewards?.loot[0]?.item;
+const CombatRewardsToast = ({ combatData }: CombatRewardsToastProps) => {
+    const monster = combatData?.monster;
+    const outcome = combatData?.state?.outcome;
     return (
         <div className='flex flex-row w-full justify-between items-center gap-1'>
             <div>
-                Gained {outcome?.rewards?.experience} experience and {outcome?.rewards?.gold} gold!
-                {outcome?.rewards?.loot[0] ? <div className='flex flex-row items-center gap-1'>
-                    <span className='text-sm'>Looted {outcome?.rewards?.loot[0]?.quanity}x</span>
-                    <span className='text-sm'>{item?.name}</span>
-                </div> : <></>}
+                You defeated <span className="text-red-500">{monster?.name}</span> and gained <span className="text-green-600">{outcome?.rewards?.experience}</span> experience
+                {(outcome?.rewards?.gold && outcome?.rewards?.gold > 0) ? <> and <span className="text-yellow-500">{outcome?.rewards?.gold}</span> gold!</> : '!'}
             </div>
-            {outcome?.rewards?.loot[0] ? <div className='w-1/4'>
-                <img src={item?.image?.base64} alt={item?.image?.alt ? item?.image.alt : ''} title={item?.image?.alt ? item?.image.alt : ''} />
+            {outcome?.rewards?.loot[0] ? <div className='w-1/5'>
+                <img src='images/swords.png' />
             </div> : <></>}
         </div>
     );

@@ -32,7 +32,7 @@ createRoot(document.getElementById('root')!).render(
             <ConfettiProvider>
                 <TimersProvider>
                     <BrowserRouter>
-                        <ToastContainer position="top-center" autoClose={2250} closeOnClick={true} draggablePercent={80} />
+                        <ToastContainer position="top-center" autoClose={2500} closeOnClick={true} draggablePercent={80} />
                         <Routes>
                             <Route element={<CharacterRoute />}>
                                 <Route element={<Dashboard />} >

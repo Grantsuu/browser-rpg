@@ -11,6 +11,7 @@ import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
 import ButtonPress from "../../components/Animated/Button/ButtonPress";
 import ProgressBar from "../../components/Animated/ProgressBar";
 import CombatRewardsToast from "../../components/Toasts/CombatRewardsToast";
+import SuccessToast from "../../components/Toasts/SuccessToast";
 
 interface CombatProps {
     combat: CombatData;
@@ -34,7 +35,11 @@ const Combat = ({ combat }: CombatProps) => {
             setShowAnimation(true);
             queryClient.setQueryData(['combat'], data);
             if (data?.state?.outcome?.rewards) {
-                toast.success(<CombatRewardsToast outcome={data?.state?.outcome} />);
+                toast.success(<CombatRewardsToast combatData={data} />);
+                const loot = data?.state?.outcome?.rewards?.loot;
+                if (loot?.length > 0) {
+                    toast.info(<SuccessToast action='Looted' name={loot[0].item.name} amount={loot[0].quantity} image={loot[0].item.image} />);
+                }
             }
         },
         onError: (error) => {
@@ -138,9 +143,9 @@ const Combat = ({ combat }: CombatProps) => {
                             <span className="font-semibold">{character.name}</span> <span className="text-blue-500 italic">fled</span> from <span className="font-semibold">{combat.monster.name}</span>!
                         </span>
                     </div>}
-                    {combat?.state?.outcome?.rewards && <>
+                    {/* {combat?.state?.outcome?.rewards && <>
                         {JSON.stringify(combat?.state?.outcome?.rewards)}
-                    </>}
+                    </>} */}
                 </>
                 }
             </>}
