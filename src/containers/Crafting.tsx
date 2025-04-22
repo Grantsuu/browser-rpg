@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHammer, faKitchenSet } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { clsx } from 'clsx';
-import { item, ItemCategory, Recipe } from '../types/types';
+import type { Item, ItemCategory, Recipe } from '../types/types';
 import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient";
 import { useConfetti } from '../contexts/ConfettiContext';
 import PageCard from '../layouts/PageCard';
@@ -123,7 +123,7 @@ const Crafting = () => {
                                         {recipe.item.description}
                                     </td>
                                     <td>
-                                        {recipe.ingredients.map((ingredient: item, id: number) => {
+                                        {recipe.ingredients.map((ingredient: Item, id: number) => {
                                             return (
                                                 <div key={id}>
                                                     {ingredient.amount} x {ingredient.name}

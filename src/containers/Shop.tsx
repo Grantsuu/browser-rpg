@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import { Character, item } from '../types/types';
+import type { Character, Item } from '../types/types';
 import { toTitleCase } from '../utils/strings';
 import { useCharacter, useInventory } from '../lib/stateMangers';
 import { getItemCategories, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
@@ -40,8 +40,8 @@ const Shop = () => {
     })
 
     const { mutate: buy, isPending: isBuyPending } = useMutation({
-        mutationFn: (variables: { item: item, amount: number }) => postBuyFromShop(variables.item.id, variables.amount),
-        onSuccess: (data, variables: { item: item, amount: number }) => {
+        mutationFn: (variables: { item: Item, amount: number }) => postBuyFromShop(variables.item.id, variables.amount),
+        onSuccess: (data, variables: { item: Item, amount: number }) => {
             toast.success(
                 <SuccessToast
                     action="Bought"
@@ -65,8 +65,8 @@ const Shop = () => {
     })
 
     const { mutate: sell, isPending: isSellPending } = useMutation({
-        mutationFn: (variables: { item: item, amount: number }) => postSellToShop(variables.item.id, variables.amount),
-        onSuccess: (data, variables: { item: item, amount: number }) => {
+        mutationFn: (variables: { item: Item, amount: number }) => postSellToShop(variables.item.id, variables.amount),
+        onSuccess: (data, variables: { item: Item, amount: number }) => {
             toast.success(
                 <SuccessToast
                     action="Sold"
@@ -145,7 +145,7 @@ const Shop = () => {
                             </td>
                         </tr> :
                         shopMode === 'buy' ?
-                            shop.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
+                            shop.sort((a: Item, b: Item) => a.id - b.id).map((item: Item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
@@ -176,7 +176,7 @@ const Shop = () => {
                                     </tr>
                                 )
                             }) :
-                            inventory.sort((a: item, b: item) => a.id - b.id).map((item: item, id: number) => {
+                            inventory.sort((a: Item, b: Item) => a.id - b.id).map((item: Item, id: number) => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">

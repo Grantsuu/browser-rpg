@@ -7,7 +7,7 @@ export type ItemImage = {
     alt: string
 }
 
-export type item = {
+export type Item = {
     id: number
     image: ItemImage,
     name: string,
@@ -17,13 +17,13 @@ export type item = {
     amount?: number
 }
 
-export type InventoryItem = item & {
+export type InventoryItem = Item & {
     amount: number
 }
 
 export type Recipe = {
-    item: item
-    ingredients: item[]
+    item: Item
+    ingredients: Item[]
     amount: number
     category: string
     experience: number
@@ -32,10 +32,10 @@ export type Recipe = {
 
 export type Crop = {
     id: number,
-    seed: item,
+    seed: Item,
     grow_time: number,
     experience: number,
-    product: item,
+    product: Item,
     required_level: number,
     amount_produced: number[]
 }
@@ -106,7 +106,7 @@ export type CombatOutcome = {
         gold: number;
         experience: number;
         level?: number;
-        loot: { item: item, quantity: number }[];
+        loot: { item: Item, quantity: number }[];
     }
 }
 
