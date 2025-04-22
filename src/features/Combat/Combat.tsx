@@ -39,10 +39,12 @@ const Combat = ({ combat }: CombatProps) => {
             queryClient.setQueryData(['combat'], data);
             if (data?.state?.outcome?.rewards) {
                 toast.success(<CombatRewardsToast combatData={data} />);
+                // Loot toast
                 const loot = data?.state?.outcome?.rewards?.loot;
                 if (loot?.length > 0) {
                     toast.info(<SuccessToast action='Looted' name={loot[0].item.name} amount={loot[0].quantity} image={loot[0].item.image} />);
                 }
+                // Level up toast
                 if (data?.state?.outcome?.rewards?.level) {
                     levelUpConfetti();
                     toast.info(

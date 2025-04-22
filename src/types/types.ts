@@ -17,6 +17,10 @@ export type item = {
     amount?: number
 }
 
+export type InventoryItem = item & {
+    amount: number
+}
+
 export type Recipe = {
     item: item
     ingredients: item[]

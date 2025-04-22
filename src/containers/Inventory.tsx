@@ -2,12 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { faBox } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { clsx } from 'clsx';
-import { item } from '../types/types';
+import type { CombatData, item } from '../types/types';
 import { useInventory } from '../lib/stateMangers';
-import { removeItemFromInventory } from '../lib/apiClient';
+import { putUseItem, removeItemFromInventory } from '../lib/apiClient';
 import PageCard from '../layouts/PageCard';
 import ItemCategoryBadge from '../components/Badges/ItemCategoryBadge';
 import SuccessToast from '../components/Toasts/SuccessToast';
+import ButtonPress from '../components/Animated/Button/ButtonPress';
 
 const Inventory = () => {
     const queryClient = useQueryClient();
@@ -15,28 +16,65 @@ const Inventory = () => {
     const { data, error, isLoading } = useInventory();
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (item: item) => removeItemFromInventory(item.id),
-        onSuccess: (data) => {
+        mutationFn: (variables: { item: item }) => removeItemFromInventory(variables.item.id),
+        onSuccess: (_, variables) => {
             toast.success(
                 <SuccessToast
                     action="Deleted"
-                    name={data.item.item.name}
-                    amount={data.amount}
-                    image={data.item.item.image}
+                    name={variables.item.name}
+                    image={variables.item.image}
                 />);
-            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.setQueryData(['inventory'], (oldData: item[]) => {
+                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
+                oldData.splice(itemIndex, 1);
+                return oldData;
+            });
         },
         onError: (error: Error) => {
             toast.error(`Failed to remove item from inventory: ${(error as Error).message}`);
         }
     })
 
+    const { mutateAsync: itemUse, isPending: useItemLoading } = useMutation({
+        mutationFn: (variables: { item: item }) => putUseItem(variables.item.id),
+        onSuccess: (data, variables) => {
+            toast.success(
+                <SuccessToast
+                    action="Used"
+                    name={variables.item.name}
+                    amount={1}
+                    image={variables.item.image}
+                />
+            );
+            queryClient.setQueryData(['inventory'], (oldData: item[]) => {
+                // We know the item is in the inventory because we just used it and the API checks before using it
+                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
+                // Have to check if item being removed had its amount reduced or removed entirely
+                if (data.inventory_item) {
+                    oldData[itemIndex].amount = data.inventory_item.amount;
+                } else {
+                    oldData.splice(itemIndex, 1);
+                }
+                return oldData;
+            });
+            queryClient.setQueryData(['combat'], (oldData: CombatData) => {
+                return { ...oldData, ...data.character_combat };
+            });
+        },
+        onError: (error: Error) => {
+            toast.error(`Failed to use item: ${(error as Error).message}`);
+        }
+    });
+
+    const handleUseItem = async (item: item) => {
+        await itemUse({ item });
+    }
     if (error) {
         toast.error(`Something went wrong fetching the Character's inventory: ${(error as Error).message}`);
     }
 
     return (
-        <PageCard title="Inventory" icon={faBox}>
+        <PageCard title="Inventory" icon={faBox} >
             <table className={clsx('xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100', { 'flex-1': isLoading })}>
                 {/* head */}
                 <thead>
@@ -80,8 +118,15 @@ const Inventory = () => {
                                     <td className="hidden xl:table-cell">
                                         {item.description}
                                     </td>
-                                    <td className="p-1">
-                                        <button className="btn btn-soft btn-error btn-sm md:btn-md" onClick={() => { mutate(item) }} disabled={isPending}>Delete</button>
+                                    <td className="p-1 flex flex-row gap-1 justify-end">
+                                        {item.category === "consumable" && <ButtonPress
+                                            className="btn-soft btn-primary btn-sm md:btn-md"
+                                            onClick={() => { handleUseItem(item) }}
+                                            disabled={isPending || useItemLoading}
+                                        >
+                                            Use
+                                        </ButtonPress>}
+                                        <button className="btn btn-soft btn-error btn-sm md:btn-md" onClick={() => { mutate({ item }) }} disabled={isPending || useItemLoading}>Delete</button>
                                     </td>
                                 </tr>
                             )

@@ -164,6 +164,24 @@ export const postCreateCharacter = async (name: string) => {
     }
 }
 
+// Item
+
+// PUT
+
+// Use item
+export const putUseItem = async (itemId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', itemId.toString());
+    try {
+        return await fetchApi(`${apiUrl}/items/use?${params.toString()}`, {
+            method: 'PUT'
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
+
 // Inventory
 
 // GET
