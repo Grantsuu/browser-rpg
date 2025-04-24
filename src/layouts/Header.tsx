@@ -14,7 +14,7 @@ const Header = () => {
             </label>
             {/* Title */}
             <div>
-                <a className="btn btn-ghost text-xl" href="/">Browser RPG <FontAwesomeIcon icon={faShieldHalved as IconProp} /></a>
+                <a className="btn btn-ghost text-xl font-bold gap-2" href="/">Elvard <img src="/dragon.png" className="inline-block w-8 h-8" alt="Elvard" /></a>
             </div>
             {/* Profile */}
             <div className="flex-none">
