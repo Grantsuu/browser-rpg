@@ -1,3 +1,4 @@
+import './index.css'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router";
@@ -15,14 +16,13 @@ import Home from './containers/Home.tsx';
 import Character from './containers/Character.tsx';
 import CharacterCreate from './components/Character/CharacterCreate.tsx';
 import CharacterStats from './components/Character/CharacterStats.tsx';
-import Shop from './containers/Shop.tsx';
-import Inventory from './features/Inventory/Inventory.tsx';
-import Training from './features/Training/Training.tsx';
+import Shop from '@features/Shop/Shop.tsx';
+import Inventory from '@features/Inventory/Inventory.tsx';
+import Training from '@features/Training/Training.tsx';
 import Crafting from './containers/Crafting.tsx';
 import Farming from './containers/Farming.tsx';
 import Login from './components/Auth/Login.tsx';
 import Fishing from './containers/Fishing.tsx';
-import './index.css'
 
 const queryClient = new QueryClient();
 

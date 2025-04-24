@@ -32,8 +32,12 @@ export type Item = ItemImage & {
     effects?: ItemEffectData[]
 }
 
+export type ShopItem = Item & {
+    item_id: number
+}
+
 export type InventoryItem = Item & {
-    amount: number
+    item_id: number
 }
 
 export type Recipe = {
