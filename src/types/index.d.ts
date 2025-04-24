@@ -1,5 +1,7 @@
 export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
 
+export type ItemSubcategory = 'food' | 'seed' | 'ingredient' | 'fish';
+
 export type RecipeCategory = 'cooking';
 
 export type ItemImage = {
@@ -7,14 +9,27 @@ export type ItemImage = {
     alt: string
 }
 
-export type Item = {
-    id: number
-    image: ItemImage,
+export type ItemEffectType = 'restore_health';
+
+export type ItemEffectUnit = 'integer' | 'second';
+
+export type ItemEffectData = {
+    id: number,
+    item_id: number,
+    effect: ItemEffectType,
+    effect_value: number,
+    effect_unit: ItemEffectUnit
+}
+
+export type Item = ItemImage & {
+    id: number,
+    amount?: number
     name: string,
-    category: string,
+    category: ItemCategory,
+    subcategory?: ItemSubcategory,
     value: number,
     description: string,
-    amount?: number
+    effects?: ItemEffectData[]
 }
 
 export type InventoryItem = Item & {

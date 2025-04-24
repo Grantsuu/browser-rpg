@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHammer, faKitchenSet } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { clsx } from 'clsx';
-import type { Item, ItemCategory, Recipe } from '../types/types';
+import type { Item, ItemCategory, Recipe } from '../types';
 import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient";
 import { useConfetti } from '../contexts/ConfettiContext';
 import PageCard from '../layouts/PageCard';
@@ -36,7 +36,7 @@ const Crafting = () => {
                     name={variables.recipe.item.name}
                     amount={data.amount}
                     experience={data.experience}
-                    image={variables.recipe.item.image}
+                    image={{ base64: variables.recipe.item.base64, alt: variables.recipe.item.alt }}
                 />
             );
             if (data.level) {
@@ -105,7 +105,7 @@ const Crafting = () => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
                                     <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                        <img src={recipe.item.image.base64} alt={recipe.item.image.alt} title={recipe.item.image.alt} />
+                                        <img src={recipe.item.base64} alt={recipe.item.alt} title={recipe.item.alt} />
                                     </td>
                                     <td>
                                         {recipe.item.name}

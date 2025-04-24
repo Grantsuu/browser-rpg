@@ -16,7 +16,7 @@ import Character from './containers/Character.tsx';
 import CharacterCreate from './components/Character/CharacterCreate.tsx';
 import CharacterStats from './components/Character/CharacterStats.tsx';
 import Shop from './containers/Shop.tsx';
-import Inventory from './containers/Inventory.tsx';
+import Inventory from './features/Inventory/Inventory.tsx';
 import Training from './features/Training/Training.tsx';
 import Crafting from './containers/Crafting.tsx';
 import Farming from './containers/Farming.tsx';

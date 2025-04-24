@@ -1,5 +1,5 @@
 import React from "react";
-import { ItemImage } from "../../types/types";
+import { ItemImage } from "../../types";
 
 interface SuccessToastProps {
     action: string;

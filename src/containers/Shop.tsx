@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import type { Character, Item } from '../types/types';
+import type { Character, Item } from '../types';
 import { toTitleCase } from '../utils/strings';
 import { useCharacter, useInventory } from '../lib/stateMangers';
 import { getItemCategories, getShopInventory, postBuyFromShop, postSellToShop } from '../lib/apiClient';
@@ -47,7 +47,7 @@ const Shop = () => {
                     action="Bought"
                     name={variables.item.name}
                     amount={variables.amount}
-                    image={variables.item.image}
+                    image={{ base64: variables.item.base64, alt: variables.item.alt }}
                     extendedMessage={<> for <span className="text-red-600"><b>{data.goldSpent}</b></span> gold.</>}
                 />
             )
@@ -72,7 +72,7 @@ const Shop = () => {
                     action="Sold"
                     name={variables.item.name}
                     amount={variables.amount}
-                    image={variables.item.image}
+                    image={{ base64: variables.item.base64, alt: variables.item.alt }}
                     extendedMessage={<> for <span className="text-green-600"><b>{data.goldGained}</b></span> gold.</>}
                 />
             )
@@ -149,7 +149,7 @@ const Shop = () => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                            <img src={item.image.base64} alt={item.image.alt} title={item.image.alt} />
+                                            <img src={item.base64} alt={item.alt} title={item.alt} />
                                         </td>
                                         <td className="p-1">
                                             {item.name}
@@ -180,7 +180,7 @@ const Shop = () => {
                                 return (
                                     <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                         <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                            <img src={item.image.base64} alt={item.image.alt} title={item.image.alt} />
+                                            <img src={item.base64} alt={item.alt} title={item.alt} />
                                         </td>
                                         <td>
                                             {item.name}

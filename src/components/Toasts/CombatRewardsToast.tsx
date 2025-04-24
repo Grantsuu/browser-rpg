@@ -1,4 +1,4 @@
-import type { CombatData } from "../../types/types";
+import type { CombatData } from "../../types";
 
 interface CombatRewardsToastProps {
     combatData: CombatData;

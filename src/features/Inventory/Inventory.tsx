@@ -5,13 +5,13 @@ import { clsx } from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import type { Item } from '../types/types';
-import { useInventory } from '../lib/stateMangers';
-import { putUseItem, removeItemFromInventory } from '../lib/apiClient';
-import PageCard from '../layouts/PageCard';
-import ItemCategoryBadge from '../components/Badges/ItemCategoryBadge';
-import SuccessToast from '../components/Toasts/SuccessToast';
-import ButtonPress from '../components/Animated/Button/ButtonPress';
+import type { Item } from '@src/types';
+import { useInventory } from '@lib/stateMangers';
+import { putUseItem, removeItemFromInventory } from '@lib/apiClient';
+import PageCard from '@layouts/PageCard';
+import ItemCategoryBadge from '@components/Badges/ItemCategoryBadge';
+import SuccessToast from '@components/Toasts/SuccessToast';
+import ButtonPress from '@components/Animated/Button/ButtonPress';
 
 const Inventory = () => {
     const queryClient = useQueryClient();
@@ -25,7 +25,7 @@ const Inventory = () => {
                 <SuccessToast
                     action="Deleted"
                     name={variables.item.name}
-                    image={variables.item.image}
+                    image={{ base64: variables.item.base64, alt: variables.item.alt }}
                 />);
             queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
                 const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
@@ -47,7 +47,7 @@ const Inventory = () => {
                     action="Used"
                     name={variables.item.name}
                     amount={1}
-                    image={variables.item.image}
+                    image={{ base64: variables.item.base64, alt: variables.item.alt }}
                 />
             );
             queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
@@ -102,7 +102,7 @@ const Inventory = () => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
                                     <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                        <img src={item.image.base64} alt={item.image.alt} title={item.image.alt} />
+                                        <img src={item.base64} alt={item.alt} title={item.alt} />
                                     </td>
                                     <td className="p-1">
                                         {item.name}

@@ -34,7 +34,7 @@ const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProp
                         name={data.fish.name}
                         amount={data.fish_amount}
                         experience={data.experience}
-                        image={data.fish.item.image}
+                        image={{ base64: data.fish.base64, alt: data.fish.alt }}
                     />);
             }
             if (data.level) {

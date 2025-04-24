@@ -4,7 +4,7 @@ import { faCoins, faSeedling } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import PageCard from '../layouts/PageCard';
 import FarmPlot from '../components/Farming/FarmPlot';
-import { FarmPlotData } from '../types/types';
+import { FarmPlotData } from '../types';
 import { toast } from 'react-toastify';
 import { getFarmPlots, getFarmPlotCost, postBuyPlot } from '../lib/apiClient';
 

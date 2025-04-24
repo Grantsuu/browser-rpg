@@ -5,7 +5,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { clsx } from 'clsx';
 import { getFishingAreas } from "../../lib/apiClient";
-import { type FishingArea } from "../../types/types";
+import { type FishingArea } from "../../types";
 import { useCharacter } from "../../lib/stateMangers";
 import { FishingScreen } from "../../containers/Fishing";
 

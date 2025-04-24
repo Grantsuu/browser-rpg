@@ -3,17 +3,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faArrowLeftLong, faRotateRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeftLong, faHand, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import type { CombatData } from "../../types/types";
-import { useCharacter, useCharacterLevels } from "../../lib/stateMangers";
+import type { CombatData, Item } from "../../types";
+import { useCharacter, useCharacterLevels, useInventory } from "../../lib/stateMangers";
 import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
 import { useConfetti } from '../../contexts/ConfettiContext';
+import ResponsiveDrawer from "../../components/Responsive/ResponsiveDrawer";
 import ButtonPress from "../../components/Animated/Button/ButtonPress";
 import ProgressBar from "../../components/Animated/ProgressBar";
 import CombatRewardsToast from "../../components/Toasts/CombatRewardsToast";
 import SuccessToast from "../../components/Toasts/SuccessToast";
 import LevelUpToast from "../../components/Toasts/LevelUpToast";
+import ColumnDelayDown from "../../components/Animated/Motion/ColumnDelayDown";
 
 interface CombatProps {
     combat: CombatData;
@@ -23,8 +25,11 @@ const Combat = ({ combat }: CombatProps) => {
     const queryClient = useQueryClient();
     const { levelUpConfetti } = useConfetti();
     const { data: character } = useCharacter();
+    const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useInventory();
     const { data: characterLevels } = useCharacterLevels();
     const [showAnimation, setShowAnimation] = useState(false);
+
+    const [showItemDrawer, setShowItemDrawer] = useState(false);
 
     useEffect(() => {
         if (showAnimation) {
@@ -42,7 +47,7 @@ const Combat = ({ combat }: CombatProps) => {
                 // Loot toast
                 const loot = data?.state?.outcome?.rewards?.loot;
                 if (loot?.length > 0) {
-                    toast.info(<SuccessToast action='Looted' name={loot[0].item.name} amount={loot[0].quantity} image={loot[0].item.image} />);
+                    toast.info(<SuccessToast action='Looted' name={loot[0].item.name} amount={loot[0].quantity} image={{ base64: loot[0].base64, alt: loot[0].alt }} />);
                 }
                 // Level up toast
                 if (data?.state?.outcome?.rewards?.level) {
@@ -72,6 +77,7 @@ const Combat = ({ combat }: CombatProps) => {
 
     return (
         <div className="flex flex-col items-center gap-2">
+            {/* Monster card */}
             <motion.div
                 className="w-full lg:w-1/3"
                 initial={{ opacity: 0, y: -50 }}
@@ -106,6 +112,7 @@ const Combat = ({ combat }: CombatProps) => {
                     </div>
                 </div>
             </motion.div>
+            {/* Combat log */}
             {combat?.state?.last_actions && <>
                 {(combat?.state?.last_actions?.player) &&
                     <div className="flex flex-row gap-1">
@@ -162,6 +169,7 @@ const Combat = ({ combat }: CombatProps) => {
                 </>
                 }
             </>}
+            {/* Player card */}
             <motion.div
                 className="w-full lg:w-1/2"
                 initial={{ opacity: 0, y: 50 }}
@@ -172,8 +180,8 @@ const Combat = ({ combat }: CombatProps) => {
             >
                 <div className="card card-lg border border-gray-100 shadow-md">
                     <div className="card-body p-3 items-center">
-
                         <div className="relative z-0 w-full">
+                            {/* Animated numbers for player health */}
                             <AnimatePresence initial={false}>
                                 {combat?.state?.last_actions?.monster?.action === 'attack' && showAnimation && (
                                     <motion.div
@@ -187,12 +195,15 @@ const Combat = ({ combat }: CombatProps) => {
                                         <div className="text-red-500 text-2xl font-bold">{combat?.state?.last_actions?.monster?.amount}</div>
                                     </motion.div>)}
                             </AnimatePresence >
+                            {/* Player name and level */}
                             <div className="flex justify-center">
                                 <h2 className="card-title">{character.name} Lvl. {characterLevels.combat_level}</h2>
                             </div>
                         </div>
+                        {/* Health and Mana Bars */}
                         <ProgressBar foregroundClassName="bg-green-500" width={Math.floor((combat.player.health / combat.player.max_health) * 100)} />
                         <ProgressBar foregroundClassName="bg-blue-500" width={100} />
+                        {/* Health and Mana Numbers */}
                         <div className="flex flex-row w-full justify-between">
                             <div className="flex flex-row gap-1">
                                 <img src="images/heart.png" className="w-5" />
@@ -203,7 +214,9 @@ const Combat = ({ combat }: CombatProps) => {
                                 <div className="font-semibold">5/5</div>
                             </div>
                         </div>
+                        {/* Combat Buttons */}
                         {combat.state.outcome ?
+                            // Post Combat Buttons
                             <div className="grid grid-cols-2 gap-1 lg:gap-3 w-full">
                                 {/* Return to Training Area selection screen */}
                                 <ButtonPress
@@ -222,6 +235,7 @@ const Combat = ({ combat }: CombatProps) => {
                                     <FontAwesomeIcon icon={faRotateRight as IconProp} /> Fight Again
                                 </ButtonPress>
                             </div> :
+                            // Combat Actions
                             <div className="grid grid-cols-4 w-full gap-1 lg:gap-2">
                                 {/* Attack */}
                                 <ButtonPress
@@ -243,7 +257,7 @@ const Combat = ({ combat }: CombatProps) => {
                                 <ButtonPress
                                     className="btn btn-success"
                                     disabled={combatLoading}
-                                    onClick={() => { }}
+                                    onClick={() => { setShowItemDrawer(true); }}
                                 >
                                     <img src="images/backpack.png" className="w-5" />Items
                                 </ButtonPress>
@@ -259,7 +273,45 @@ const Combat = ({ combat }: CombatProps) => {
                     </div>
                 </div>
             </motion.div>
-        </div >
+            <ResponsiveDrawer title="Items" icon="images/backpack.png" open={showItemDrawer} setOpen={setShowItemDrawer}>
+                {showItemDrawer && <div className="flex flex-col gap-2 h-full">
+                    {isInventoryLoading ? <span className="h-full loading loading-spinner loading-xl self-center"></span> :
+                        inventoryError ? <span className="h-full text-center">Something went wrong fetching inventory.</span> :
+                            inventory?.filter((item: Item) => item.category === "consumable").map((item: Item, index: number) => (
+                                <ColumnDelayDown index={index} key={index}>
+                                    {/* Item Card */}
+                                    <div className="card card-sm w-full bg-base-100 shadow-md">
+                                        <div className="card-body">
+                                            <div className="flex items-center justify-between">
+                                                {/* Item Info */}
+                                                <div key={index} className="flex flex-row gap-1 lg:gap-3 items-center">
+                                                    <img src={item.base64} alt={item.alt} title={item.alt} className="w-1/10" />
+                                                    <div className="flex flex-col">
+                                                        <div className="text-base font-semibold">{item.name}</div>
+                                                        <div>{item.description}</div>
+                                                    </div>
+                                                </div>
+                                                {/* Use Button */}
+                                                <ButtonPress
+                                                    className="btn-primary"
+                                                    onClick={async () => {
+                                                        // Use item
+                                                        // await itemUse({ item });
+                                                        // toast.success(`Used ${item.name}`);
+                                                    }}
+                                                    disabled={isInventoryLoading || combatLoading}
+                                                >
+                                                    <FontAwesomeIcon icon={faHand as IconProp} className="text-lg" />
+                                                </ButtonPress>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ColumnDelayDown>
+                            ))
+                    }
+                </div>}
+            </ResponsiveDrawer>
+        </div>
     );
 };
 export default Combat;

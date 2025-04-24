@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faRotateRight, faSeedling, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import { Crop, FarmPlotData } from "../../types/types";
+import { Crop, FarmPlotData } from "../../types";
 import { putClearPlot, postHarvestPlot, postPlantPlot, getCrops } from '../../lib/apiClient';
 import { useConfetti } from '../../contexts/ConfettiContext';
 import { useTimers } from '../../contexts/TimersContext';
@@ -80,7 +80,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                                 Click <Link to='/farming' className="text-blue-500 hover:text-blue-800 underline">here</Link> to go to the Farming page.
                             </div>
                             <div className="w-1/3">
-                                <img src={variables.crop.product.image.base64} alt={variables.crop.product.image.alt} title={variables.crop.product.image.alt} />
+                                <img src={variables.crop.product.base64} alt={variables.crop.product.alt} title={variables.crop.product.alt} />
                             </div>
                         </div>);
                 }
@@ -113,7 +113,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                     name={plotData.crop.product.name}
                     amount={data.amount}
                     experience={plotData.crop.experience}
-                    image={plotData.crop.product.image}
+                    image={{ base64: plotData.crop.product.base64, alt: plotData.crop.product.alt }}
                 />);
             if (data.level) {
                 levelUpConfetti();
@@ -148,9 +148,9 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                         {status === 'Inactive' ?
                             <FontAwesomeIcon icon={faSeedling as IconProp} size="3x" color="green" /> :
                             <img
-                                src={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image.base64 : plotData.crop.product.image.base64)}
-                                alt={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image.alt : plotData.crop.product.image.alt)}
-                                title={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image.alt : plotData.crop.product.image.alt)}
+                                src={plotData.crop && (status === 'Growing' ? plotData.crop.seed.base64 : plotData.crop.product.base64)}
+                                alt={plotData.crop && (status === 'Growing' ? plotData.crop.seed.alt : plotData.crop.product.alt)}
+                                title={plotData.crop && (status === 'Growing' ? plotData.crop.seed.alt : plotData.crop.product.alt)}
                                 className="w-15"
                             />}
                     </div>
@@ -213,7 +213,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                                                     <div className="card-body">
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex flex-row gap-2 items-center">
-                                                                <img src={crop?.seed?.image.base64} alt={crop?.seed?.image?.alt} title={crop?.seed?.image?.alt} className="w-10" />
+                                                                <img src={crop?.seed?.base64} alt={crop?.seed?.alt} title={crop?.seed?.alt} className="w-10" />
                                                                 <div><b>Lvl. {crop?.required_level}</b></div>
                                                                 <div>{crop?.seed?.name}</div>
                                                             </div>
