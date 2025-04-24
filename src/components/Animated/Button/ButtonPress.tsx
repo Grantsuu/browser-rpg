@@ -18,7 +18,6 @@ const ButtonPress = ({ type, className, disabled, onClick, children }: ButtonPre
             onClick={onClick}
             disabled={disabled}
             whileTap={{ scale: 0.90 }}
-            whileHover={{ scale: 1.05 }}
         >
             {disabled ? <span className="loading loading-spinner loading-sm self-center"></span> : children}
         </motion.button>
