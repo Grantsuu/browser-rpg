@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import type { Item } from '@src/types';
+import type { InventoryItem } from '@src/types';
 import { useInventory } from '@lib/stateMangers';
 import { putUseItem, removeItemFromInventory } from '@lib/apiClient';
 import PageCard from '@layouts/PageCard';
@@ -19,16 +19,16 @@ const Inventory = () => {
     const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useInventory();
 
     const { mutate: deleteItem, isPending: isDeletePending } = useMutation({
-        mutationFn: (variables: { item: Item }) => removeItemFromInventory(variables.item.id),
+        mutationFn: (variables: { item: InventoryItem }) => removeItemFromInventory(variables.item.item_id),
         onSuccess: (_, variables) => {
             toast.success(
                 <SuccessToast
                     action="Deleted"
                     name={variables.item.name}
-                    image={{ base64: variables.item.base64, alt: variables.item.alt }}
+                    image={{ base64: variables.item.base64, alt: variables.item.name }}
                 />);
-            queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
-                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
+            queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
+                const itemIndex = oldData.findIndex((i) => i.item_id === variables.item.item_id);
                 oldData.splice(itemIndex, 1);
                 return oldData;
             });
@@ -40,7 +40,7 @@ const Inventory = () => {
 
     // Can't name this useItem because the linter thinks it's a hook
     const { mutateAsync: itemUse, isPending: isItemUsePending } = useMutation({
-        mutationFn: (variables: { item: Item }) => putUseItem(variables.item.id),
+        mutationFn: (variables: { item: InventoryItem }) => putUseItem(variables.item.id),
         onSuccess: (data, variables) => {
             toast.success(
                 <SuccessToast
@@ -50,7 +50,7 @@ const Inventory = () => {
                     image={{ base64: variables.item.base64, alt: variables.item.alt }}
                 />
             );
-            queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
+            queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
                 // We know the item is in the inventory because we just used it and the API checks before using it
                 const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
                 // Have to check if item being removed had its amount reduced or removed entirely
@@ -98,9 +98,9 @@ const Inventory = () => {
                                 </div>
                             </td>
                         </tr> :
-                        inventory.sort((a: Item, b: Item) => a.id - b.id).map((item: Item, id: number) => {
+                        inventory.sort((a: InventoryItem, b: InventoryItem) => a.item_id - b.item_id).map((item: InventoryItem, index: number) => {
                             return (
-                                <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
+                                <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={index}>
                                     <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
                                         <img src={item.base64} alt={item.alt} title={item.alt} />
                                     </td>
