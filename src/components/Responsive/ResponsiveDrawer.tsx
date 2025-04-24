@@ -19,7 +19,7 @@ const ResponsiveDrawer = ({ children, title, icon, open, setOpen }: ResponsiveDr
                 <ul className="menu bg-base-200 text-base-content h-full w-85 lg:w-1/3 p-4 overflow-y-scroll">
                     <div className="flex flex-col gap-4 h-full">
                         <div className="flex flex-row items-center">
-                            <div className="flex flex-row gap-2 justify-center items-center text-3xl">
+                            <div className="flex flex-row w-full gap-2 justify-center items-center text-3xl">
                                 {(typeof icon === "object") && <FontAwesomeIcon icon={icon as IconProp} />}
                                 {(typeof icon === "string") && <img src={icon} alt="icon" className="w-1/12" />}
                                 <h2 className="font-bold">{title}</h2>

@@ -4,10 +4,10 @@ import { faWater } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { clsx } from 'clsx';
-import { getFishingAreas } from "../../lib/apiClient";
-import { type FishingArea } from "../../types";
-import { useCharacter } from "../../lib/stateMangers";
-import { FishingScreen } from "../../containers/Fishing";
+import { getFishingAreas } from "@lib/apiClient";
+import { type FishingArea } from "@src/types";
+import { useCharacter } from "@lib/stateMangers";
+import { FishingScreen } from "@features/Fishing/Fishing";
 
 interface FishingAreaSelectionProps {
     setDisplay: (display: FishingScreen) => void;

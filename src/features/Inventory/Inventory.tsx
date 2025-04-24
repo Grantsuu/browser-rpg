@@ -40,19 +40,19 @@ const Inventory = () => {
 
     // Can't name this useItem because the linter thinks it's a hook
     const { mutateAsync: itemUse, isPending: isItemUsePending } = useMutation({
-        mutationFn: (variables: { item: InventoryItem }) => putUseItem(variables.item.id),
+        mutationFn: (variables: { item: InventoryItem }) => putUseItem(variables.item.item_id),
         onSuccess: (data, variables) => {
             toast.success(
                 <SuccessToast
                     action="Used"
                     name={variables.item.name}
                     amount={1}
-                    image={{ base64: variables.item.base64, alt: variables.item.alt }}
+                    image={{ base64: variables.item.base64, alt: variables.item.name }}
                 />
             );
             queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
                 // We know the item is in the inventory because we just used it and the API checks before using it
-                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
+                const itemIndex = oldData.findIndex((i) => i.item_id === variables.item.item_id);
                 // Have to check if item being removed had its amount reduced or removed entirely
                 if (data.inventory_item) {
                     oldData[itemIndex].amount = data.inventory_item.amount;
@@ -61,9 +61,6 @@ const Inventory = () => {
                 }
                 return oldData;
             });
-            // queryClient.setQueryData(['combat'], (oldData: CombatData) => {
-            //     return { ...oldData, ...data.character_combat };
-            // });
         },
         onError: (error: Error) => {
             toast.error(`Failed to use item: ${(error as Error).message}`);

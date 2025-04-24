@@ -23,7 +23,7 @@ const Shop = () => {
     const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useInventory();
 
     const { data: shop, error: shopError, isLoading: isShopLoading } = useQuery({
-        queryKey: ['shopInventory', { activeTab }],
+        queryKey: ['shopInventory', activeTab],
         queryFn: async () => {
             if (activeTab === 'All') {
                 return await getShopInventory();
@@ -127,117 +127,121 @@ const Shop = () => {
 
     return (
         <PageCard title="Shop" icon={faShop}>
-            <div className="flex flex-row items-center justify-between">
-                <div className="join">
-                    <input className="join-item btn btn-wide" type="radio" name="options" aria-label="Buy" defaultChecked onClick={() => setShopMode('buy')} />
-                    <input className="join-item btn btn-wide" type="radio" name="options" aria-label="Sell" onClick={() => setShopMode('sell')} />
+            <div className="flex flex-col gap-1">
+                <div className="flex flex-row items-center justify-between">
+                    <div className="join">
+                        <input className="join-item btn btn-wide" type="radio" name="options" aria-label="Buy" defaultChecked onClick={() => setShopMode('buy')} />
+                        <input className="join-item btn btn-wide" type="radio" name="options" aria-label="Sell" onClick={() => setShopMode('sell')} />
+                    </div>
+                    <div className="prose prose-lg">
+                        <FontAwesomeIcon icon={faCoins as IconProp} className="mr-1" />
+                        Gold: {character?.gold}
+                    </div>
                 </div>
-                <div className="prose prose-lg">
-                    <FontAwesomeIcon icon={faCoins as IconProp} className="mr-1" />
-                    Gold: {character?.gold}
+                <div className="flex flex-col w-full">
+                    {shopMode === 'buy' && <div role="tablist" className="tabs tabs-lift">
+                        <a role="tab" className={activeTab === 'All' ? `tab tab-active` : `tab`} onClick={() => setActiveTab('All')}>All</a>
+                        {isCategoriesLoading ? <span className="loading loading-spinner loading-sm"></span> :
+                            categories?.map((category: ItemCategory, id: number) => {
+                                return (
+                                    <a role="tab" className={activeTab === category ? `tab tab-active` : `tab`} onClick={() => setActiveTab(category)} key={id}>{toTitleCase(category)}</a>
+                                )
+                            })}
+                    </div>}
+                    <table className={`xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100 ${(isInventoryLoading || isShopLoading) ? 'flex-1' : ''}`}>
+                        <thead>
+                            <tr className="bg-secondary">
+                                <th className="w-10"></th>
+                                <th className="text-left p-1">Name</th>
+                                <th className="hidden xs:table-cell text-left p-1">Category</th>
+                                {shopMode === 'sell' && <th className="text-left p-1">Amount</th>}
+                                <th className="text-left p-1">Value</th>
+                                <th className="hidden xl:table-cell">Description</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {(isInventoryLoading || isShopLoading) ?
+                                <tr>
+                                    <td colSpan={7}>
+                                        <div className="flex items-center justify-center">
+                                            <span className="loading loading-spinner loading-xl"></span>
+                                        </div>
+                                    </td>
+                                </tr> :
+                                // Buy Mode
+                                shopMode === 'buy' ?
+                                    shop.sort((a: ShopItem, b: ShopItem) => a.item_id - b.item_id).map((item: ShopItem, id: number) => {
+                                        return (
+                                            <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
+                                                <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
+                                                    <img src={item.base64} alt={item.alt} title={item.alt} />
+                                                </td>
+                                                <td className="p-1">
+                                                    {item.name}
+                                                </td>
+                                                <td className="hidden xs:table-cell p-1">
+                                                    <ItemCategoryBadge category={item.category} />
+                                                </td>
+                                                <td className="p-1">
+                                                    {item.value}
+                                                </td>
+                                                <td className="hidden xl:table-cell">
+                                                    {item.description}
+                                                </td>
+                                                <td>
+                                                    <div className="flex flex-row gap-1">
+                                                        <button className="btn btn-soft btn-primary" onClick={async () => { buyItem({ item: item, amount: 1 }) }} disabled={isBuyPending}>
+                                                            {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy'}
+                                                        </button>
+                                                        <button className="btn btn-soft btn-primary" onClick={async () => { buyItem({ item: item, amount: 5 }) }} disabled={isBuyPending}>
+                                                            {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy x5'}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    }) :
+                                    // Sell Mode
+                                    inventory.sort((a: InventoryItem, b: InventoryItem) => a.item_id - b.item_id).map((item: InventoryItem, index: number) => {
+                                        return (
+                                            <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={index}>
+                                                <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
+                                                    <img src={item.base64} alt={item.alt} title={item.alt} />
+                                                </td>
+                                                <td>
+                                                    {item.name}
+                                                </td>
+                                                <td className="hidden xs:table-cell p-1">
+                                                    <ItemCategoryBadge category={item.category} />
+                                                </td>
+                                                <td>
+                                                    {item.amount}
+                                                </td>
+                                                <td>
+                                                    {Math.floor(item.value / 2)}
+                                                </td>
+                                                <td className="hidden xl:table-cell">
+                                                    {item.description}
+                                                </td>
+                                                <td>
+                                                    <div className="flex flex-col xs:flex-row gap-1">
+                                                        <button className="btn btn-soft btn-error btn-xs md:btn-sm" onClick={async () => { sellItem({ item: item, amount: 1 }) }} disabled={isSellPending}>
+                                                            {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell'}
+                                                        </button>
+                                                        <button className="btn btn-soft btn-error btn-xs md:btn-sm" onClick={async () => { sellItem({ item: item, amount: 5 }) }} disabled={isSellPending}>
+                                                            {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell x5'}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div role="tablist" className="tabs tabs-lift">
-                <a role="tab" className={activeTab === 'All' ? `tab tab-active` : `tab`} onClick={() => setActiveTab('All')}>All</a>
-                {isCategoriesLoading ? <span className="loading loading-spinner loading-sm"></span> :
-                    categories?.map((category: ItemCategory, id: number) => {
-                        return (
-                            <a role="tab" className={activeTab === category ? `tab tab-active` : `tab`} onClick={() => setActiveTab(category)} key={id}>{toTitleCase(category)}</a>
-                        )
-                    })}
-            </div>
-            <table className={`xs:table-xs sm:table-sm md:table-md table-compact table-pin-rows bg-base-100 ${(isInventoryLoading || isShopLoading) ? 'flex-1' : ''}`}>
-                <thead>
-                    <tr className="bg-secondary">
-                        <th className="w-10"></th>
-                        <th className="text-left p-1">Name</th>
-                        <th className="hidden xs:table-cell text-left p-1">Category</th>
-                        {shopMode === 'sell' && <th className="text-left p-1">Amount</th>}
-                        <th className="text-left p-1">Value</th>
-                        <th className="hidden xl:table-cell">Description</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {(isInventoryLoading || isShopLoading) ?
-                        <tr>
-                            <td colSpan={7}>
-                                <div className="flex items-center justify-center">
-                                    <span className="loading loading-spinner loading-xl"></span>
-                                </div>
-                            </td>
-                        </tr> :
-                        // Buy Mode
-                        shopMode === 'buy' ?
-                            shop.sort((a: ShopItem, b: ShopItem) => a.item_id - b.item_id).map((item: ShopItem, id: number) => {
-                                return (
-                                    <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
-                                        <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                            <img src={item.base64} alt={item.alt} title={item.alt} />
-                                        </td>
-                                        <td className="p-1">
-                                            {item.name}
-                                        </td>
-                                        <td className="hidden xs:table-cell p-1">
-                                            <ItemCategoryBadge category={item.category} />
-                                        </td>
-                                        <td className="p-1">
-                                            {item.value}
-                                        </td>
-                                        <td className="hidden xl:table-cell">
-                                            {item.description}
-                                        </td>
-                                        <td>
-                                            <div className="flex flex-row gap-1">
-                                                <button className="btn btn-soft btn-primary" onClick={async () => { buyItem({ item: item, amount: 1 }) }} disabled={isBuyPending}>
-                                                    {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy'}
-                                                </button>
-                                                <button className="btn btn-soft btn-primary" onClick={async () => { buyItem({ item: item, amount: 5 }) }} disabled={isBuyPending}>
-                                                    {isBuyPending ? <span className="loading loading-spinner loading-sm"></span> : 'Buy x5'}
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            }) :
-                            // Sell Mode
-                            inventory.sort((a: InventoryItem, b: InventoryItem) => a.item_id - b.item_id).map((item: InventoryItem, index: number) => {
-                                return (
-                                    <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={index}>
-                                        <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                            <img src={item.base64} alt={item.alt} title={item.alt} />
-                                        </td>
-                                        <td>
-                                            {item.name}
-                                        </td>
-                                        <td className="hidden xs:table-cell p-1">
-                                            <ItemCategoryBadge category={item.category} />
-                                        </td>
-                                        <td>
-                                            {item.amount}
-                                        </td>
-                                        <td>
-                                            {Math.floor(item.value / 2)}
-                                        </td>
-                                        <td className="hidden xl:table-cell">
-                                            {item.description}
-                                        </td>
-                                        <td>
-                                            <div className="flex flex-col xs:flex-row gap-1">
-                                                <button className="btn btn-soft btn-error btn-xs md:btn-sm" onClick={async () => { sellItem({ item: item, amount: 1 }) }} disabled={isSellPending}>
-                                                    {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell'}
-                                                </button>
-                                                <button className="btn btn-soft btn-error btn-xs md:btn-sm" onClick={async () => { sellItem({ item: item, amount: 5 }) }} disabled={isSellPending}>
-                                                    {isSellPending ? <span className="loading loading-spinner loading-sm"></span> : 'Sell x5'}
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                    }
-                </tbody>
-            </table>
         </PageCard>
     )
 }

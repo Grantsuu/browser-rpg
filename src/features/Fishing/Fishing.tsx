@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faExclamation, faFish, faFishFins, faHashtag, faRotateLeft, faWater, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import { getFishingGame, putStartFishingGame } from '../lib/apiClient';
-import PageCard from '../layouts/PageCard';
-import FishingTile from "../components/Fishing/FishingTile";
-import FishingAreaSelection from '../components/Fishing/FishingAreaSelection';
+import { getFishingGame, putStartFishingGame } from '@lib/apiClient';
+import PageCard from '@layouts/PageCard';
+import FishingTile from "@src/features/Fishing/FishingTile";
+import FishingAreaSelection from '@src/features/Fishing/FishingAreaSelection';
 
 export type FishingScreen = 'AreaSelection' | 'Fishing';
 

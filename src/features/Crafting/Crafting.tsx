@@ -5,14 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHammer, faKitchenSet } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { clsx } from 'clsx';
-import type { Item, ItemCategory, Recipe } from '../types';
-import { getCraftingRecipes, postCraftRecipe } from "../lib/apiClient";
-import { useConfetti } from '../contexts/ConfettiContext';
-import PageCard from '../layouts/PageCard';
-import ItemCategoryBadge from '../components/Badges/ItemCategoryBadge';
-import { useCharacter } from '../lib/stateMangers';
-import SuccessToast from '../components/Toasts/SuccessToast';
-import LevelUpToast from '../components/Toasts/LevelUpToast';
+import type { Item, ItemCategory, Recipe } from '@src/types';
+import { getCraftingRecipes, postCraftRecipe } from "@lib/apiClient";
+import { useConfetti } from '@contexts/ConfettiContext';
+import PageCard from '@layouts/PageCard';
+import ItemCategoryBadge from '@components/Badges/ItemCategoryBadge';
+import { useCharacter } from '@lib/stateMangers';
+import SuccessToast from '@components/Toasts/SuccessToast';
+import LevelUpToast from '@components/Toasts/LevelUpToast';
 
 const Crafting = () => {
     const queryClient = useQueryClient();

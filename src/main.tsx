@@ -12,17 +12,17 @@ import Dashboard from './layouts/Dashboard.tsx';
 import Register from './components/Auth/Register.tsx';
 import ResetPassword from './components/Auth/ResetPassword.tsx';
 import UpdatePassword from './components/Auth/UpdatePassword.tsx';
-import Home from './containers/Home.tsx';
-import Character from './containers/Character.tsx';
-import CharacterCreate from './components/Character/CharacterCreate.tsx';
-import CharacterStats from './components/Character/CharacterStats.tsx';
+import Home from '@features/Home/Home';
+import Character from '@features/Character/Character';
+import CharacterCreate from '@features/Character/CharacterCreate';
+import CharacterStats from '@features/Character/CharacterStats';
 import Shop from '@features/Shop/Shop.tsx';
-import Inventory from '@features/Inventory/Inventory.tsx';
-import Training from '@features/Training/Training.tsx';
-import Crafting from './containers/Crafting.tsx';
-import Farming from './containers/Farming.tsx';
+import Inventory from '@features/Inventory/Inventory';
+import Training from '@features/Training/Training';
+import Crafting from '@features/Crafting/Crafting';
+import Farming from '@features/Farming/Farming';
 import Login from './components/Auth/Login.tsx';
-import Fishing from './containers/Fishing.tsx';
+import Fishing from '@features/Fishing/Fishing';
 
 const queryClient = new QueryClient();
 

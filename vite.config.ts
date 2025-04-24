@@ -22,7 +22,6 @@ export default defineConfig({
             "@src": path.resolve(__dirname, "src/"),
             "@components": path.resolve(__dirname, "src/components/"),
             "@constants": path.resolve(__dirname, "src/constants/"),
-            "@containers": path.resolve(__dirname, "src/containers/"),
             "@contexts": path.resolve(__dirname, "src/contexts/"),
             "@features": path.resolve(__dirname, "src/features/"),
             "@layouts": path.resolve(__dirname, "src/layouts/"),

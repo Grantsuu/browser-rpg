@@ -5,10 +5,10 @@ import { faFish, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
 import { clsx } from 'clsx';
-import { useConfetti } from '../../contexts/ConfettiContext';
-import { putUpdateFishingGame } from '../../lib/apiClient';
-import SuccessToast from '../Toasts/SuccessToast';
-import LevelUpToast from '../Toasts/LevelUpToast';
+import { useConfetti } from '@contexts/ConfettiContext';
+import { putUpdateFishingGame } from '@lib/apiClient';
+import SuccessToast from '@components/Toasts/SuccessToast';
+import LevelUpToast from '@components/Toasts/LevelUpToast';
 
 interface FishingTileProps {
     label: string;
@@ -34,7 +34,7 @@ const FishingTile = ({ label, row, col, disabled, setDisabled }: FishingTileProp
                         name={data.fish.name}
                         amount={data.fish_amount}
                         experience={data.experience}
-                        image={{ base64: data.fish.base64, alt: data.fish.alt }}
+                        image={{ base64: data.fish.item.base64, alt: data.fish.name }}
                     />);
             }
             if (data.level) {

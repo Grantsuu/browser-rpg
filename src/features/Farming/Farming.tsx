@@ -2,11 +2,11 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faSeedling } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import PageCard from '../layouts/PageCard';
-import FarmPlot from '../components/Farming/FarmPlot';
-import { FarmPlotData } from '../types';
+import PageCard from '@layouts/PageCard';
+import FarmPlot from '@src/features/Farming/FarmPlot';
+import { FarmPlotData } from '@src/types';
 import { toast } from 'react-toastify';
-import { getFarmPlots, getFarmPlotCost, postBuyPlot } from '../lib/apiClient';
+import { getFarmPlots, getFarmPlotCost, postBuyPlot } from '@lib/apiClient';
 
 // const MAX_PLOTS = 3;
 

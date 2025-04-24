@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { parseISO } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faRotateRight, faSeedling, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faRotateRight, faSeedling } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import { Crop, FarmPlotData } from "../../types";
-import { putClearPlot, postHarvestPlot, postPlantPlot, getCrops } from '../../lib/apiClient';
-import { useConfetti } from '../../contexts/ConfettiContext';
-import { useTimers } from '../../contexts/TimersContext';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCharacter } from '../../lib/stateMangers';
-import SuccessToast from '../Toasts/SuccessToast';
-import LevelUpToast from '../Toasts/LevelUpToast';
+import { Crop, FarmPlotData } from "@src/types";
+import { putClearPlot, postHarvestPlot, postPlantPlot, getCrops } from '@lib/apiClient';
+import { useCharacter } from '@lib/stateMangers';
+import { useConfetti } from '@contexts/ConfettiContext';
+import { useTimers } from '@contexts/TimersContext';
+import SuccessToast from '@components/Toasts/SuccessToast';
+import LevelUpToast from '@components/Toasts/LevelUpToast';
+import ResponsiveDrawer from '@src/components/Responsive/ResponsiveDrawer';
+import ColumnDelayDown from '@src/components/Animated/Motion/ColumnDelayDown';
 
 interface FarmPlotProps {
     plotData: FarmPlotData;
@@ -189,45 +191,43 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                 </div>
             </div>
             {/* Seed Drawer */}
-            <div className="drawer drawer-end">
-                <input id="my-drawer-4" type="checkbox" className="drawer-toggle" checked={seedDrawerOpen} onChange={() => { }} />
-                <div className="drawer-side z-2">
-                    <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay" onClick={() => setSeedDrawerOpen(false)} />
-                    <ul className="menu bg-base-200 text-base-content h-full w-85 lg:w-1/3 p-4 overflow-y-scroll">
-                        {/* Sidebar content here */}
-                        <div className="flex items-start justify-between prose">
-                            <h2 className="flex-1 text-center">Choose a Seed</h2>
-                            <button className="btn btn-circle btn-ghost" onClick={() => setSeedDrawerOpen(false)}><FontAwesomeIcon icon={faXmark as IconProp} /></button>
-                        </div>
-                        <div className="flex flex-center">
-                            {
-                                cropIsLoading ?
-                                    <span className="loading loading-spinner loading-xl"></span> :
-                                    cropError ?
-                                        <div>
-                                            <p>Error loading crops: {cropError?.message}</p>
-                                        </div> :
-                                        <div className="flex flex-col gap-2 w-full">
-                                            {cropData?.sort((a: Crop, b: Crop) => a.required_level - b.required_level).map((crop: Crop) => (
-                                                <div key={crop?.id} className="card card-md w-full bg-base-100 shadow-md">
-                                                    <div className="card-body">
-                                                        <div className="flex items-center justify-between">
-                                                            <div className="flex flex-row gap-2 items-center">
-                                                                <img src={crop?.seed?.base64} alt={crop?.seed?.alt} title={crop?.seed?.alt} className="w-10" />
-                                                                <div><b>Lvl. {crop?.required_level}</b></div>
-                                                                <div>{crop?.seed?.name}</div>
-                                                            </div>
-                                                            <button className="btn btn-primary" onClick={() => handlePlantSeed(plotData.id, crop)} disabled={isPlantSeedsPending || (character?.farming_level < crop?.required_level)}>Plant</button>
+            <ResponsiveDrawer
+                open={seedDrawerOpen}
+                setOpen={setSeedDrawerOpen}
+                title="Seeds"
+                icon={faSeedling}
+            >
+                <div className="flex flex-center">
+                    {seedDrawerOpen && <div className="flex flex-col gap-2 w-full">
+                        {cropIsLoading ?
+                            <span className="loading loading-spinner loading-xl"></span> :
+                            cropError ?
+                                <div>
+                                    <p>Error loading crops: {cropError?.message}</p>
+                                </div> :
+                                <div className="flex flex-col gap-2 w-full">
+                                    {cropData?.sort((a: Crop, b: Crop) => a.required_level - b.required_level).map((crop: Crop, index: number) => (
+                                        <ColumnDelayDown index={index} key={index}>
+                                            <div key={crop?.id} className="card card-md w-full bg-base-100 shadow-md">
+                                                <div className="card-body">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex flex-row gap-2 items-center">
+                                                            <img src={crop?.seed?.base64} alt={crop?.seed?.alt} title={crop?.seed?.name} className="w-10" />
+                                                            <div><b>Lvl. {crop?.required_level}</b></div>
+                                                            <div>{crop?.seed?.name}</div>
                                                         </div>
+                                                        <button className="btn btn-primary" onClick={() => handlePlantSeed(plotData.id, crop)} disabled={isPlantSeedsPending || (character?.farming_level < crop?.required_level)}>Plant</button>
                                                     </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                            }
-                        </div>
-                    </ul>
+                                            </div>
+                                        </ColumnDelayDown>
+                                    ))}
+                                </div>
+                        }
+                    </div>
+                    }
                 </div>
-            </div>
+            </ResponsiveDrawer>
         </div>
     );
 };

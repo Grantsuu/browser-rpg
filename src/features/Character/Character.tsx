@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router';
 import { faUserShield } from "@fortawesome/free-solid-svg-icons";
-import PageCard from '../layouts/PageCard';
+import PageCard from '@layouts/PageCard';
 
 const Character = () => {
 

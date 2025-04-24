@@ -1,8 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faFish, faSeedling, faKitchenSet } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { useCharacter, useCharacterLevels } from '../../lib/stateMangers';
-import { experience_table } from '../../constants/game/experience_table';
+import { useCharacter, useCharacterLevels } from '@lib/stateMangers';
+import { experience_table } from '@constants/game/experience_table';
 
 const CharacterStats = () => {
     const { data: character } = useCharacter();
