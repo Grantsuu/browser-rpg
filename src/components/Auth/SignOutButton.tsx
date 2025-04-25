@@ -29,7 +29,7 @@ const SignOutButton = ({ className }: SignOutButtonProps) => {
     return (
         <ButtonPress
             type="submit"
-            className={clsx(`btn btn-error w-full ${className}`)}
+            className={clsx(`btn btn-error btn-outline w-full ${className}`)}
             onClick={() => { handleSignout() }}
         >
             <FontAwesomeIcon icon={faRightFromBracket as IconProp} /> Sign Out
