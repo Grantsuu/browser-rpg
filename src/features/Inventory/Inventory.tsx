@@ -48,6 +48,7 @@ const Inventory = () => {
                 <ItemUseToast
                     item={variables.item}
                     amount={1}
+                    results={data.results}
                 />
             );
             queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
