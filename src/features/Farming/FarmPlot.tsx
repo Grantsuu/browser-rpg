@@ -82,7 +82,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                                 Click <Link to='/farming' className="text-blue-500 hover:text-blue-800 underline">here</Link> to go to the Farming page.
                             </div>
                             <div className="w-1/3">
-                                <img src={variables.crop.product.base64} alt={variables.crop.product.alt} title={variables.crop.product.alt} />
+                                <img src={variables.crop.product.image} alt={variables.crop.product.name} title={variables.crop.product.name} />
                             </div>
                         </div>);
                 }
@@ -115,7 +115,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                     name={plotData.crop.product.name}
                     amount={data.amount}
                     experience={plotData.crop.experience}
-                    image={{ base64: plotData.crop.product.base64, alt: plotData.crop.product.alt }}
+                    image={plotData.crop.product.image}
                 />);
             if (data.level) {
                 levelUpConfetti();
@@ -150,9 +150,9 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                         {status === 'Inactive' ?
                             <FontAwesomeIcon icon={faSeedling as IconProp} size="3x" color="green" /> :
                             <img
-                                src={plotData.crop && (status === 'Growing' ? plotData.crop.seed.base64 : plotData.crop.product.base64)}
-                                alt={plotData.crop && (status === 'Growing' ? plotData.crop.seed.alt : plotData.crop.product.alt)}
-                                title={plotData.crop && (status === 'Growing' ? plotData.crop.seed.alt : plotData.crop.product.alt)}
+                                src={plotData.crop && (status === 'Growing' ? plotData.crop.seed.image : plotData.crop.product.image)}
+                                alt={plotData.crop && (status === 'Growing' ? plotData.crop.seed.name : plotData.crop.product.name)}
+                                title={plotData.crop && (status === 'Growing' ? plotData.crop.seed.name : plotData.crop.product.name)}
                                 className="w-15"
                             />}
                     </div>
@@ -212,7 +212,7 @@ const FarmPlot = ({ plotData }: FarmPlotProps) => {
                                                 <div className="card-body">
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex flex-row gap-2 items-center">
-                                                            <img src={crop?.seed?.base64} alt={crop?.seed?.alt} title={crop?.seed?.name} className="w-10" />
+                                                            <img src={crop?.seed?.image} alt={crop?.seed?.name} title={crop?.seed?.name} className="w-10" />
                                                             <div><b>Lvl. {crop?.required_level}</b></div>
                                                             <div>{crop?.seed?.name}</div>
                                                         </div>
