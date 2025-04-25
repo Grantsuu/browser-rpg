@@ -454,11 +454,11 @@ export const getCombat = async () => {
 
 // PUT
 
-export const putUpdateCombat = async (action: string, monsterId?: number) => {
+export const putUpdateCombat = async (action: string, id?: number) => {
     const params = new URLSearchParams();
     params.set('action', action);
-    if (monsterId) {
-        params.set('monster_id', monsterId.toString());
+    if (id) {
+        params.set('id', id.toString());
     }
     try {
         return await fetchApi(`${apiUrl}/combat?${params.toString()}`, {

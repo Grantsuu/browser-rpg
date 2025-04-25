@@ -5,17 +5,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faArrowLeftLong, faHand, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import type { CombatData, Item } from "../../types";
-import { useCharacter, useCharacterLevels, useInventory } from "../../lib/stateMangers";
-import { putResetCombat, putUpdateCombat } from "../../lib/apiClient";
-import { useConfetti } from '../../contexts/ConfettiContext';
-import ResponsiveDrawer from "../../components/Responsive/ResponsiveDrawer";
-import ButtonPress from "../../components/Animated/Button/ButtonPress";
-import ProgressBar from "../../components/Animated/ProgressBar";
-import CombatRewardsToast from "../../components/Toasts/CombatRewardsToast";
-import SuccessToast from "../../components/Toasts/SuccessToast";
-import LevelUpToast from "../../components/Toasts/LevelUpToast";
-import ColumnDelayDown from "../../components/Animated/Motion/ColumnDelayDown";
+import type { CombatData, InventoryItem } from "@src/types";
+import { useCharacter, useCharacterLevels, useInventory } from "@lib/stateMangers";
+import { putResetCombat, putUpdateCombat } from "@lib/apiClient";
+import { useConfetti } from '@contexts/ConfettiContext';
+import ResponsiveDrawer from "@components/Responsive/ResponsiveDrawer";
+import ButtonPress from "@components/Animated/Button/ButtonPress";
+import ProgressBar from "@components/Animated/ProgressBar";
+import CombatRewardsToast from "@components/Toasts/CombatRewardsToast";
+import SuccessToast from "@components/Toasts/SuccessToast";
+import LevelUpToast from "@components/Toasts/LevelUpToast";
+import ItemUseToast from "@src/components/Toasts/ItemUseToast";
+import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
 
 interface CombatProps {
     combat: CombatData;
@@ -38,7 +39,7 @@ const Combat = ({ combat }: CombatProps) => {
     }, [showAnimation]);
 
     const { mutateAsync: updateCombat, isPending: combatLoading } = useMutation({
-        mutationFn: (variables: { action: string, monsterId?: number }) => putUpdateCombat(variables.action, variables.monsterId),
+        mutationFn: (variables: { action: string, id?: number }) => putUpdateCombat(variables.action, variables.id),
         onSuccess: (data) => {
             setShowAnimation(true);
             queryClient.setQueryData(['combat'], data);
@@ -58,6 +59,9 @@ const Combat = ({ combat }: CombatProps) => {
                             skill="Combat"
                         />);
                 }
+            }
+            if (data?.state?.last_actions?.player?.action === 'use_item') {
+                toast.success(<ItemUseToast item={data?.state?.last_actions?.player?.item} amount={1} />);
             }
         },
         onError: (error) => {
@@ -229,7 +233,7 @@ const Combat = ({ combat }: CombatProps) => {
                                 {/* Fight same monster again */}
                                 <ButtonPress
                                     className="btn-primary text-white"
-                                    onClick={() => { updateCombat({ action: "start", monsterId: combat.monster.id }); }}
+                                    onClick={() => { updateCombat({ action: "start", id: combat.monster.id }); }}
                                     disabled={combatLoading || resetLoading}
                                 >
                                     <FontAwesomeIcon icon={faRotateRight as IconProp} /> Fight Again
@@ -277,7 +281,7 @@ const Combat = ({ combat }: CombatProps) => {
                 {showItemDrawer && <div className="flex flex-col gap-2 h-full">
                     {isInventoryLoading ? <span className="h-full loading loading-spinner loading-xl self-center"></span> :
                         inventoryError ? <span className="h-full text-center">Something went wrong fetching inventory.</span> :
-                            inventory?.filter((item: Item) => item.category === "consumable").map((item: Item, index: number) => (
+                            inventory?.filter((item: InventoryItem) => item.category === "consumable").map((item: InventoryItem, index: number) => (
                                 <ColumnDelayDown index={index} key={index}>
                                     {/* Item Card */}
                                     <div className="card card-sm w-full bg-base-100 shadow-md">
@@ -295,9 +299,8 @@ const Combat = ({ combat }: CombatProps) => {
                                                 <ButtonPress
                                                     className="btn-primary"
                                                     onClick={async () => {
-                                                        // Use item
-                                                        // await itemUse({ item });
-                                                        // toast.success(`Used ${item.name}`);
+                                                        setShowItemDrawer(false);
+                                                        await updateCombat({ action: 'use_item', id: item.item_id });
                                                     }}
                                                     disabled={isInventoryLoading || combatLoading}
                                                 >
@@ -310,8 +313,8 @@ const Combat = ({ combat }: CombatProps) => {
                             ))
                     }
                 </div>}
-            </ResponsiveDrawer>
-        </div>
+            </ResponsiveDrawer >
+        </div >
     );
 };
 export default Combat;

@@ -12,6 +12,8 @@ import PageCard from '@layouts/PageCard';
 import ItemCategoryBadge from '@components/Badges/ItemCategoryBadge';
 import SuccessToast from '@components/Toasts/SuccessToast';
 import ButtonPress from '@components/Animated/Button/ButtonPress';
+import ItemEffectDisplay from '@src/components/Items/ItemEffectDisplay';
+import ItemUseToast from '@src/components/Toasts/ItemUseToast';
 
 const Inventory = () => {
     const queryClient = useQueryClient();
@@ -43,11 +45,9 @@ const Inventory = () => {
         mutationFn: (variables: { item: InventoryItem }) => putUseItem(variables.item.item_id),
         onSuccess: (data, variables) => {
             toast.success(
-                <SuccessToast
-                    action="Used"
-                    name={variables.item.name}
+                <ItemUseToast
+                    item={variables.item}
                     amount={1}
-                    image={{ base64: variables.item.base64, alt: variables.item.name }}
                 />
             );
             queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
@@ -115,6 +115,10 @@ const Inventory = () => {
                                     </td>
                                     <td className="hidden xl:table-cell">
                                         {item.description}
+                                        {item.effects &&
+                                            <div className="flex flex-row gap-1">
+                                                <span className="font-semibold">Usage:</span> <ItemEffectDisplay effects={item.effects} />
+                                            </div>}
                                     </td>
                                     <td className="p-1 flex flex-row gap-1 justify-end">
                                         {/* Use Item for consumables only */}
