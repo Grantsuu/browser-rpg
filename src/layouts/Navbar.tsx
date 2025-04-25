@@ -21,7 +21,7 @@ const Navbar = () => {
 
     return (
         // Side Navigation Bar
-        <div className="drawer-side z-1 border-r-1 border-gray-200">
+        <div className="drawer-side z-1 border-r-1 border-base-200">
             {/* This is the part that lets you click to close */}
             <label htmlFor="left-navbar-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <ul className="menu bg-base-100 text-base-content min-h-full w-80 lg:w-65 p-2 justify-between text-xl md:text-lg lg:text-base">

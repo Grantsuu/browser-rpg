@@ -10,7 +10,7 @@ interface PageCardProps {
 
 const PageCard = ({ title, icon, loading = false, children }: PageCardProps) => {
     return (
-        <div className="card rounded-md w-full h-full bg-base-100 shadow-md overflow-y-auto border-1 border-gray-200">
+        <div className="card rounded-md w-full h-full bg-base-100 shadow-md overflow-y-auto border-1 border-base-200">
             <div className="card-body p-2 md:p-4 lg:p-6 gap-0">
                 <div className="w-full">
                     <div className="text-4xl font-bold text-center sm:text-left">

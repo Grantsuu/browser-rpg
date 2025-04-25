@@ -3,19 +3,21 @@ import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useCharacter } from '../lib/stateMangers';
 import SignOutButton from '../components/Auth/SignOutButton';
+import ThemeController from '@src/components/ThemeController/ThemeController';
 
 const Header = () => {
     const { data } = useCharacter();
 
     return (
-        <div className="navbar sticky top-0 z-1 bg-base-100 border-b-1 border-gray-200 justify-between">
+        <div className="navbar sticky top-0 z-1 bg-base-100 border-b-1 border-base-200 justify-between">
             {/* Drawer for mobile/tablet view */}
             <label htmlFor="left-navbar-drawer" className="btn btn-ghost btn-circle lg:hidden">
                 <FontAwesomeIcon icon={faBars as IconProp} size="2x" />
             </label>
             <div></div>
             {/* Profile */}
-            <div className="flex-none">
+            <div className="flex flex-row gap-2 items-center">
+                <ThemeController />
                 {/* <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                         <div className="indicator">
@@ -61,7 +63,7 @@ const Header = () => {
                     </ul>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
