@@ -6,16 +6,14 @@ import SignOutButton from '../components/Auth/SignOutButton';
 
 const Header = () => {
     const { data } = useCharacter();
+
     return (
-        <div className="navbar bg-primary flex justify-between">
+        <div className="navbar sticky top-0 z-1 bg-base-100 border-b-1 border-gray-200 justify-between">
             {/* Drawer for mobile/tablet view */}
-            <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">
+            <label htmlFor="left-navbar-drawer" className="btn btn-ghost btn-circle lg:hidden">
                 <FontAwesomeIcon icon={faBars as IconProp} size="2x" />
             </label>
-            {/* Title */}
-            <div>
-                <a className="btn btn-ghost text-xl font-bold gap-2" href="/">Elvard <img src="/dragon.png" className="inline-block w-8 h-8" alt="Elvard" /></a>
-            </div>
+            <div></div>
             {/* Profile */}
             <div className="flex-none">
                 {/* <div className="dropdown dropdown-end">

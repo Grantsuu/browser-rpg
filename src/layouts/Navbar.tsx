@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { clsx } from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,33 +5,31 @@ import { faBox, faFish, faHammer, faHouse, faSeedling, faShop, faUserShield } fr
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import SignOutButton from '../components/Auth/SignOutButton';
 
-const Navbar = ({ children }: { children: React.ReactNode }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const Navbar = () => {
     const location = useLocation();
 
-    const handleItemClick = () => {
-        setIsOpen(false);
+    const toggleNavbar = () => {
+        const navbarDrawer = document.getElementById('left-navbar-drawer');
+        if (navbarDrawer) {
+            navbarDrawer.click();
+        }
     }
 
-    console.log(location.pathname);
+    const handleItemClick = () => {
+        toggleNavbar();
+    }
+
     return (
-        <div className="drawer lg:drawer-open">
-            <input
-                id="my-drawer-2"
-                type="checkbox"
-                checked={isOpen}
-                onChange={() => setIsOpen(!isOpen)}
-                className="drawer-toggle"
-            />
-            {/* Content */}
-            {/* Header is 4rem so the rest of the content, determined by sidebar, should be 100vh - rem high */}
-            <div className="drawer-content flex flex-col h-[calc(100dvh-4rem)] items-center justify-center bg-base-200 shadow-inner p-1 md:p-3 overflow-scroll">
-                {children}
-            </div>
-            {/* Side Navigation Bar */}
-            <div className="drawer-side w-full h-dvh lg:h-[calc(100dvh-4rem)] z-1">
-                <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
-                <ul className="menu bg-base-100 text-base-content h-full w-85 lg:w-70 p-2 justify-between text-xl md:text-lg lg:text-base">
+        // Side Navigation Bar
+        <div className="drawer-side z-1 border-r-1 border-gray-200">
+            {/* This is the part that lets you click to close */}
+            <label htmlFor="left-navbar-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+            <ul className="menu bg-base-100 text-base-content min-h-full w-80 lg:w-65 p-2 justify-between text-xl md:text-lg lg:text-base">
+                <div>
+                    {/* Title */}
+                    <div className="flex w-full p-2 items-center justify-center">
+                        <a className="btn btn-ghost text-2xl font-bold gap-2" href="/">Elvard <img src="/dragon.png" className="inline-block w-8 h-8" alt="Elvard" /></a>
+                    </div>
                     <div>
                         <li>
                             <Link
@@ -114,9 +111,9 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
                             </details>
                         </li>
                     </div>
-                    <SignOutButton />
-                </ul>
-            </div>
+                </div>
+                <SignOutButton />
+            </ul>
         </div>
     )
 }
