@@ -48,7 +48,7 @@ const Combat = ({ combat }: CombatProps) => {
                 // Loot toast
                 const loot = data?.state?.outcome?.rewards?.loot;
                 if (loot?.length > 0) {
-                    toast.info(<SuccessToast action='Looted' name={loot[0].item.name} amount={loot[0].quantity} image={{ base64: loot[0].base64, alt: loot[0].alt }} />);
+                    toast.info(<SuccessToast action='Looted' name={loot[0].item.name} amount={loot[0].quantity} image={loot[0].image} />);
                 }
                 // Level up toast
                 if (data?.state?.outcome?.rewards?.level) {
@@ -289,7 +289,7 @@ const Combat = ({ combat }: CombatProps) => {
                                             <div className="flex items-center justify-between">
                                                 {/* Item Info */}
                                                 <div key={index} className="flex flex-row gap-1 lg:gap-3 items-center">
-                                                    <img src={item.base64} alt={item.alt} title={item.alt} className="w-1/10" />
+                                                    <img src={item.image} alt={item.name} title={item.name} className="w-1/10" />
                                                     <div className="flex flex-col">
                                                         <div className="text-base font-semibold">{item.name}</div>
                                                         <div>{item.description}</div>

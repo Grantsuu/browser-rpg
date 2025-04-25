@@ -10,20 +10,26 @@ const ItemCategoryBadge = ({ category }: ItemCategoryBadgeProps) => {
 
     useEffect(() => {
         switch (category) {
+            // TODO: remove when category is removed from database
             case 'weapon':
                 setBadgeStyle('badge-primary');
                 break;
+            // TODO: remove when category is removed from database
             case 'accessory':
                 setBadgeStyle('badge-secondary');
                 break;
             case 'consumable':
                 setBadgeStyle('badge-accent');
                 break;
+            // TODO: remove when category is removed from database
             case 'armor':
                 setBadgeStyle('badge-neutral');
                 break;
             case 'material':
                 setBadgeStyle('badge-success');
+                break;
+            case 'equipment':
+                setBadgeStyle('badge-primary');
                 break;
             default:
                 setBadgeStyle('badge-error');

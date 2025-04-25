@@ -23,7 +23,7 @@ const ItemUseToast = ({ item, amount, results }: ItemUseToastProps) => {
                 }.
             </div>
             <div className='w-1/5'>
-                <img src={item?.base64} alt={item?.name} title={item?.name} />
+                <img src={item?.image} alt={item?.name} title={item?.name} />
             </div>
         </div>
     );

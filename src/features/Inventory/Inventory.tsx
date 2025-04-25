@@ -27,7 +27,7 @@ const Inventory = () => {
                 <SuccessToast
                     action="Deleted"
                     name={variables.item.name}
-                    image={{ base64: variables.item.base64, alt: variables.item.name }}
+                    image={variables.item.image}
                 />);
             queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
                 const itemIndex = oldData.findIndex((i) => i.item_id === variables.item.item_id);
@@ -100,7 +100,7 @@ const Inventory = () => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={index}>
                                     <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                        <img src={item.base64} alt={item.alt} title={item.alt} />
+                                        <img src={item.image} alt={item.name} title={item.name} />
                                     </td>
                                     <td className="p-1">
                                         {item.name}

@@ -36,7 +36,7 @@ const Crafting = () => {
                     name={variables.recipe.item.name}
                     amount={data.amount}
                     experience={data.experience}
-                    image={{ base64: variables.recipe.item.base64, alt: variables.recipe.item.alt }}
+                    image={variables.recipe.item.image}
                 />
             );
             if (data.level) {
@@ -105,7 +105,7 @@ const Crafting = () => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={id}>
                                     <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
-                                        <img src={recipe.item.base64} alt={recipe.item.alt} title={recipe.item.alt} />
+                                        <img src={recipe.item.image} alt={recipe.item.name} title={recipe.item.name} />
                                     </td>
                                     <td>
                                         {recipe.item.name}

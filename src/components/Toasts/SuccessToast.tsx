@@ -1,5 +1,4 @@
 import React from "react";
-import { ItemImage } from "../../types";
 
 interface SuccessToastProps {
     action: string;
@@ -7,7 +6,7 @@ interface SuccessToastProps {
     amount?: number;
     experience?: number;
     extendedMessage?: React.ReactNode;
-    image?: ItemImage;
+    image?: string;
 }
 
 const SuccessToast = ({ action, name, amount, experience, image, extendedMessage }: SuccessToastProps) => {
@@ -17,7 +16,7 @@ const SuccessToast = ({ action, name, amount, experience, image, extendedMessage
                 {action} {amount ? <b>{amount}x</b> : ''} <span className="text-blue-500">{name}</span>{experience ? <> and gained <span className="text-green-600"><b>{experience}</b></span> experience!</> : extendedMessage ? extendedMessage : '.'}
             </div>
             {image ? <div className='w-1/5'>
-                <img src={image?.base64} alt={image?.alt ? image.alt : ''} title={image?.alt ? image.alt : ''} />
+                <img src={image} alt={name} title={name} />
             </div> : <></>}
         </div>
     );

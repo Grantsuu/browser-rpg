@@ -4,11 +4,6 @@ export type ItemSubcategory = 'food' | 'seed' | 'ingredient' | 'fish';
 
 export type RecipeCategory = 'cooking';
 
-export type ItemImage = {
-    base64: string
-    alt: string
-}
-
 export type ItemEffectType = 'restore_health';
 
 export type ItemEffectUnit = 'integer' | 'second';
@@ -21,7 +16,7 @@ export type ItemEffectData = {
     effect_unit: ItemEffectUnit
 }
 
-export type Item = ItemImage & {
+export type Item = {
     id: number,
     amount?: number
     name: string,
@@ -29,6 +24,7 @@ export type Item = ItemImage & {
     subcategory?: ItemSubcategory,
     value: number,
     description: string,
+    image: string,
     effects?: ItemEffectData[]
 }
 
