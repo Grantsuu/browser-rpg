@@ -62,6 +62,7 @@ const Combat = ({ combat }: CombatProps) => {
             }
             if (data?.state?.last_actions?.player?.action === 'use_item') {
                 toast.success(<ItemUseToast item={data?.state?.last_actions?.player?.item} amount={1} results={data?.state?.last_actions?.player?.results} />);
+                queryClient.setQueryData(['characterCombatStats'], data.player);
             }
         },
         onError: (error) => {

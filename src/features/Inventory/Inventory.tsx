@@ -62,6 +62,7 @@ const Inventory = () => {
                 }
                 return oldData;
             });
+            queryClient.setQueryData(['characterCombatStats'], data.character_combat);
         },
         onError: (error: Error) => {
             toast.error(`Failed to use item: ${(error as Error).message}`);

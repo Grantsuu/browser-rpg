@@ -147,6 +147,15 @@ export const getCharacterLevels = async () => {
     }
 }
 
+// Get Character Combat Stats
+export const getCharacterCombatStats = async () => {
+    try {
+        return await fetchApi(`${apiUrl}/characters/combat`);
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
 // POST
 
 export const postCreateCharacter = async (name: string) => {
