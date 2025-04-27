@@ -3,6 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { Equipment } from "@src/types";
 import { getCharacterEquipment } from "@lib/apiClient";
 import { useCharacterCombatStats } from "@src/lib/stateMangers";
+import ArmorPlaceholder from "./Placeholders/ArmorPlaceholder";
+import WeaponPlaceholder from "./Placeholders/WeaponPlaceholder";
+import AccessoryPlaceholder from "./Placeholders/AccessoryPlaceholder";
+import EquipmentSlot from "./EquipmentSlot";
 
 const Equipment = () => {
 
@@ -20,9 +24,9 @@ const Equipment = () => {
     return (
         <PageCard title="Equipment" icon='/images/equipment.png'>
             <div className="flex flex-col md:flex-row gap-4">
-                <div className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 lg:w-1/4">
+                <div className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4">
                     <div className="card-body gap-1">
-                        <h2 className="card-title">
+                        <h2 className="card-title justify-center">
                             Combat Stats
                             <img src='/images/stats.png' alt="Stats" className="w-5 h-5" />
                         </h2>
@@ -43,34 +47,17 @@ const Equipment = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 lg:w-1/4">
+                <div className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4">
                     <div className="card-body gap-1">
                         <h2 className="card-title justify-center">
                             Equipped
                             <img src='/images/equipment.png' alt="Equipped" className="w-5 h-5" />
                         </h2>
                         <div className="divider m-0" />
-                        <div className="grid grid-cols-2 gap-2 gap-x-2">
-
-                            <div className="flex justify-center aspect-square w-20 p-1 rounded-lg border-5 bg-base-200 hover:bg-base-300 hover:cursor-pointer">
-                                {isEquipmentLoading ?
-                                    <span className="loading loading-spinner w-10" /> :
-                                    <img src={equippedWeapon?.item?.image ? equippedWeapon?.item?.image : '/images/weapon_placeholder.png'} alt="Weapon" />}
-                            </div>
-                            <div>
-                                <div className="text-base font-semibold">Weapon</div>
-                                <div>{equippedWeapon?.item?.name}</div>
-                            </div>
-                            <img src='/images/armor_placeholder.png' alt="Armor" className="w-20 p-1 rounded-lg border-5 bg-base-200 hover:bg-base-300 hover:cursor-pointer" />
-                            <div>
-                                <div className="text-base font-semibold">Armor</div>
-                                <div>{equippedArmor?.item?.name}</div>
-                            </div>
-                            <img src='/images/accessory_placeholder.png' alt="Accessory" className="w-20 p-1 rounded-lg border-5 bg-base-200 hover:bg-base-300 hover:cursor-pointer" />
-                            <div>
-                                <div className="text-base font-semibold">Accessory</div>
-                                <div>{equippedAccessory?.item?.name}</div>
-                            </div>
+                        <div className="flex flex-col gap-2">
+                            <EquipmentSlot title="Weapon" placeholder={<WeaponPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedWeapon} />
+                            <EquipmentSlot title="Armor" placeholder={<ArmorPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedArmor} />
+                            <EquipmentSlot title="Accessory" placeholder={<AccessoryPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedAccessory} />
                         </div>
                     </div>
                 </div>
