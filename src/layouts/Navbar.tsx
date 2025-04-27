@@ -50,7 +50,7 @@ const Navbar = () => {
                                             onClick={() => handleItemClick()}
                                             className={clsx(`${location.pathname.includes('stats') ? 'menu-active' : ''}`)}
                                         >
-                                            <img src='/images/character_skills.png' className="w-5" /> Stats
+                                            <img src='/images/stats.png' className="w-5" /> Stats
                                         </Link>
                                     </li>
                                     <li>

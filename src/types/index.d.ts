@@ -36,6 +36,19 @@ export type InventoryItem = Item & {
     item_id: number
 }
 
+export type Equipment = {
+    id: number,
+    item_id: number,
+    health: number,
+    power: number,
+    toughness: number,
+    category: EquipmentCategoryType,
+    subcategory: EquipmentSubcategoryType,
+    required_level: number,
+    effects: EquipmentEffectData[],
+    item: Item
+}
+
 export type Recipe = {
     item: Item
     ingredients: Item[]

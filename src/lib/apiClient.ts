@@ -500,3 +500,14 @@ export const getTrainingAreas = async () => {
     }
 }
 
+// Equipment
+
+// GET
+
+export const getCharacterEquipment = async () => {
+    try {
+        return await fetchApi(`${apiUrl}/equipment`);
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
