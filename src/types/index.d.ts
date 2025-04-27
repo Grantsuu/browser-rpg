@@ -36,6 +36,10 @@ export type InventoryItem = Item & {
     item_id: number
 }
 
+export type EquipmentCategoryType = 'weapon' | 'armor' | 'accessory';
+
+export type EquipmentSubcategoryType = 'sword' | 'axe' | 'pickaxe' | 'shovel' | 'fishing_rod' | 'ring' | 'amulet';
+
 export type Equipment = {
     id: number,
     item_id: number,

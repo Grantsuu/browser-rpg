@@ -1,5 +1,6 @@
 import PageCard from "@src/layouts/PageCard";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "motion/react"
 import type { Equipment } from "@src/types";
 import { getCharacterEquipment } from "@lib/apiClient";
 import { useCharacterCombatStats } from "@src/lib/stateMangers";
@@ -24,7 +25,13 @@ const Equipment = () => {
     return (
         <PageCard title="Equipment" icon='/images/equipment.png'>
             <div className="flex flex-col md:flex-row gap-4">
-                <div className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.2, delay: 0.1 }}
+                    className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4"
+                >
                     <div className="card-body gap-1">
                         <h2 className="card-title justify-center">
                             Combat Stats
@@ -46,8 +53,14 @@ const Equipment = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4">
+                </motion.div>
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.2, delay: 0.2 }}
+                    className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4"
+                >
                     <div className="card-body gap-1">
                         <h2 className="card-title justify-center">
                             Equipped
@@ -55,12 +68,12 @@ const Equipment = () => {
                         </h2>
                         <div className="divider m-0" />
                         <div className="flex flex-col gap-2">
-                            <EquipmentSlot title="Weapon" placeholder={<WeaponPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedWeapon} />
-                            <EquipmentSlot title="Armor" placeholder={<ArmorPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedArmor} />
-                            <EquipmentSlot title="Accessory" placeholder={<AccessoryPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedAccessory} />
+                            <EquipmentSlot category="weapon" placeholder={<WeaponPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedWeapon} />
+                            <EquipmentSlot category="armor" placeholder={<ArmorPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedArmor} />
+                            <EquipmentSlot category="accessory" placeholder={<AccessoryPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedAccessory} />
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </PageCard >
     )

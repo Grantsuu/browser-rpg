@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faArrowLeftLong, faHand, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import type { CombatData, InventoryItem } from "@src/types";
+import type { CombatData, InventoryItem, ItemEffectData } from "@src/types";
 import { useCharacter, useCharacterLevels, useInventory } from "@lib/stateMangers";
 import { putResetCombat, putUpdateCombat } from "@lib/apiClient";
 import { useConfetti } from '@contexts/ConfettiContext';
@@ -17,6 +17,7 @@ import SuccessToast from "@components/Toasts/SuccessToast";
 import LevelUpToast from "@components/Toasts/LevelUpToast";
 import ItemUseToast from "@src/components/Toasts/ItemUseToast";
 import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
+import ItemEffectDisplay from "@src/components/Items/ItemEffectDisplay";
 
 interface CombatProps {
     combat: CombatData;
@@ -292,8 +293,10 @@ const Combat = ({ combat }: CombatProps) => {
                                                 <div key={index} className="flex flex-row gap-1 lg:gap-3 items-center">
                                                     <img src={item.image} alt={item.name} title={item.name} className="w-1/10" />
                                                     <div className="flex flex-col">
-                                                        <div className="text-base font-semibold">{item.name}</div>
-                                                        <div>{item.description}</div>
+                                                        <div className="text-lg font-semibold">{item.name}</div>
+                                                        <div className="text-base">
+                                                            <ItemEffectDisplay effects={item.effects as ItemEffectData[]} />
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 {/* Use Button */}
