@@ -16,6 +16,7 @@ import Home from '@features/Home/Home';
 import Character from '@features/Character/Character';
 import CharacterCreate from '@features/Character/CharacterCreate';
 import CharacterStats from '@features/Character/CharacterStats';
+import Equipment from './features/Equipment/Equipment.tsx';
 import Shop from '@features/Shop/Shop.tsx';
 import Inventory from '@features/Inventory/Inventory';
 import Training from '@features/Training/Training';
@@ -38,9 +39,10 @@ createRoot(document.getElementById('root')!).render(
                                 <Route element={<Dashboard />} >
                                     <Route index element={<Home />} />
                                     <Route path="character" element={<Character />}>
-                                        <Route index element={<CharacterStats />} />
+                                        <Route path='stats' element={<CharacterStats />} />
                                         <Route path="create" element={<CharacterCreate />} />
                                     </Route>
+                                    <Route path="equipment" element={<Equipment />} />
                                     <Route path="shop" element={<Shop />} />
                                     <Route path="inventory" element={<Inventory />} />
                                     <Route path="training" element={<Training />} />

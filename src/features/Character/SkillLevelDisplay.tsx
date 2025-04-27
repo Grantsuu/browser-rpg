@@ -30,7 +30,7 @@ const SkillLevelDisplay = ({ title, icon, level, experience, maxExperience, isLo
             </div>
             {isLoading ? <div className="skeleton h-4 w-full"></div> : <ProgressBar
                 backgroundClassName="h-4"
-                width={Math.min(100, ((experience - currentLevelExperience) / (maxExperience - currentLevelExperience)) * 100)}
+                width={Math.floor(((experience - currentLevelExperience) / (maxExperience - currentLevelExperience)) * 100)}
             />}
         </div>
     );

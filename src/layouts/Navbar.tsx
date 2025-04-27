@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router';
 import { clsx } from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBox, faFish, faHammer, faHouse, faSeedling, faShop, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import { faBox, faFish, faHammer, faHouse, faSeedling, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import SignOutButton from '../components/Auth/SignOutButton';
 
@@ -41,13 +41,29 @@ const Navbar = () => {
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                to="/character"
-                                onClick={() => handleItemClick()}
-                                className={clsx(`${location.pathname.includes('character') ? 'menu-active' : ''}`)}
-                            >
-                                <FontAwesomeIcon icon={faUserShield as IconProp} />Character
-                            </Link>
+                            <details open>
+                                <summary><img src='/images/knight.png' className="w-5" />Character</summary>
+                                <ul>
+                                    <li>
+                                        <Link
+                                            to="/character/stats"
+                                            onClick={() => handleItemClick()}
+                                            className={clsx(`${location.pathname.includes('stats') ? 'menu-active' : ''}`)}
+                                        >
+                                            <img src='/images/character_skills.png' className="w-5" /> Stats
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/equipment"
+                                            onClick={() => handleItemClick()}
+                                            className={clsx(`${location.pathname.includes('equipment') ? 'menu-active' : ''}`)}
+                                        >
+                                            <img src='/images/equipment.png' className="w-5" /> Equipment
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </details>
                         </li>
                         <li>
                             <Link
@@ -73,12 +89,12 @@ const Navbar = () => {
                                 onClick={() => handleItemClick()}
                                 className={clsx(`${location.pathname.includes('training') ? 'menu-active' : ''}`)}
                             >
-                                <img src="images/swords.png" className="w-5" />Training
+                                <img src="/images/swords.png" className="w-5" />Training
                             </Link>
                         </li>
                         <li>
                             <details open>
-                                <summary><img src='images/skills.png' className="w-5" />Skills</summary>
+                                <summary><img src='/images/skills.png' className="w-5" />Skills</summary>
                                 <ul>
                                     <li>
                                         <Link

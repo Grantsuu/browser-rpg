@@ -49,7 +49,7 @@ const CharacterStats = () => {
             <div className="grid grid-cols-3 gap-4">
                 <SkillLevelDisplay
                     title={'Combat'}
-                    icon='images/swords.png'
+                    icon='/images/swords.png'
                     level={levels?.combat_level}
                     experience={levels?.combat_experience}
                     maxExperience={experience_table[levels?.combat_level + 1 as keyof typeof experience_table]}

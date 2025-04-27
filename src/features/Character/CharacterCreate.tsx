@@ -36,7 +36,7 @@ const CharacterCreate = () => {
         onSuccess: () => {
             toast.success('Character created successfully!');
             queryClient.invalidateQueries({ queryKey: ['character'] });
-            navigate('/character');
+            navigate('/character/stats');
         },
         onError: (error: Error) => {
             toast.error(`Something went wrong creating the character: ${error.message}`);
