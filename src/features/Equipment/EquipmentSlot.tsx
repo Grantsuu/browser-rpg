@@ -49,16 +49,45 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                         </div>
                     </div>
                     {equipment ?
-                        <ButtonPress className="btn-secondary btn-sm xl:btn-xs btn-outline" disabled={isLoading}>
+                        <ButtonPress className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
                             Unequip
                         </ButtonPress> :
-                        <ButtonPress onClick={() => setIsDrawerOpen(true)} className="btn-primary btn-sm xl:btn-xs" disabled={isLoading}>
+                        <ButtonPress onClick={() => setIsDrawerOpen(true)} className="btn-primary btn-sm" disabled={isLoading}>
                             Equip
                         </ButtonPress>}
                 </div>
             </div>
             <ResponsiveDrawer title={toTitleCase(category)} icon="images/equipment.png" open={isDrawerOpen} setOpen={setIsDrawerOpen}>
                 {isDrawerOpen && <div className="flex flex-col gap-2 h-full">
+                    <div className="text-base font-semibold self-center">Currently Equipped</div>
+                    {equipment && <div className="card card-sm w-full bg-base-100 shadow-md border-6 border-base-300 hover:bg-base-200">
+                        <div className="card-body p-2">
+                            <div className="flex flex-row">
+                                <img src={equipment?.image} alt={equipment?.name} className="w-1/4 xl:w-1/5 p-1 border-5 rounded-lg" />
+                                <div className="flex flex-row justify-between w-full ml-2">
+                                    <div className="flex flex-col self-start gap-1">
+                                        <div className="flex flex-col lg:gap-1 items-start lg:flex-row lg:items-center">
+                                            <div className="text-base font-semibold">{equipment?.name}</div>
+                                            <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.subcategory)}</div>
+                                        </div>
+                                        <div className="flex flex-row gap-2">
+                                            <div className="flex flex-row gap-1 font-semibold items-center text-sm">
+                                                <img src='/images/heart.png' className="w-5" /> {equipment?.health}
+                                            </div>
+                                            <div className="flex flex-row gap-1 font-semibold items-center text-sm">
+                                                <img src='/images/muscle.png' className="w-5" />  {equipment?.power}
+                                            </div>
+                                            <div className="flex flex-row gap-1 font-semibold items-center text-sm">
+                                                <img src='/images/shield.png' className="w-5" /> {equipment?.toughness}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>}
+                    <div className="divider m-0"></div>
+                    <div className="text-base font-semibold self-center">In Inventory</div>
                     {inventoryError ?
                         <span className="h-full text-center">Something went wrong fetching inventory.</span> :
                         isInventoryLoading ?
@@ -66,19 +95,32 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                             inventory?.sort((a: Equipment, b: Equipment) => a.item_id - b.item_id).map((equipment: Equipment, index: number) => {
                                 return (
                                     <ColumnDelayDown index={index} key={index}>
-                                        <div className="card card-sm w-full bg-base-100 shadow-md">
-                                            <div className="card-body">
-                                                <div className="flex flex-row items-center justify-between">
-                                                    <div className="flex flex-row gap-2 items-center">
-                                                        <img src={equipment.image} alt={equipment.name} className="w-1/4" />
-                                                        <div className="flex flex-col">
-                                                            <span>{equipment.name}</span>
-                                                            <span>{equipment.category}</span>
+                                        <div className="card card-sm w-full bg-base-100 shadow-md border-6 border-base-300 hover:bg-base-200">
+                                            <div className="card-body p-2">
+                                                <div className="flex flex-row">
+                                                    <img src={equipment.image} alt={equipment.name} className="w-1/4 xl:w-1/5 p-1 border-5 rounded-lg" />
+                                                    <div className="flex flex-row justify-between w-full ml-2">
+                                                        <div className="flex flex-col self-start gap-1">
+                                                            <div className="flex flex-col lg:gap-1 items-start lg:flex-row lg:items-center">
+                                                                <div className="text-base font-semibold">{equipment.name}</div>
+                                                                {equipment?.subcategory && <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.subcategory)}</div>}
+                                                            </div>
+                                                            <div className="flex flex-row gap-2">
+                                                                <div className="flex flex-row gap-1 font-semibold items-center text-sm">
+                                                                    <img src='/images/heart.png' className="w-5" /> {equipment.health}
+                                                                </div>
+                                                                <div className="flex flex-row gap-1 font-semibold items-center text-sm">
+                                                                    <img src='/images/muscle.png' className="w-5" />  {equipment.power}
+                                                                </div>
+                                                                <div className="flex flex-row gap-1 font-semibold items-center text-sm">
+                                                                    <img src='/images/shield.png' className="w-5" /> {equipment.toughness}
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                        <ButtonPress className="btn-primary btn-md self-center" disabled={isLoading}>
+                                                            Equip
+                                                        </ButtonPress>
                                                     </div>
-                                                    <ButtonPress className="btn-primary btn-sm xl:btn-xs" disabled={isLoading}>
-                                                        Equip
-                                                    </ButtonPress>
                                                 </div>
                                             </div>
                                         </div>
