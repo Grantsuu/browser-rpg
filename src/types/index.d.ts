@@ -50,7 +50,10 @@ export type Equipment = {
     subcategory: EquipmentSubcategoryType,
     required_level: number,
     effects: EquipmentEffectData[],
-    item: Item
+    name: string,
+    value: number,
+    description: string,
+    image: string
 }
 
 export type Recipe = {

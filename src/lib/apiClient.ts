@@ -511,3 +511,13 @@ export const getCharacterEquipment = async () => {
         throw new Error((error as Error).message);
     }
 }
+
+export const getEquipmentByCategory = async (category: string) => {
+    const params = new URLSearchParams();
+    params.set('category', category);
+    try {
+        return await fetchApi(`${apiUrl}/inventory/equipment?${params.toString()}`);
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}

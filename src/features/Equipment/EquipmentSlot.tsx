@@ -1,6 +1,11 @@
+import { useState } from "react";
+import { useQuery } from '@tanstack/react-query';
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
 import type { Equipment, EquipmentCategoryType } from "@src/types";
+import { getEquipmentByCategory } from "@lib/apiClient";
 import { toTitleCase } from "@src/utils/strings";
+import ResponsiveDrawer from "@src/components/Responsive/ResponsiveDrawer";
+import ColumnDelayDown from "@src/components/Animated/Motion/ColumnDelayDown";
 
 interface EquipmentSlotProps {
     category: EquipmentCategoryType;
@@ -10,15 +15,24 @@ interface EquipmentSlotProps {
 }
 
 const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: EquipmentSlotProps) => {
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useQuery({
+        queryKey: ['inventoryEquipment', category],
+        queryFn: () => getEquipmentByCategory(category)
+    });
 
     return (
         <>
             <div className="flex flex-row gap-1 lg:gap-3">
-                <div className="flex justify-center aspect-square w-1/3 p-2 rounded-lg border-5 bg-base-300 hover:bg-base-100 hover:cursor-pointer">
+                <div
+                    onClick={() => setIsDrawerOpen(true)}
+                    className="flex justify-center aspect-square w-1/3 p-2 rounded-lg border-5 bg-base-300 hover:bg-base-100 hover:cursor-pointer active:bg-base-300"
+                >
                     {isLoading ?
                         <span className="loading loading-spinner w-1/2" /> :
-                        equipment?.item?.image ?
-                            <img src={equipment?.item?.image} alt={category} /> :
+                        equipment?.image ?
+                            <img src={equipment?.image} alt={category} /> :
                             placeholder
                     }
                 </div>
@@ -28,21 +42,53 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                         <div>
                             {isLoading ?
                                 <div className="skeleton h-3 w-full" /> :
-                                equipment?.item?.name ?
-                                    equipment?.item?.name :
+                                equipment?.name ?
+                                    equipment?.name :
                                     `None`
                             }
                         </div>
                     </div>
                     {equipment ?
-                        <ButtonPress className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
+                        <ButtonPress className="btn-secondary btn-sm xl:btn-xs btn-outline" disabled={isLoading}>
                             Unequip
                         </ButtonPress> :
-                        <ButtonPress className="btn-primary btn-sm" disabled={isLoading}>
+                        <ButtonPress onClick={() => setIsDrawerOpen(true)} className="btn-primary btn-sm xl:btn-xs" disabled={isLoading}>
                             Equip
                         </ButtonPress>}
                 </div>
             </div>
+            <ResponsiveDrawer title={toTitleCase(category)} icon="images/equipment.png" open={isDrawerOpen} setOpen={setIsDrawerOpen}>
+                {isDrawerOpen && <div className="flex flex-col gap-2 h-full">
+                    {inventoryError ?
+                        <span className="h-full text-center">Something went wrong fetching inventory.</span> :
+                        isInventoryLoading ?
+                            <span className="loading loading-spinner loading-lg" /> :
+                            inventory?.sort((a: Equipment, b: Equipment) => a.item_id - b.item_id).map((equipment: Equipment, index: number) => {
+                                return (
+                                    <ColumnDelayDown index={index} key={index}>
+                                        <div className="card card-sm w-full bg-base-100 shadow-md">
+                                            <div className="card-body">
+                                                <div className="flex flex-row items-center justify-between">
+                                                    <div className="flex flex-row gap-2 items-center">
+                                                        <img src={equipment.image} alt={equipment.name} className="w-1/4" />
+                                                        <div className="flex flex-col">
+                                                            <span>{equipment.name}</span>
+                                                            <span>{equipment.category}</span>
+                                                        </div>
+                                                    </div>
+                                                    <ButtonPress className="btn-primary btn-sm xl:btn-xs" disabled={isLoading}>
+                                                        Equip
+                                                    </ButtonPress>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ColumnDelayDown>
+                                );
+                            })
+                    }
+                </div>
+                }
+            </ResponsiveDrawer>
         </>
     );
 };
