@@ -2,8 +2,6 @@ const WeaponPlaceholder = () => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            // width="682.667"
-            // height="682.667"
             version="1"
             viewBox="0 0 512 512"
             fill="var(--color-base-content)"

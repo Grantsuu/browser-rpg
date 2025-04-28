@@ -521,3 +521,27 @@ export const getEquipmentByCategory = async (category: string) => {
         throw new Error((error as Error).message);
     }
 }
+
+export const postEquipment = async (equipmentId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', equipmentId.toString());
+    try {
+        return await fetchApi(`${apiUrl}/equipment?${params.toString()}`, {
+            method: 'POST'
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
+export const removeEquipment = async (equipmentId: number) => {
+    const params = new URLSearchParams();
+    params.set('id', equipmentId.toString());
+    try {
+        return await fetchApi(`${apiUrl}/equipment?${params.toString()}`, {
+            method: 'DELETE'
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}

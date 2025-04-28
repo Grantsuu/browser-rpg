@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
 import type { Equipment, EquipmentCategoryType } from "@src/types";
-import { getEquipmentByCategory } from "@lib/apiClient";
+import { getEquipmentByCategory, postEquipment, removeEquipment } from "@lib/apiClient";
 import { toTitleCase } from "@src/utils/strings";
 import ResponsiveDrawer from "@src/components/Responsive/ResponsiveDrawer";
 import ColumnDelayDown from "@src/components/Animated/Motion/ColumnDelayDown";
@@ -22,15 +22,30 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
         queryFn: () => getEquipmentByCategory(category)
     });
 
+    const { mutateAsync: equip, isPending: isEquipPending } = useMutation({
+        mutationKey: ['equipment'],
+        mutationFn: (id: number) => postEquipment(id)
+    });
+
+    const { mutateAsync: equipmentRemove, isPending: isRemovePending } = useMutation({
+        mutationKey: ['equipment'],
+        mutationFn: async (id: number) => removeEquipment(id)
+    });
+
+    const handleEquip = async (id: number) => {
+        setIsDrawerOpen(false);
+        await equip(id);
+    }
+
     return (
         <>
             <div className="flex flex-row gap-1 lg:gap-3">
                 <div
                     onClick={() => setIsDrawerOpen(true)}
-                    className="flex justify-center aspect-square w-1/3 p-2 rounded-lg border-5 bg-base-300 hover:bg-base-100 hover:cursor-pointer active:bg-base-300"
+                    className="flex justify-center aspect-square w-1/3 p-2 rounded-lg border-5 hover:bg-base-200 hover:cursor-pointer active:bg-base-300"
                 >
-                    {isLoading ?
-                        <span className="loading loading-spinner w-1/2" /> :
+                    {(isLoading || isEquipPending || isRemovePending) ?
+                        <div className="skeleton h-full w-full" /> :
                         equipment?.image ?
                             <img src={equipment?.image} alt={category} /> :
                             placeholder
@@ -49,11 +64,11 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                         </div>
                     </div>
                     {equipment ?
-                        <ButtonPress className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
-                            Unequip
+                        <ButtonPress onClick={() => { equipmentRemove(equipment.id) }} className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
+                            {(isEquipPending || isRemovePending) ? <div className="loading loading-spinner"></div> : `Unequip`}
                         </ButtonPress> :
                         <ButtonPress onClick={() => setIsDrawerOpen(true)} className="btn-primary btn-sm" disabled={isLoading}>
-                            Equip
+                            {isEquipPending ? <div className="loading loading-spinner"></div> : `Equip`}
                         </ButtonPress>}
                 </div>
             </div>
@@ -117,7 +132,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <ButtonPress className="btn-primary btn-md self-center" disabled={isLoading}>
+                                                        <ButtonPress onClick={() => { handleEquip(equipment.id) }} className="btn-primary btn-md self-center" disabled={isLoading}>
                                                             Equip
                                                         </ButtonPress>
                                                     </div>
