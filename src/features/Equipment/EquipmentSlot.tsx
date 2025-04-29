@@ -86,19 +86,15 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                             placeholder
                     }
                 </div>
-                <div className="flex flex-col justify-between w-2/3">
-                    <div>
-                        {isLoading ? <div className="skeleton h-4 w-full" /> : <div className="text-base font-semibold">{toTitleCase(category as string)}</div>}
-                        <div>
-                            {isLoading ?
-                                <div className="skeleton h-4 w-4/5 mt-1" /> :
-                                equipment?.name ?
-                                    equipment?.name :
-                                    `None`
-                            }
-                        </div>
-                        {isLoading ? <div className="skeleton h-4 w-full mt-1" /> : equipment && <EquipmentStatDisplay equipment={equipment} />}
-                    </div>
+                <div className="flex flex-col justify-between gap-1 w-2/3">
+                    {(isLoading || isEquipPending || isRemovePending) ? <div className="skeleton h-4 w-full" /> : <div className="text-base font-semibold">{toTitleCase(category as string)}</div>}
+                    {(isLoading || isEquipPending || isRemovePending) ?
+                        <div className="skeleton h-4 w-4/5" /> :
+                        equipment?.name ?
+                            equipment?.name :
+                            `None`
+                    }
+                    {(isLoading || isEquipPending || isRemovePending) ? <div className="skeleton h-4 w-full" /> : equipment && <EquipmentStatDisplay equipment={equipment} />}
                     {equipment ?
                         <ButtonPress onClick={() => { equipmentRemove({ equipment }) }} className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
                             {(isEquipPending || isRemovePending) ? <div className="loading loading-spinner"></div> : `Unequip`}
