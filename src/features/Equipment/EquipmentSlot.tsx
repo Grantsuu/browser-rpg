@@ -7,6 +7,7 @@ import { getEquipmentByCategory, postEquipment, removeEquipment } from "@lib/api
 import { toTitleCase } from "@src/utils/strings";
 import ResponsiveDrawer from "@src/components/Responsive/ResponsiveDrawer";
 import ColumnDelayDown from "@src/components/Animated/Motion/ColumnDelayDown";
+import EquipmentStatDisplay from "./EquipmentStatDisplay";
 
 interface EquipmentSlotProps {
     category: EquipmentCategoryType;
@@ -26,16 +27,20 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
     });
 
     const { mutateAsync: equip, isPending: isEquipPending } = useMutation({
-        mutationFn: (id: number) => postEquipment(id),
-        onSuccess: (data) => {
+        mutationFn: (variables: { equipment: Equipment }) => postEquipment(variables.equipment.id),
+        onSuccess: (data, variables) => {
             queryClient.setQueryData(['equipment'], (oldData: Equipment[]) => {
                 const newData = [
                     ...oldData,
-                    data.inventoryEquipment
+                    variables.equipment
                 ];
                 return newData;
             });
             queryClient.setQueryData(['characterCombatStats'], data.updatedCombatStats);
+            queryClient.setQueryData(['inventoryEquipment', category], (oldData: Equipment[]) => {
+                const newData = oldData.filter((i) => i.id !== variables.equipment.id);
+                return newData;
+            });
         },
         onError: (error) => {
             toast.error(`Something went wrong equipping: ${(error as Error).message}`);
@@ -43,21 +48,28 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
     });
 
     const { mutateAsync: equipmentRemove, isPending: isRemovePending } = useMutation({
-        mutationFn: async (variables: { id: number }) => removeEquipment(variables.id),
+        mutationFn: async (variables: { equipment: Equipment }) => removeEquipment(variables.equipment.id),
         onSuccess: (data, variables) => {
             queryClient.setQueryData(['equipment'], (oldData: Equipment[]) => {
-                return oldData.filter((i) => i.id !== variables.id);
+                return oldData.filter((i) => i.id !== variables.equipment.id);
             });
             queryClient.setQueryData(['characterCombatStats'], data.updatedCombatStats);
+            queryClient.setQueryData(['inventoryEquipment', category], (oldData: Equipment[]) => {
+                const newData = [
+                    ...oldData,
+                    variables.equipment
+                ];
+                return newData;
+            });
         },
         onError: (error) => {
             toast.error(`Something went wrong removing equipment: ${(error as Error).message}`);
         }
     });
 
-    const handleEquip = async (id: number) => {
+    const handleEquip = async (equipment: Equipment) => {
         setIsDrawerOpen(false);
-        await equip(id);
+        await equip({ equipment });
     }
 
     return (
@@ -76,18 +88,19 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                 </div>
                 <div className="flex flex-col justify-between w-2/3">
                     <div>
-                        <div className="text-base font-semibold">{toTitleCase(category as string)}</div>
+                        {isLoading ? <div className="skeleton h-4 w-full" /> : <div className="text-base font-semibold">{toTitleCase(category as string)}</div>}
                         <div>
                             {isLoading ?
-                                <div className="skeleton h-3 w-full" /> :
+                                <div className="skeleton h-4 w-4/5 mt-1" /> :
                                 equipment?.name ?
                                     equipment?.name :
                                     `None`
                             }
                         </div>
+                        {isLoading ? <div className="skeleton h-4 w-full mt-1" /> : equipment && <EquipmentStatDisplay equipment={equipment} />}
                     </div>
                     {equipment ?
-                        <ButtonPress onClick={() => { equipmentRemove({ id: equipment.id }) }} className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
+                        <ButtonPress onClick={() => { equipmentRemove({ equipment }) }} className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
                             {(isEquipPending || isRemovePending) ? <div className="loading loading-spinner"></div> : `Unequip`}
                         </ButtonPress> :
                         <ButtonPress onClick={() => setIsDrawerOpen(true)} className="btn-primary btn-sm" disabled={isLoading}>
@@ -108,17 +121,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                                             <div className="text-base font-semibold">{equipment?.name}</div>
                                             <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.subcategory)}</div>
                                         </div>
-                                        <div className="flex flex-row gap-2">
-                                            <div className="flex flex-row gap-1 font-semibold items-center text-sm">
-                                                <img src='/images/heart.png' className="w-5" /> {equipment?.health}
-                                            </div>
-                                            <div className="flex flex-row gap-1 font-semibold items-center text-sm">
-                                                <img src='/images/muscle.png' className="w-5" />  {equipment?.power}
-                                            </div>
-                                            <div className="flex flex-row gap-1 font-semibold items-center text-sm">
-                                                <img src='/images/shield.png' className="w-5" /> {equipment?.toughness}
-                                            </div>
-                                        </div>
+                                        <EquipmentStatDisplay equipment={equipment} />
                                     </div>
                                 </div>
                             </div>
@@ -136,26 +139,16 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                                         <div className="card card-sm w-full bg-base-100 shadow-md border-6 border-base-300 hover:bg-base-200">
                                             <div className="card-body p-2">
                                                 <div className="flex flex-row">
-                                                    <img src={equipment.image} alt={equipment.name} className="w-1/4 xl:w-1/5 p-1 border-5 rounded-lg" />
+                                                    <img src={equipment?.image} alt={equipment?.name} className="w-1/4 xl:w-1/5 p-1 border-5 rounded-lg" />
                                                     <div className="flex flex-row justify-between w-full ml-2">
                                                         <div className="flex flex-col self-start gap-1">
                                                             <div className="flex flex-col lg:gap-1 items-start lg:flex-row lg:items-center">
-                                                                <div className="text-base font-semibold">{equipment.name}</div>
+                                                                <div className="text-base font-semibold">{equipment?.name}</div>
                                                                 {equipment?.subcategory && <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.subcategory)}</div>}
                                                             </div>
-                                                            <div className="flex flex-row gap-2">
-                                                                <div className="flex flex-row gap-1 font-semibold items-center text-sm">
-                                                                    <img src='/images/heart.png' className="w-5" /> {equipment.health}
-                                                                </div>
-                                                                <div className="flex flex-row gap-1 font-semibold items-center text-sm">
-                                                                    <img src='/images/muscle.png' className="w-5" />  {equipment.power}
-                                                                </div>
-                                                                <div className="flex flex-row gap-1 font-semibold items-center text-sm">
-                                                                    <img src='/images/shield.png' className="w-5" /> {equipment.toughness}
-                                                                </div>
-                                                            </div>
+                                                            <EquipmentStatDisplay equipment={equipment} />
                                                         </div>
-                                                        <ButtonPress onClick={() => { handleEquip(equipment.id) }} className="btn-primary btn-md self-center" disabled={isLoading}>
+                                                        <ButtonPress onClick={() => { handleEquip(equipment) }} className="btn-primary btn-md self-center" disabled={isLoading}>
                                                             Equip
                                                         </ButtonPress>
                                                     </div>
