@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
 import type { Equipment, EquipmentCategoryType } from "@src/types";
 import { getEquipmentByCategory, postEquipment, removeEquipment } from "@lib/apiClient";
@@ -15,6 +16,8 @@ interface EquipmentSlotProps {
 }
 
 const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: EquipmentSlotProps) => {
+    const queryClient = useQueryClient();
+
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useQuery({
@@ -23,13 +26,33 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
     });
 
     const { mutateAsync: equip, isPending: isEquipPending } = useMutation({
-        mutationKey: ['equipment'],
-        mutationFn: (id: number) => postEquipment(id)
+        mutationFn: (id: number) => postEquipment(id),
+        onSuccess: (data) => {
+            queryClient.setQueryData(['equipment'], (oldData: Equipment[]) => {
+                const newData = [
+                    ...oldData,
+                    data.inventoryEquipment
+                ];
+                return newData;
+            });
+            queryClient.setQueryData(['characterCombatStats'], data.updatedCombatStats);
+        },
+        onError: (error) => {
+            toast.error(`Something went wrong equipping: ${(error as Error).message}`);
+        }
     });
 
     const { mutateAsync: equipmentRemove, isPending: isRemovePending } = useMutation({
-        mutationKey: ['equipment'],
-        mutationFn: async (id: number) => removeEquipment(id)
+        mutationFn: async (variables: { id: number }) => removeEquipment(variables.id),
+        onSuccess: (data, variables) => {
+            queryClient.setQueryData(['equipment'], (oldData: Equipment[]) => {
+                return oldData.filter((i) => i.id !== variables.id);
+            });
+            queryClient.setQueryData(['characterCombatStats'], data.updatedCombatStats);
+        },
+        onError: (error) => {
+            toast.error(`Something went wrong removing equipment: ${(error as Error).message}`);
+        }
     });
 
     const handleEquip = async (id: number) => {
@@ -64,7 +87,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                         </div>
                     </div>
                     {equipment ?
-                        <ButtonPress onClick={() => { equipmentRemove(equipment.id) }} className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
+                        <ButtonPress onClick={() => { equipmentRemove({ id: equipment.id }) }} className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
                             {(isEquipPending || isRemovePending) ? <div className="loading loading-spinner"></div> : `Unequip`}
                         </ButtonPress> :
                         <ButtonPress onClick={() => setIsDrawerOpen(true)} className="btn-primary btn-sm" disabled={isLoading}>

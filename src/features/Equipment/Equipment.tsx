@@ -10,7 +10,6 @@ import AccessoryPlaceholder from "./Placeholders/AccessoryPlaceholder";
 import EquipmentSlot from "./EquipmentSlot";
 
 const Equipment = () => {
-
     const { data: combatStats, isLoading: isCombatStatsLoading } = useCharacterCombatStats();
 
     const { data: equipment, isLoading: isEquipmentLoading } = useQuery({
@@ -18,9 +17,9 @@ const Equipment = () => {
         queryFn: getCharacterEquipment
     });
 
-    const equippedWeapon = equipment?.find((equipment: Equipment) => equipment.category === 'weapon');
-    const equippedArmor = equipment?.find((equipment: Equipment) => equipment.category === 'armor');
-    const equippedAccessory = equipment?.find((equipment: Equipment) => equipment.category === 'accessory');
+    const weapon = equipment?.find((item: Equipment) => item.category === 'weapon');
+    const armor = equipment?.find((item: Equipment) => item.category === 'armor');
+    const accessory = equipment?.find((item: Equipment) => item.category === 'accessory');
 
     return (
         <PageCard title="Equipment" icon='/images/equipment.png'>
@@ -68,9 +67,9 @@ const Equipment = () => {
                         </h2>
                         <div className="divider m-0" />
                         <div className="flex flex-col gap-2">
-                            <EquipmentSlot category="weapon" placeholder={<WeaponPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedWeapon} />
-                            <EquipmentSlot category="armor" placeholder={<ArmorPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedArmor} />
-                            <EquipmentSlot category="accessory" placeholder={<AccessoryPlaceholder />} isLoading={isEquipmentLoading} equipment={equippedAccessory} />
+                            <EquipmentSlot category="weapon" placeholder={<WeaponPlaceholder />} isLoading={isEquipmentLoading} equipment={weapon} />
+                            <EquipmentSlot category="armor" placeholder={<ArmorPlaceholder />} isLoading={isEquipmentLoading} equipment={armor} />
+                            <EquipmentSlot category="accessory" placeholder={<AccessoryPlaceholder />} isLoading={isEquipmentLoading} equipment={accessory} />
                         </div>
                     </div>
                 </motion.div>
