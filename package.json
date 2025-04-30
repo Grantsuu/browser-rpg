@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "vite --host --open",
         "build": "tsc -b && vite build",
+        "clean": "tsc -b --clean",
         "lint": "eslint --fix .",
         "preview": "vite preview"
     },

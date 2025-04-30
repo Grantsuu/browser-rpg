@@ -1,7 +1,7 @@
 import PageCard from "@src/layouts/PageCard";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react"
-import type { Equipment } from "@src/types";
+import type { Item } from "@src/types";
 import { getCharacterEquipment } from "@lib/apiClient";
 import { useCharacterCombatStats } from "@src/lib/stateMangers";
 import ArmorPlaceholder from "./Placeholders/ArmorPlaceholder";
@@ -17,9 +17,9 @@ const Equipment = () => {
         queryFn: getCharacterEquipment
     });
 
-    const weapon = equipment?.find((item: Equipment) => item.equipment_category === 'weapon');
-    const armor = equipment?.find((item: Equipment) => item.equipment_category === 'armor');
-    const accessory = equipment?.find((item: Equipment) => item.equipment_category === 'accessory');
+    const weapon = equipment?.find((item: Item) => item.equipment_category === 'weapon');
+    const armor = equipment?.find((item: Item) => item.equipment_category === 'armor');
+    const accessory = equipment?.find((item: Item) => item.equipment_category === 'accessory');
 
     return (
         <PageCard title="Equipment" icon='/images/equipment.png'>

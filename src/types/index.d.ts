@@ -2,8 +2,6 @@ export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'ma
 
 export type ItemSubcategory = 'food' | 'seed' | 'ingredient' | 'fish';
 
-export type RecipeCategory = 'cooking';
-
 export type ItemEffectType = 'restore_health';
 
 export type ItemEffectUnit = 'integer' | 'second';
@@ -15,6 +13,10 @@ export type ItemEffectData = {
     effect_value: number,
     effect_unit: ItemEffectUnit
 }
+
+export type EquipmentCategoryType = 'weapon' | 'armor' | 'accessory';
+
+export type EquipmentSubcategoryType = 'sword' | 'axe' | 'pickaxe' | 'shovel' | 'fishing_rod' | 'ring' | 'amulet';
 
 export type Item = {
     id: number,
@@ -36,33 +38,7 @@ export type Item = {
     equipment_effects?: EquipmentEffectData[],
 }
 
-export type ShopItem = Item & {
-    item_id: number
-}
-
-export type InventoryItem = Item & {
-    item_id: number
-}
-
-export type EquipmentCategoryType = 'weapon' | 'armor' | 'accessory';
-
-export type EquipmentSubcategoryType = 'sword' | 'axe' | 'pickaxe' | 'shovel' | 'fishing_rod' | 'ring' | 'amulet';
-
-export type Equipment = {
-    id: number,
-    item_id: number,
-    health: number,
-    power: number,
-    toughness: number,
-    equipment_category: EquipmentCategoryType,
-    equipment_subcategory: EquipmentSubcategoryType,
-    required_level: number,
-    effects: EquipmentEffectData[],
-    name: string,
-    value: number,
-    description: string,
-    image: string
-}
+export type RecipeCategory = 'cooking';
 
 export type Recipe = {
     item: Item
