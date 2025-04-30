@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import ButtonPress from "@src/components/Animated/Button/ButtonPress";
+import ButtonPress from "@components/Animated/Button/ButtonPress";
 import type { EquipmentCategoryType, Item } from "@src/types";
 import { getEquipmentByCategory, postEquipment, removeEquipment } from "@lib/apiClient";
-import { toTitleCase } from "@src/utils/strings";
-import ResponsiveDrawer from "@src/components/Responsive/ResponsiveDrawer";
-import ColumnDelayDown from "@src/components/Animated/Motion/ColumnDelayDown";
-import EquipmentStatDisplay from "./EquipmentStatDisplay";
+import { toTitleCase } from "@utils/strings";
+import ResponsiveDrawer from "@components/Responsive/ResponsiveDrawer";
+import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
+import EquipmentStatDisplay from "@components/Items/EquipmentStatDisplay";
 
 interface EquipmentSlotProps {
     category: EquipmentCategoryType;

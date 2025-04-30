@@ -11,6 +11,8 @@ import { getItemCategories, getShopInventory, postBuyFromShop, postSellToShop } 
 import PageCard from '@layouts/PageCard';
 import ItemCategoryBadge from '@components/Badges/ItemCategoryBadge';
 import SuccessToast from '@components/Toasts/SuccessToast';
+import ItemEffectDisplay from '@components/Items/ItemEffectDisplay';
+import EquipmentStatDisplay from '@components/Items/EquipmentStatDisplay';
 
 type ShopModes = 'buy' | 'sell';
 
@@ -188,6 +190,11 @@ const Shop = () => {
                                                 </td>
                                                 <td className="hidden xl:table-cell">
                                                     {item.description}
+                                                    {item.item_effects &&
+                                                        <div className="flex flex-row gap-1">
+                                                            <span className="font-semibold">Usage:</span> <ItemEffectDisplay effects={item.item_effects} />
+                                                        </div>}
+                                                    {item.item_category === "equipment" && <EquipmentStatDisplay equipment={item} />}
                                                 </td>
                                                 <td>
                                                     <div className="flex flex-row gap-1">
@@ -223,6 +230,11 @@ const Shop = () => {
                                                 </td>
                                                 <td className="hidden xl:table-cell">
                                                     {item.description}
+                                                    {item.item_effects &&
+                                                        <div className="flex flex-row gap-1">
+                                                            <span className="font-semibold">Usage:</span> <ItemEffectDisplay effects={item.item_effects} />
+                                                        </div>}
+                                                    {item.item_category === "equipment" && <EquipmentStatDisplay equipment={item} />}
                                                 </td>
                                                 <td>
                                                     <div className="flex flex-col xs:flex-row gap-1">

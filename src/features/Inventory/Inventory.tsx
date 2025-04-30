@@ -12,8 +12,9 @@ import PageCard from '@layouts/PageCard';
 import ItemCategoryBadge from '@components/Badges/ItemCategoryBadge';
 import SuccessToast from '@components/Toasts/SuccessToast';
 import ButtonPress from '@components/Animated/Button/ButtonPress';
-import ItemEffectDisplay from '@src/components/Items/ItemEffectDisplay';
-import ItemUseToast from '@src/components/Toasts/ItemUseToast';
+import ItemEffectDisplay from '@components/Items/ItemEffectDisplay';
+import ItemUseToast from '@components/Toasts/ItemUseToast';
+import EquipmentStatDisplay from '@components/Items/EquipmentStatDisplay';
 
 const Inventory = () => {
     const queryClient = useQueryClient();
@@ -121,6 +122,7 @@ const Inventory = () => {
                                             <div className="flex flex-row gap-1">
                                                 <span className="font-semibold">Usage:</span> <ItemEffectDisplay effects={item.item_effects} />
                                             </div>}
+                                        {item.item_category === "equipment" && <EquipmentStatDisplay equipment={item} />}
                                     </td>
                                     <td className="p-1 flex flex-row gap-1 justify-end">
                                         {/* Use Item for consumables only */}

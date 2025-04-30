@@ -1,4 +1,4 @@
-export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material';
+export type ItemCategory = 'weapon' | 'accessory' | 'consumable' | 'armor' | 'material' | 'equipment';
 
 export type ItemSubcategory = 'food' | 'seed' | 'ingredient' | 'fish';
 
