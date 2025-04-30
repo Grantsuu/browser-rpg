@@ -2,12 +2,14 @@ import type { Item } from '@src/types'; // Adjust the path as needed
 
 interface EquipmentStatDisplayProps {
     equipment: Item;
+    showLevel?: boolean;
 }
 
-const EquipmentStatDisplay = ({ equipment }: EquipmentStatDisplayProps) => {
+const EquipmentStatDisplay = ({ equipment, showLevel = true }: EquipmentStatDisplayProps) => {
 
     return (
         <div className="flex flex-row gap-2">
+            {showLevel && <div className="mr-2"><span className="font-semibold">Required Level:</span> {equipment.required_level}</div>}
             <div className="flex flex-row gap-1 font-semibold items-center text-sm">
                 <img src='/images/heart.png' className="w-5" /> {equipment?.health}
             </div>

@@ -94,7 +94,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                             equipment?.name :
                             `None`
                     }
-                    {(isLoading || isEquipPending || isRemovePending) ? <div className="skeleton h-4 w-full" /> : equipment && <EquipmentStatDisplay equipment={equipment} />}
+                    {(isLoading || isEquipPending || isRemovePending) ? <div className="skeleton h-4 w-full" /> : equipment && <EquipmentStatDisplay equipment={equipment} showLevel={false} />}
                     {equipment ?
                         <ButtonPress onClick={() => { equipmentRemove({ equipment }) }} className="btn-secondary btn-sm btn-outline" disabled={isLoading}>
                             {(isEquipPending || isRemovePending) ? <div className="loading loading-spinner"></div> : `Unequip`}
