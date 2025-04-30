@@ -1,7 +1,7 @@
-import type { Equipment } from '@src/types'; // Adjust the path as needed
+import type { Item } from '@src/types'; // Adjust the path as needed
 
 interface EquipmentStatDisplayProps {
-    equipment: Equipment;
+    equipment: Item;
 }
 
 const EquipmentStatDisplay = ({ equipment }: EquipmentStatDisplayProps) => {

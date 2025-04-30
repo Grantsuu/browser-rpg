@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
-import type { Equipment, EquipmentCategoryType } from "@src/types";
+import type { EquipmentCategoryType, Item } from "@src/types";
 import { getEquipmentByCategory, postEquipment, removeEquipment } from "@lib/apiClient";
 import { toTitleCase } from "@src/utils/strings";
 import ResponsiveDrawer from "@src/components/Responsive/ResponsiveDrawer";
@@ -13,7 +13,7 @@ interface EquipmentSlotProps {
     category: EquipmentCategoryType;
     isLoading: boolean;
     placeholder: React.ReactNode;
-    equipment?: Equipment;
+    equipment?: Item;
 }
 
 const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: EquipmentSlotProps) => {
@@ -27,9 +27,9 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
     });
 
     const { mutateAsync: equip, isPending: isEquipPending } = useMutation({
-        mutationFn: (variables: { equipment: Equipment }) => postEquipment(variables.equipment.id),
+        mutationFn: (variables: { equipment: Item }) => postEquipment(variables.equipment.equipment_id as number),
         onSuccess: (data, variables) => {
-            queryClient.setQueryData(['equipment'], (oldData: Equipment[]) => {
+            queryClient.setQueryData(['equipment'], (oldData: Item[]) => {
                 const newData = [
                     ...oldData,
                     variables.equipment
@@ -37,8 +37,8 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                 return newData;
             });
             queryClient.setQueryData(['characterCombatStats'], data.updatedCombatStats);
-            queryClient.setQueryData(['inventoryEquipment', category], (oldData: Equipment[]) => {
-                const newData = oldData.filter((i) => i.id !== variables.equipment.id);
+            queryClient.setQueryData(['inventoryEquipment', category], (oldData: Item[]) => {
+                const newData = oldData.filter((i) => i.equipment_id !== variables.equipment.equipment_id);
                 return newData;
             });
         },
@@ -48,13 +48,13 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
     });
 
     const { mutateAsync: equipmentRemove, isPending: isRemovePending } = useMutation({
-        mutationFn: async (variables: { equipment: Equipment }) => removeEquipment(variables.equipment.id),
+        mutationFn: async (variables: { equipment: Item }) => removeEquipment(variables.equipment.equipment_id as number),
         onSuccess: (data, variables) => {
-            queryClient.setQueryData(['equipment'], (oldData: Equipment[]) => {
-                return oldData.filter((i) => i.id !== variables.equipment.id);
+            queryClient.setQueryData(['equipment'], (oldData: Item[]) => {
+                return oldData.filter((i) => i.equipment_id !== variables.equipment.equipment_id);
             });
             queryClient.setQueryData(['characterCombatStats'], data.updatedCombatStats);
-            queryClient.setQueryData(['inventoryEquipment', category], (oldData: Equipment[]) => {
+            queryClient.setQueryData(['inventoryEquipment', category], (oldData: Item[]) => {
                 const newData = [
                     ...oldData,
                     variables.equipment
@@ -67,7 +67,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
         }
     });
 
-    const handleEquip = async (equipment: Equipment) => {
+    const handleEquip = async (equipment: Item) => {
         setIsDrawerOpen(false);
         await equip({ equipment });
     }
@@ -115,7 +115,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                                     <div className="flex flex-col self-start gap-1">
                                         <div className="flex flex-col lg:gap-1 items-start lg:flex-row lg:items-center">
                                             <div className="text-base font-semibold">{equipment?.name}</div>
-                                            <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.subcategory)}</div>
+                                            {equipment?.equipment_category && <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.equipment_category)}</div>}
                                         </div>
                                         <EquipmentStatDisplay equipment={equipment} />
                                     </div>
@@ -129,7 +129,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                         <span className="h-full text-center">Something went wrong fetching inventory.</span> :
                         isInventoryLoading ?
                             <span className="loading loading-spinner loading-lg" /> :
-                            inventory?.sort((a: Equipment, b: Equipment) => a.item_id - b.item_id).map((equipment: Equipment, index: number) => {
+                            inventory?.sort((a: Item, b: Item) => a.id - b.id).map((equipment: Item, index: number) => {
                                 return (
                                     <ColumnDelayDown index={index} key={index}>
                                         <div className="card card-sm w-full bg-base-100 shadow-md border-6 border-base-300 hover:bg-base-200">
@@ -140,7 +140,7 @@ const EquipmentSlot = ({ category, equipment, placeholder, isLoading }: Equipmen
                                                         <div className="flex flex-col self-start gap-1">
                                                             <div className="flex flex-col lg:gap-1 items-start lg:flex-row lg:items-center">
                                                                 <div className="text-base font-semibold">{equipment?.name}</div>
-                                                                {equipment?.subcategory && <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.subcategory)}</div>}
+                                                                {equipment?.equipment_subcategory && <div className="badge badge-primary badge-sm">{toTitleCase(equipment?.equipment_subcategory)}</div>}
                                                             </div>
                                                             <EquipmentStatDisplay equipment={equipment} />
                                                         </div>

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins, faShop } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { toast } from 'react-toastify';
-import type { Character, InventoryItem, ItemCategory, ShopItem } from '@src/types';
+import type { Character, Item, ItemCategory } from '@src/types';
 import { toTitleCase } from '@utils/strings';
 import { useCharacter, useInventory } from '@lib/stateMangers';
 import { getItemCategories, getShopInventory, postBuyFromShop, postSellToShop } from '@lib/apiClient';
@@ -39,8 +39,8 @@ const Shop = () => {
     })
 
     const { mutateAsync: buyItem, isPending: isBuyPending } = useMutation({
-        mutationFn: (variables: { item: ShopItem, amount: number }) => postBuyFromShop(variables.item.item_id, variables.amount),
-        onSuccess: (data, variables: { item: ShopItem, amount: number }) => {
+        mutationFn: (variables: { item: Item, amount: number }) => postBuyFromShop(variables.item.id, variables.amount),
+        onSuccess: (data, variables: { item: Item, amount: number }) => {
             toast.success(
                 <SuccessToast
                     action="Bought"
@@ -50,8 +50,8 @@ const Shop = () => {
                     extendedMessage={<> for <span className="text-red-600"><b>{data.goldSpent}</b></span> gold.</>}
                 />
             )
-            queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
-                const itemIndex = oldData.findIndex((i) => i.item_id === variables.item.item_id);
+            queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
+                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
                 if (itemIndex !== -1) {
                     // If the item is already in the inventory, just increase the amount
                     oldData[itemIndex].amount = data.inventory.amount;
@@ -78,8 +78,8 @@ const Shop = () => {
     })
 
     const { mutateAsync: sellItem, isPending: isSellPending } = useMutation({
-        mutationFn: (variables: { item: InventoryItem, amount: number }) => postSellToShop(variables.item.item_id, variables.amount),
-        onSuccess: (data, variables: { item: InventoryItem, amount: number }) => {
+        mutationFn: (variables: { item: Item, amount: number }) => postSellToShop(variables.item.id, variables.amount),
+        onSuccess: (data, variables: { item: Item, amount: number }) => {
             toast.success(
                 <SuccessToast
                     action="Sold"
@@ -89,8 +89,8 @@ const Shop = () => {
                     extendedMessage={<> for <span className="text-green-600"><b>{data.goldGained}</b></span> gold.</>}
                 />
             )
-            queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
-                const itemIndex = oldData.findIndex((i) => i.item_id === variables.item.item_id);
+            queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
+                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
                 // If the item is already in the inventory, just decrease the amount
                 if (itemIndex !== -1) {
                     if (data.item) {
@@ -171,7 +171,7 @@ const Shop = () => {
                                 </tr> :
                                 // Buy Mode
                                 shopMode === 'buy' ?
-                                    shop.sort((a: ShopItem, b: ShopItem) => a.item_id - b.item_id).map((item: ShopItem, id: number) => {
+                                    shop.sort((a: Item, b: Item) => a.id - b.id).map((item: Item, id: number) => {
                                         return (
                                             <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={id}>
                                                 <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
@@ -181,7 +181,7 @@ const Shop = () => {
                                                     {item.name}
                                                 </td>
                                                 <td className="hidden xs:table-cell p-1">
-                                                    <ItemCategoryBadge category={item.category} />
+                                                    <ItemCategoryBadge category={item.item_category} />
                                                 </td>
                                                 <td className="p-1">
                                                     {item.value}
@@ -203,7 +203,7 @@ const Shop = () => {
                                         )
                                     }) :
                                     // Sell Mode
-                                    inventory.sort((a: InventoryItem, b: InventoryItem) => a.item_id - b.item_id).map((item: InventoryItem, index: number) => {
+                                    inventory.sort((a: Item, b: Item) => a.id - b.id).map((item: Item, index: number) => {
                                         return (
                                             <tr className="table-row items-baseline justify-baseline hover:bg-base-300 m-0" key={index}>
                                                 <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
@@ -213,7 +213,7 @@ const Shop = () => {
                                                     {item.name}
                                                 </td>
                                                 <td className="hidden xs:table-cell p-1">
-                                                    <ItemCategoryBadge category={item.category} />
+                                                    <ItemCategoryBadge category={item.item_category} />
                                                 </td>
                                                 <td>
                                                     {item.amount}

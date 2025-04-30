@@ -20,12 +20,20 @@ export type Item = {
     id: number,
     amount?: number
     name: string,
-    category: ItemCategory,
-    subcategory?: ItemSubcategory,
+    item_category: ItemCategory,
+    item_subcategory?: ItemSubcategory,
     value: number,
     description: string,
     image: string,
-    effects?: ItemEffectData[]
+    item_effects?: ItemEffectData[],
+    equipment_id?: number,
+    health?: number,
+    power?: number,
+    toughness?: number,
+    equipment_category?: EquipmentCategoryType,
+    equipment_subcategory?: EquipmentSubcategoryType,
+    required_level?: number,
+    equipment_effects?: EquipmentEffectData[],
 }
 
 export type ShopItem = Item & {
@@ -46,8 +54,8 @@ export type Equipment = {
     health: number,
     power: number,
     toughness: number,
-    category: EquipmentCategoryType,
-    subcategory: EquipmentSubcategoryType,
+    equipment_category: EquipmentCategoryType,
+    equipment_subcategory: EquipmentSubcategoryType,
     required_level: number,
     effects: EquipmentEffectData[],
     name: string,

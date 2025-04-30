@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faArrowLeftLong, faHand, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import type { CombatData, InventoryItem, ItemEffectData } from "@src/types";
+import type { CombatData, Item, ItemEffectData } from "@src/types";
 import { useCharacter, useCharacterLevels, useInventory } from "@lib/stateMangers";
 import { putResetCombat, putUpdateCombat } from "@lib/apiClient";
 import { useConfetti } from '@contexts/ConfettiContext';
@@ -283,7 +283,7 @@ const Combat = ({ combat }: CombatProps) => {
                 {showItemDrawer && <div className="flex flex-col gap-2 h-full">
                     {isInventoryLoading ? <span className="h-full loading loading-spinner loading-xl self-center"></span> :
                         inventoryError ? <span className="h-full text-center">Something went wrong fetching inventory.</span> :
-                            inventory?.filter((item: InventoryItem) => item.category === "consumable").map((item: InventoryItem, index: number) => (
+                            inventory?.filter((item: Item) => item.item_category === "consumable").map((item: Item, index: number) => (
                                 <ColumnDelayDown index={index} key={index}>
                                     {/* Item Card */}
                                     <div className="card card-sm w-full bg-base-100 shadow-md">
@@ -295,7 +295,7 @@ const Combat = ({ combat }: CombatProps) => {
                                                     <div className="flex flex-col">
                                                         <div className="text-lg font-semibold">{item.name}</div>
                                                         <div className="text-base">
-                                                            <ItemEffectDisplay effects={item.effects as ItemEffectData[]} />
+                                                            <ItemEffectDisplay effects={item.item_effects as ItemEffectData[]} />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -304,7 +304,7 @@ const Combat = ({ combat }: CombatProps) => {
                                                     className="btn-primary"
                                                     onClick={async () => {
                                                         setShowItemDrawer(false);
-                                                        await updateCombat({ action: 'use_item', id: item.item_id });
+                                                        await updateCombat({ action: 'use_item', id: item.id });
                                                     }}
                                                     disabled={isInventoryLoading || combatLoading}
                                                 >

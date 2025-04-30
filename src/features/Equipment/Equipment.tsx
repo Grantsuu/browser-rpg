@@ -17,9 +17,9 @@ const Equipment = () => {
         queryFn: getCharacterEquipment
     });
 
-    const weapon = equipment?.find((item: Equipment) => item.category === 'weapon');
-    const armor = equipment?.find((item: Equipment) => item.category === 'armor');
-    const accessory = equipment?.find((item: Equipment) => item.category === 'accessory');
+    const weapon = equipment?.find((item: Equipment) => item.equipment_category === 'weapon');
+    const armor = equipment?.find((item: Equipment) => item.equipment_category === 'armor');
+    const accessory = equipment?.find((item: Equipment) => item.equipment_category === 'accessory');
 
     return (
         <PageCard title="Equipment" icon='/images/equipment.png'>

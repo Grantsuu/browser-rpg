@@ -12,7 +12,7 @@ const ItemUseToast = ({ item, amount, results }: ItemUseToastProps) => {
         <div className='flex flex-row w-full justify-between items-center gap-1'>
             <div>
                 Used <b>{amount}x</b> <span className="text-blue-500">{item.name}</span> {
-                    item.effects && item.effects.length > 0 ? <>
+                    item.item_effects && item.item_effects.length > 0 ? <>
                         {results.map((result: string, index: number) => {
                             return (
                                 <span key={index}>

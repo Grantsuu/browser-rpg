@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import type { InventoryItem } from '@src/types';
+import type { Item } from '@src/types';
 import { useInventory } from '@lib/stateMangers';
 import { putUseItem, removeItemFromInventory } from '@lib/apiClient';
 import PageCard from '@layouts/PageCard';
@@ -21,7 +21,7 @@ const Inventory = () => {
     const { data: inventory, error: inventoryError, isLoading: isInventoryLoading } = useInventory();
 
     const { mutate: deleteItem, isPending: isDeletePending } = useMutation({
-        mutationFn: (variables: { item: InventoryItem }) => removeItemFromInventory(variables.item.item_id),
+        mutationFn: (variables: { item: Item }) => removeItemFromInventory(variables.item.id),
         onSuccess: (_, variables) => {
             toast.success(
                 <SuccessToast
@@ -29,8 +29,8 @@ const Inventory = () => {
                     name={variables.item.name}
                     image={variables.item.image}
                 />);
-            queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
-                const itemIndex = oldData.findIndex((i) => i.item_id === variables.item.item_id);
+            queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
+                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
                 oldData.splice(itemIndex, 1);
                 return oldData;
             });
@@ -42,7 +42,7 @@ const Inventory = () => {
 
     // Can't name this useItem because the linter thinks it's a hook
     const { mutateAsync: itemUse, isPending: isItemUsePending } = useMutation({
-        mutationFn: (variables: { item: InventoryItem }) => putUseItem(variables.item.item_id),
+        mutationFn: (variables: { item: Item }) => putUseItem(variables.item.id),
         onSuccess: (data, variables) => {
             toast.success(
                 <ItemUseToast
@@ -51,9 +51,9 @@ const Inventory = () => {
                     results={data.results}
                 />
             );
-            queryClient.setQueryData(['inventory'], (oldData: InventoryItem[]) => {
+            queryClient.setQueryData(['inventory'], (oldData: Item[]) => {
                 // We know the item is in the inventory because we just used it and the API checks before using it
-                const itemIndex = oldData.findIndex((i) => i.item_id === variables.item.item_id);
+                const itemIndex = oldData.findIndex((i) => i.id === variables.item.id);
                 // Have to check if item being removed had its amount reduced or removed entirely
                 if (data.inventory_item) {
                     oldData[itemIndex].amount = data.inventory_item.amount;
@@ -97,7 +97,7 @@ const Inventory = () => {
                                 </div>
                             </td>
                         </tr> :
-                        inventory.sort((a: InventoryItem, b: InventoryItem) => a.item_id - b.item_id).map((item: InventoryItem, index: number) => {
+                        inventory.sort((a: Item, b: Item) => a.id - b.id).map((item: Item, index: number) => {
                             return (
                                 <tr className="table-row items-baseline justify-baseline hover:bg-base-300" key={index}>
                                     <td className="p-2 xs:p-1 w-1/8 sm:w-1/10 xl:w-1/18">
@@ -107,7 +107,7 @@ const Inventory = () => {
                                         {item.name}
                                     </td>
                                     <td className="hidden xs:table-cell p-1">
-                                        <ItemCategoryBadge category={item.category} />
+                                        <ItemCategoryBadge category={item.item_category} />
                                     </td>
                                     <td className="p-1">
                                         {item.amount}
@@ -117,14 +117,14 @@ const Inventory = () => {
                                     </td>
                                     <td className="hidden xl:table-cell">
                                         {item.description}
-                                        {item.effects &&
+                                        {item.item_effects &&
                                             <div className="flex flex-row gap-1">
-                                                <span className="font-semibold">Usage:</span> <ItemEffectDisplay effects={item.effects} />
+                                                <span className="font-semibold">Usage:</span> <ItemEffectDisplay effects={item.item_effects} />
                                             </div>}
                                     </td>
                                     <td className="p-1 flex flex-row gap-1 justify-end">
                                         {/* Use Item for consumables only */}
-                                        {item.category === "consumable" && <ButtonPress
+                                        {item.item_category === "consumable" && <ButtonPress
                                             className="btn-soft btn-primary btn-sm md:btn-md"
                                             onClick={async () => { await itemUse({ item }) }}
                                             disabled={isInventoryLoading || isDeletePending || isItemUsePending}

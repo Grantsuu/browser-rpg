@@ -114,7 +114,7 @@ const Crafting = () => {
                                         {recipe.required_level}
                                     </td>
                                     <td className="hidden sm:table-cell">
-                                        <ItemCategoryBadge category={recipe.item.category as ItemCategory} />
+                                        <ItemCategoryBadge category={recipe.item.item_category as ItemCategory} />
                                     </td>
                                     <td className="hidden sm:table-cell">
                                         {recipe.item.value}
