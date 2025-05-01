@@ -29,7 +29,7 @@ const Equipment = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.2, delay: 0.1 }}
-                    className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4"
+                    className="card shadow-sm border-2 border-base-200 w-full md:w-1/3 xl:w-1/4"
                 >
                     <div className="card-body gap-1">
                         <h2 className="card-title justify-center">
@@ -58,7 +58,7 @@ const Equipment = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.2, delay: 0.2 }}
-                    className="card shadow-sm border-2 border-base-200 w-full md:w-1/2 xl:w-1/4"
+                    className="card shadow-sm border-2 border-base-200 w-full md:w-2/3 xl:w-1/3"
                 >
                     <div className="card-body gap-1">
                         <h2 className="card-title justify-center">

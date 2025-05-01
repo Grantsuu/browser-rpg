@@ -22,8 +22,9 @@ import Inventory from '@features/Inventory/Inventory';
 import Training from '@features/Training/Training';
 import Crafting from '@features/Crafting/Crafting';
 import Farming from '@features/Farming/Farming';
-import Login from './components/Auth/Login.tsx';
+import Login from '@components/Auth/Login.tsx';
 import Fishing from '@features/Fishing/Fishing';
+import BountyBoard from '@features/BountyBoard/BountyBoard.tsx';
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ createRoot(document.getElementById('root')!).render(
                                         <Route path="create" element={<CharacterCreate />} />
                                     </Route>
                                     <Route path="equipment" element={<Equipment />} />
+                                    <Route path="bounty-board" element={<BountyBoard />} />
                                     <Route path="shop" element={<Shop />} />
                                     <Route path="inventory" element={<Inventory />} />
                                     <Route path="training" element={<Training />} />

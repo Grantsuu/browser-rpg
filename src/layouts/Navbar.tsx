@@ -67,6 +67,15 @@ const Navbar = () => {
                         </li>
                         <li>
                             <Link
+                                to="/bounty-board"
+                                onClick={() => handleItemClick()}
+                                className={clsx(`${location.pathname.includes('bounty-board') ? 'menu-active' : ''}`)}
+                            >
+                                <img src="/images/bounty-board.png" className="w-5" />Bounty Board
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
                                 to="/shop"
                                 onClick={() => handleItemClick()}
                                 className={clsx(`${location.pathname.includes('shop') ? 'menu-active' : ''}`)}
