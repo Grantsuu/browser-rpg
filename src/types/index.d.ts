@@ -157,3 +157,22 @@ export type CombatData = {
     monster: CombatDataMonster;
     player: CombatDataPlayer;
 }
+
+export type Bounty = {
+    id: number;
+    active: boolean;
+    character_id: string;
+    name: string;
+    category: string;
+    skill: string;
+    description: string;
+    required_item: Item;
+    required_monster: Monster;
+    required_quantity: number;
+    required_progress: number;
+    experience: number;
+    gold: number;
+    bounty_tokens: number;
+    reward_item: Item;
+    reward_item_quantity: number;
+}

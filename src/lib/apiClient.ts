@@ -545,3 +545,15 @@ export const removeEquipment = async (equipmentId: number) => {
         throw new Error((error as Error).message);
     }
 }
+
+// Bounty
+
+// GET
+
+export const getBounties = async () => {
+    try {
+        return await fetchApi(`${apiUrl}/bounty`);
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
