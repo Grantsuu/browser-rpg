@@ -16,7 +16,7 @@ const BountyBoard = () => {
 
     return (
         <PageCard title="Bounty Board" icon='/images/bounty-board.png'>
-            <div>
+            <div className="flex flex-col gap-2">
                 <Collapse title="Active Bounties">
                     <></>
                 </Collapse>
@@ -31,9 +31,10 @@ const BountyBoard = () => {
                             : bounties?.map((bounty: Bounty, index: number) => (
                                 <ColumnDelayDown key={index} index={index}>
                                     <ResponsiveCard>
-                                        {/* <figure>
-                                    <img src={bounty.image} alt="Bounty" />
-                                </figure> */}
+                                        <figure className="flex w-full justify-center items-center pt-4">
+                                            {bounty.required_item && <img src={bounty.required_item.image} alt="Bounty" className="w-1/3 p-4 border-5 border-base-300 rounded-lg" />}
+                                            {bounty.required_monster && <img src={bounty.required_monster.image} alt="Bounty" className="w-1/3 p-4 border-5 border-base-300 rounded-lg" />}
+                                        </figure>
                                         <div className="card-body">
                                             <h2 className="card-title">{bounty.name}</h2>
                                             <p>{bounty.description}</p>
