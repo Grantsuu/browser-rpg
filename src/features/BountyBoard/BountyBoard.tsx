@@ -4,7 +4,7 @@ import PageCard from "@src/layouts/PageCard";
 import { getBounties } from "@src/lib/apiClient";
 import Collapse from "@components/Collapse/Collapse";
 import ResponsiveCardGrid from "@components/Responsive/ResponsiveCardGrid";
-import ResponsiveCard from "@components/Responsive/ResponsiveCard";
+import BountyCard from "./BountyCard";
 import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
 
 const BountyBoard = () => {
@@ -30,19 +30,7 @@ const BountyBoard = () => {
                             })
                             : bounties?.map((bounty: Bounty, index: number) => (
                                 <ColumnDelayDown key={index} index={index}>
-                                    <ResponsiveCard>
-                                        <figure className="flex w-full justify-center items-center pt-4">
-                                            {bounty.required_item && <img src={bounty.required_item.image} alt="Bounty" className="w-1/3 p-4 border-5 border-base-300 rounded-lg" />}
-                                            {bounty.required_monster && <img src={bounty.required_monster.image} alt="Bounty" className="w-1/3 p-4 border-5 border-base-300 rounded-lg" />}
-                                        </figure>
-                                        <div className="card-body">
-                                            <h2 className="card-title">{bounty.name}</h2>
-                                            <p>{bounty.description}</p>
-                                            <div className="card-actions justify-end">
-                                                <button className="btn btn-primary">Accept</button>
-                                            </div>
-                                        </div>
-                                    </ResponsiveCard>
+                                    <BountyCard bounty={bounty} />
                                 </ColumnDelayDown>
                             ))}
                     </ResponsiveCardGrid>

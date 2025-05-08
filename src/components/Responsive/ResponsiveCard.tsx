@@ -8,9 +8,9 @@ interface ResponsiveCardProps {
 const ResponsiveCard = ({ children, isDisabled = false }: ResponsiveCardProps) => {
     return (
         <div className={clsx(
-            "card border border-gray-100 w-full shadow-md transition-all duration-300 ease-in-out",
-            { "bg-base-100 hover:bg-gray-100": !isDisabled },
-            { "bg-gray-300 pointer-events-none": isDisabled },
+            "card border border-base-300 w-full shadow-md transition-all duration-300 ease-in-out",
+            { "bg-base-100 hover:bg-base-200": !isDisabled },
+            { "bg-base-300 pointer-events-none": isDisabled },
         )}>
             {children}
         </div>
