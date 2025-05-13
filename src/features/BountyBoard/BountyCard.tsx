@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDice } from "@fortawesome/free-solid-svg-icons";
+import { faDice, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Bounty } from "@src/types";
 import ResponsiveCard from "@components/Responsive/ResponsiveCard";
@@ -106,19 +106,19 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
             </div>
             {/* Buttons */}
             <div className="card-actions justify-between pl-5 pb-5 pr-5">
-                {/* Reroll */}
-                <ButtonPress className="btn-secondary btn-outline">
-                    Reroll <FontAwesomeIcon icon={faDice as IconProp} />
-                </ButtonPress>
+                <div className="flex gap-1">
+                    {/* Delete */}
+                    <ButtonPress className="btn-secondary">
+                        <FontAwesomeIcon icon={faTrash as IconProp} />
+                    </ButtonPress>
+                    {/* Reroll */}
+                    <ButtonPress className="btn-accent">
+                        Reroll <FontAwesomeIcon icon={faDice as IconProp} />
+                    </ButtonPress>
+                </div>
                 {/* Accept */}
-                <ButtonPress
-                    className={
-                        bounty?.category === 'gathering' ? 'btn-success' :
-                            bounty?.category === 'crafting' ? 'btn-info' :
-                                bounty?.category === 'combat' ? 'btn-error' : 'btn-primary'
-                    }
-                >
-                    Accept
+                <ButtonPress className='btn-primary'>
+                    Complete
                 </ButtonPress>
             </div>
         </ResponsiveCard>

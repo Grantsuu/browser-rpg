@@ -32,12 +32,13 @@ const BountyBoard = () => {
         >
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between">
+                    <div className="join">
+                        <input className="join-item btn" type="radio" name="options" aria-label="Bounties" defaultChecked onClick={() => { }} />
+                        <input className="join-item btn" type="radio" name="options" aria-label="Shop" onClick={() => { }} />
+                    </div>
                     <ButtonPress className="btn-primary">
                         Roll Bounty <FontAwesomeIcon icon={faDice as IconProp} />
                     </ButtonPress>
-                    <div className="border-1 border-base rounded-md p-2">
-                        Gathering: 0/1 | Crafting: 0/1 | Combat: 0/1
-                    </div>
                 </div>
                 <ResponsiveCardGrid>
                     {isBountiesLoading ?
