@@ -31,35 +31,28 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                     {bounty?.category === 'combat' && <div className="tooltip" data-tip="Combat"><img src="/images/swords.png" alt="Combat" className="w-5 h-5" /></div>}
                     <h2 className="card-title justify-center">{bounty.name}</h2>
                 </div>
+                {/* Indicator */}
                 <div className="flex justify-center">
-                    {bounty?.active ?
-                        <div className="indicator w-20">
-                            <span className="indicator-item indicator-bottom indicator-center badge border-base-content">
-                                {bounty?.required_progress}/{bounty?.required_quantity}
-                            </span>
-                            <div className="p-2 border-4 rounded-lg" style={{ borderColor: `var(--color-${color})` }}>
-                                {bounty?.required_item &&
-                                    <img src={bounty?.required_item?.image} alt="Bounty" />}
-                                {bounty?.required_monster &&
-                                    <img src={bounty?.required_monster?.image} alt="Bounty" />}
-                            </div>
-                        </div> :
-                        <div className="w-20 p-2 border-4 rounded-lg" style={{ borderColor: `var(--color-${color})` }}>
+                    <div className="indicator w-20">
+                        <span className="indicator-item indicator-bottom indicator-center badge border-base-content">
+                            {bounty?.required_progress}/{bounty?.required_quantity}
+                        </span>
+                        <div className="p-2 border-4 rounded-lg" style={{ borderColor: `var(--color-${color})` }}>
                             {bounty?.required_item &&
                                 <img src={bounty?.required_item?.image} alt="Bounty" />}
                             {bounty?.required_monster &&
                                 <img src={bounty?.required_monster?.image} alt="Bounty" />}
                         </div>
-                    }
+                    </div>
                 </div>
                 {/* Progress Bar */}
-                {bounty?.active && <ProgressBar
+                <ProgressBar
                     backgroundClassName='h-4 mt-3'
                     foregroundClassName={`${bounty.category === 'gathering' ? 'bg-success' : bounty.category === 'crafting' ? 'bg-info' : 'bg-error'}`}
                     width={Math.floor((bounty?.required_progress / bounty?.required_quantity) * 100)}
-                />}
+                />
                 {/* Rewards */}
-                <p className="text-base text-center">Rewards</p>
+                <div className="text-center">Rewards</div>
                 <div className="flex flex-row flex-wrap gap-1 items-center justify-center">
                     {/* Item */}
                     {bounty?.reward_item &&
@@ -118,7 +111,15 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                     Reroll <FontAwesomeIcon icon={faDice as IconProp} />
                 </ButtonPress>
                 {/* Accept */}
-                <ButtonPress className={`btn-${color}`}>Accept</ButtonPress>
+                <ButtonPress
+                    className={
+                        bounty?.category === 'gathering' ? 'btn-success' :
+                            bounty?.category === 'crafting' ? 'btn-info' :
+                                bounty?.category === 'combat' ? 'btn-error' : 'btn-primary'
+                    }
+                >
+                    Accept
+                </ButtonPress>
             </div>
         </ResponsiveCard>
     )
