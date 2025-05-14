@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDice, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faDice, faFlag, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Bounty } from "@src/types";
+import { useGameStore } from "@src/stores/gameStore";
 import ResponsiveCard from "@components/Responsive/ResponsiveCard";
 import BountyRewardIcon from "./BountyRewardIcon";
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
@@ -12,6 +13,10 @@ interface BountyCardProps {
 };
 
 const BountyCard = ({ bounty }: BountyCardProps) => {
+    const gameStore = useGameStore();
+
+    const [isActive, setIsActive] = useState<boolean>(false);
+
     let color;
     if (bounty?.category === 'gathering') {
         color = 'success';
@@ -21,15 +26,36 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
         color = 'error';
     }
 
+    const handleTrackBounty = () => {
+        if (isActive) {
+            gameStore.setTrackedBounty(undefined);
+            setIsActive(false);
+        } else {
+            gameStore.setTrackedBounty(bounty);
+            setIsActive(true);
+        }
+    }
+
     return (
-        <ResponsiveCard>
+        <ResponsiveCard className={isActive ? "border-4 border-primary" : ""} >
             <div className="card-body">
                 {/* Name */}
-                <div className="flex flex-row gap-2 items-center justify-center">
-                    {bounty?.category === 'gathering' && <div className="tooltip" data-tip="Gathering"><img src="/images/gathering.png" alt="Gathering" className="w-5 h-5" /></div>}
-                    {bounty?.category === 'crafting' && <div className="tooltip" data-tip="Crafting"><img src="/images/crafting.png" alt="Crafting" className="w-5 h-5" /></div>}
-                    {bounty?.category === 'combat' && <div className="tooltip" data-tip="Combat"><img src="/images/swords.png" alt="Combat" className="w-5 h-5" /></div>}
-                    <h2 className="card-title justify-center">{bounty.name}</h2>
+                <div className="flex flex-row relative items-center justify-between">
+                    <div></div>
+                    <div className="flex flex-row absolute w-full gap-2 items-center justify-center">
+                        {bounty?.category === 'gathering' && <div className="tooltip" data-tip="Gathering"><img src="/images/gathering.png" alt="Gathering" className="w-5 h-5" /></div>}
+                        {bounty?.category === 'crafting' && <div className="tooltip" data-tip="Crafting"><img src="/images/crafting.png" alt="Crafting" className="w-5 h-5" /></div>}
+                        {bounty?.category === 'combat' && <div className="tooltip" data-tip="Combat"><img src="/images/swords.png" alt="Combat" className="w-5 h-5" /></div>}
+                        <h2 className="card-title">{bounty.name}</h2>
+                    </div>
+                    <div className={`tooltip`} data-tip={isActive ? "Untrack bounty" : "Track bounty"}>
+                        <button
+                            className={`btn btn-ghost btn-circle text-lg hover:text-primary ${isActive ? "text-primary" : "text-gray-300"}`}
+                            onClick={() => { handleTrackBounty() }}
+                        >
+                            <FontAwesomeIcon icon={faFlag} />
+                        </button>
+                    </div>
                 </div>
                 {/* Indicator */}
                 <div className="flex justify-center">
@@ -109,11 +135,11 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                 <div className="flex gap-1">
                     {/* Delete */}
                     <ButtonPress className="btn-secondary">
-                        <FontAwesomeIcon icon={faTrash as IconProp} />
+                        <FontAwesomeIcon icon={faTrash} />
                     </ButtonPress>
                     {/* Reroll */}
                     <ButtonPress className="btn-accent">
-                        Reroll <FontAwesomeIcon icon={faDice as IconProp} />
+                        Reroll <FontAwesomeIcon icon={faDice} />
                     </ButtonPress>
                 </div>
                 {/* Accept */}

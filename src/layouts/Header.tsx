@@ -1,11 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { useGameStore } from "@src/stores/gameStore";
 import { useCharacter } from '../lib/stateMangers';
 import SignOutButton from '../components/Auth/SignOutButton';
 import ThemeController from '@src/components/ThemeController/ThemeController';
+import ProgressBar from '@src/components/Animated/ProgressBar';
 
 const Header = () => {
+    const gameStore = useGameStore();
     const { data } = useCharacter();
 
     return (
@@ -17,6 +20,22 @@ const Header = () => {
             <div></div>
             {/* Profile */}
             <div className="flex flex-row gap-2 items-center">
+                {/* Bounty Tracker */}
+                {gameStore?.trackedBounty &&
+                    <div className="flex flex-col gap-1 border-2 border-primary rounded-md p-1 bg-base-100 text-sm">
+                        <div className="flex flex-row gap-1 items-center">
+                            <img
+                                src={gameStore?.trackedBounty?.category === 'gathering' ? '/images/gathering.png' : gameStore?.trackedBounty?.category === 'crafting' ? '/images/crafting.png' : '/images/swords.png'}
+                                alt="Bounty"
+                                className="w-5"
+                            />
+                            {`${gameStore?.trackedBounty?.name}: ${gameStore?.trackedBounty?.required_progress}/${gameStore?.trackedBounty?.required_quantity}`}
+                        </div>
+                        <ProgressBar
+                            backgroundClassName='h-2'
+                            width={gameStore?.trackedBounty?.required_progress / gameStore?.trackedBounty?.required_quantity}
+                        />
+                    </div>}
                 <ThemeController />
                 {/* <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">

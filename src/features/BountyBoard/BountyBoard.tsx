@@ -5,7 +5,6 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import type { Bounty } from "@src/types";
 import PageCard from "@src/layouts/PageCard";
 import { getBounties } from "@src/lib/apiClient";
-import ResponsiveCardGrid from "@components/Responsive/ResponsiveCardGrid";
 import BountyCard from "./BountyCard";
 import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
@@ -40,7 +39,7 @@ const BountyBoard = () => {
                         Roll Bounty <FontAwesomeIcon icon={faDice as IconProp} />
                     </ButtonPress>
                 </div>
-                <ResponsiveCardGrid>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl: xl:grid-cols-3 gap-4">
                     {isBountiesLoading ?
                         [...Array(3).keys()].map((index) => {
                             return (
@@ -52,7 +51,7 @@ const BountyBoard = () => {
                                 <BountyCard bounty={bounty} />
                             </ColumnDelayDown>
                         ))}
-                </ResponsiveCardGrid>
+                </div>
             </div>
         </PageCard>
     );
