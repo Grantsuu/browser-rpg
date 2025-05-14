@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// import { useQueryClient } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDice, faFlag, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Bounty } from "@src/types";
@@ -13,9 +13,8 @@ interface BountyCardProps {
 };
 
 const BountyCard = ({ bounty }: BountyCardProps) => {
+    // const queryClient = useQueryClient();
     const gameStore = useGameStore();
-
-    const [isActive, setIsActive] = useState<boolean>(false);
 
     let color;
     if (bounty?.category === 'gathering') {
@@ -25,19 +24,49 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
     } else {
         color = 'error';
     }
+    // Keep this code commented just for reference on how to use optimistic updates
+    // const { mutateAsync: toggleActive } = useMutation({
+    //     mutationFn: async () => updateBounty(bounty.id, { active: bounty.active }),
+    //     onMutate: async () => {
+    //         await queryClient.cancelQueries({ queryKey: ['characterBounties'] });
 
-    const handleTrackBounty = () => {
-        if (isActive) {
+    //         const previousBounty = gameStore.trackedBounty;
+
+    //         if (bounty.active) {
+    //             gameStore.setTrackedBounty(undefined);
+    //             bounty.active = false;
+    //         } else {
+    //             gameStore.setTrackedBounty(bounty);
+    //             bounty.active = true;
+    //             if (previousBounty) {
+    //                 await updateBounty(previousBounty.id, { active: false });
+    //             }
+    //         }
+
+    //         return { previousBounty };
+    //     },
+    //     onError: (error, _, context) => {
+    //         toast.error(`Something went wrong updating bounty: ${(error as Error).message}`);
+    //         bounty.active = !bounty.active; // Revert the active state
+    //         gameStore.setTrackedBounty(context?.previousBounty); // Restore the previous bounty state
+    //     },
+    //     onSettled: () => {
+    //         queryClient.invalidateQueries({ queryKey: ['characterBounties'] });
+    //     }
+    // });
+
+    const handleToggleActive = async () => {
+        if (gameStore?.trackedBounty?.id === bounty.id) {
             gameStore.setTrackedBounty(undefined);
-            setIsActive(false);
+            localStorage.removeItem('trackedBounty');
         } else {
             gameStore.setTrackedBounty(bounty);
-            setIsActive(true);
+            localStorage.setItem('trackedBounty', JSON.stringify(bounty));
         }
     }
 
     return (
-        <ResponsiveCard className={isActive ? "border-4 border-primary" : ""} >
+        <ResponsiveCard className={gameStore?.trackedBounty?.id === bounty.id ? "border-4 border-primary" : ""} >
             <div className="card-body">
                 {/* Name */}
                 <div className="flex flex-row relative items-center justify-between">
@@ -48,10 +77,10 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                         {bounty?.category === 'combat' && <div className="tooltip" data-tip="Combat"><img src="/images/swords.png" alt="Combat" className="w-5 h-5" /></div>}
                         <h2 className="card-title">{bounty.name}</h2>
                     </div>
-                    <div className={`tooltip`} data-tip={isActive ? "Untrack bounty" : "Track bounty"}>
+                    <div className={`tooltip`} data-tip={gameStore?.trackedBounty?.id === bounty.id ? "Untrack bounty" : "Track bounty"}>
                         <button
-                            className={`btn btn-ghost btn-circle text-lg hover:text-primary ${isActive ? "text-primary" : "text-gray-300"}`}
-                            onClick={() => { handleTrackBounty() }}
+                            className={`btn btn-ghost btn-circle text-lg hover:text-primary ${gameStore?.trackedBounty?.id === bounty.id ? "text-primary" : "text-gray-300"}`}
+                            onClick={() => { handleToggleActive() }}
                         >
                             <FontAwesomeIcon icon={faFlag} />
                         </button>

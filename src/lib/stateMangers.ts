@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCharacter, getCharacterCombatStats, getCharacterLevels, getCharacterInventory } from './apiClient';
+import { getBounties, getCharacter, getCharacterCombatStats, getCharacterLevels, getCharacterInventory } from './apiClient';
 
 export const useCharacter = () => useQuery({
     queryKey: ['character'],
@@ -25,4 +25,9 @@ export const useInventory = () => useQuery({
 export const useCharacterCombatStats = () => useQuery({
     queryKey: ['characterCombatStats'],
     queryFn: getCharacterCombatStats
+});
+
+export const useCharacterBounties = () => useQuery({
+    queryKey: ['characterBounties'],
+    queryFn: getBounties
 });

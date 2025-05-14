@@ -1,20 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDice } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import type { Bounty } from "@src/types";
 import PageCard from "@src/layouts/PageCard";
-import { getBounties } from "@src/lib/apiClient";
+import { useCharacterBounties } from '@lib/stateMangers';
 import BountyCard from "./BountyCard";
 import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
 
 const BountyBoard = () => {
 
-    const { data: bounties, isLoading: isBountiesLoading } = useQuery({
-        queryKey: ['equipment'],
-        queryFn: getBounties
-    });
+    const { data: bounties, isLoading: isBountiesLoading } = useCharacterBounties();
 
     return (
         <PageCard

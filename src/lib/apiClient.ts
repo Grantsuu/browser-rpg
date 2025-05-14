@@ -557,3 +557,17 @@ export const getBounties = async () => {
         throw new Error((error as Error).message);
     }
 }
+
+export const updateBounty = async (bountyId: number, updateJson: object) => {
+    try {
+        return await fetchApi(`${apiUrl}/bounty/${bountyId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateJson)
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
