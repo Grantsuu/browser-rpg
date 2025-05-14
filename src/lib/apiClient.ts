@@ -392,6 +392,15 @@ export const getCrops = async () => {
 
 // GET
 
+// Get all fish
+export const getFish = async () => {
+    try {
+        return await fetchApi(`${apiUrl}/fishing/fish`);
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
 // Get fishing game state for user
 export const getFishingGame = async () => {
     try {
@@ -443,9 +452,11 @@ export const putUpdateFishingGame = async (row: number, col: number) => {
 
 // GET
 
-export const getMonstersByArea = async (area: string) => {
+export const getMonsters = async (area?: string) => {
     const params = new URLSearchParams();
-    params.set('area', area);
+    if (area) {
+        params.set('area', area);
+    }
     try {
         return await fetchApi(`${apiUrl}/combat/monsters?${params.toString()}`);
     } catch (error) {

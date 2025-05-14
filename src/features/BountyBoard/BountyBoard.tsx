@@ -1,15 +1,21 @@
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDice } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import type { Bounty } from "@src/types";
 import PageCard from "@src/layouts/PageCard";
-import { useCharacterBounties } from '@lib/stateMangers';
+import { useCharacter, useCharacterBounties } from '@lib/stateMangers';
 import BountyCard from "./BountyCard";
 import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
 
-const BountyBoard = () => {
+const rollNewBounty = async (client: QueryClient) => {
+    console.log(client.getQueryData(['allCrops']));
+}
 
+const BountyBoard = () => {
+    const queryClient = useQueryClient();
+    const { data: character } = useCharacter();
     const { data: bounties, isLoading: isBountiesLoading } = useCharacterBounties();
 
     return (
@@ -20,7 +26,7 @@ const BountyBoard = () => {
                 <div className="border-1 border-base rounded-md bg-base-300 p-2">
                     <div className="flex flex-row gap-2 items-center">
                         <img src="/images/bounty_token.png" alt="Bounty Board" className="w-5 h-5" />
-                        <span className="text-sm font-bold">Bounty Tokens: 1</span>
+                        <span className="text-sm font-bold">Bounty Tokens: {character.bounty_tokens}</span>
                     </div>
                 </div>
             }
@@ -31,7 +37,7 @@ const BountyBoard = () => {
                         <input className="join-item btn" type="radio" name="options" aria-label="Bounties" defaultChecked onClick={() => { }} />
                         <input className="join-item btn" type="radio" name="options" aria-label="Shop" onClick={() => { }} />
                     </div>
-                    <ButtonPress className="btn-primary">
+                    <ButtonPress className="btn-primary" onClick={() => rollNewBounty(queryClient)}>
                         Roll Bounty <FontAwesomeIcon icon={faDice as IconProp} />
                     </ButtonPress>
                 </div>

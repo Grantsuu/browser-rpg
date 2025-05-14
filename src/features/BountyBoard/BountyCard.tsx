@@ -16,6 +16,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
     // const queryClient = useQueryClient();
     const gameStore = useGameStore();
 
+
     let color;
     if (bounty?.category === 'gathering') {
         color = 'success';

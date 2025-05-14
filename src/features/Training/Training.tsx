@@ -6,7 +6,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import type { Monster } from "../../types";
-import { getMonstersByArea, getTrainingAreas, getCombat, putUpdateCombat } from "../../lib/apiClient";
+import { getMonsters, getTrainingAreas, getCombat, putUpdateCombat } from "../../lib/apiClient";
 import { useCharacterLevels } from "../../lib/stateMangers";
 import PageCard from "../../layouts/PageCard";
 import ResponsiveCardGrid from "../../components/Responsive/ResponsiveCardGrid";
@@ -37,7 +37,7 @@ const Training = () => {
 
     const { data: monsters, error: monstersError, isLoading: monstersLoading } = useQuery({
         queryKey: ['monsters'],
-        queryFn: () => getMonstersByArea(selectedArea ? selectedArea.name : ''),
+        queryFn: () => getMonsters(selectedArea ? selectedArea.name : ''),
         enabled: monsterSelectOpen,
     });
 
