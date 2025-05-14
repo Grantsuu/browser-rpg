@@ -126,10 +126,8 @@ const BountyBoard = () => {
     const { data: bounties, isLoading: isBountiesLoading } = useCharacterBounties();
 
     const { mutateAsync: rollBounty } = useMutation({
+        mutationKey: ['characterBounties'],
         mutationFn: async (variables: { newBounty: Bounty }) => {
-            await insertBounty(variables.newBounty);
-        },
-        onMutate: async (variables) => {
             const newBounty = await rollNewBounty(queryClient);
             if (!newBounty) return;
             variables.newBounty = newBounty;
@@ -138,6 +136,7 @@ const BountyBoard = () => {
                 if (!oldBounties) return [newBounty];
                 return [...oldBounties, newBounty];
             });
+            await insertBounty(variables.newBounty);
         },
         onError: (_, variables) => {
             toast.error(`Error rolling new bounty please try again.`);
@@ -150,7 +149,6 @@ const BountyBoard = () => {
             queryClient.invalidateQueries({ queryKey: ['characterBounties'] });
         }
     });
-
 
     return (
         <PageCard

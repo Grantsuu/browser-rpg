@@ -18,20 +18,20 @@ const Header = () => {
     useEffect(() => {
         const trackedBounty = localStorage.getItem('trackedBounty');
         if (trackedBounty) {
-            // Check if the bounty is still in the list of bounties
-            const bountyExists = bounties?.some((bounty: Bounty) => bounty.id === JSON.parse(trackedBounty).id);
-            if (!bountyExists) {
-                localStorage.removeItem('trackedBounty');
-                gameStore.setTrackedBounty(undefined);
-                return;
-            }
             // If it exists, set it in the store
             const parsedBounty = JSON.parse(trackedBounty) as Bounty;
             gameStore.setTrackedBounty(parsedBounty);
         }
+        if (bounties) {
+            // If bounties exist check if the tracked bounty is in the bounties
+            const trackedBounty = bounties.find((bounty: Bounty) => bounty.id === gameStore.trackedBounty?.id);
+            if (!trackedBounty) {
+                // If the tracked bounty is not in the bounties, set it to undefined and remove it from local storage
+                gameStore.setTrackedBounty(undefined);
+                localStorage.removeItem('trackedBounty');
+            }
+        }
     }, [bounties]);
-
-
 
     return (
         <div className="navbar sticky top-0 z-1 bg-base-100 border-b-1 border-base-200 justify-between">
