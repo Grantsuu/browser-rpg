@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useGameStore } from "@src/stores/gameStore";
-import { useCharacter } from '@lib/stateMangers';
+import { useCharacter, useCharacterBounties } from '@lib/stateMangers';
 import type { Bounty } from "@src/types";
 import SignOutButton from '../components/Auth/SignOutButton';
 import ThemeController from '@src/components/ThemeController/ThemeController';
@@ -13,14 +13,25 @@ import ProgressBar from '@src/components/Animated/ProgressBar';
 const Header = () => {
     const gameStore = useGameStore();
     const { data } = useCharacter();
+    const { data: bounties } = useCharacterBounties();
 
     useEffect(() => {
         const trackedBounty = localStorage.getItem('trackedBounty');
         if (trackedBounty) {
+            // Check if the bounty is still in the list of bounties
+            const bountyExists = bounties?.some((bounty: Bounty) => bounty.id === JSON.parse(trackedBounty).id);
+            if (!bountyExists) {
+                localStorage.removeItem('trackedBounty');
+                gameStore.setTrackedBounty(undefined);
+                return;
+            }
+            // If it exists, set it in the store
             const parsedBounty = JSON.parse(trackedBounty) as Bounty;
             gameStore.setTrackedBounty(parsedBounty);
         }
-    }, []);
+    }, [bounties]);
+
+
 
     return (
         <div className="navbar sticky top-0 z-1 bg-base-100 border-b-1 border-base-200 justify-between">

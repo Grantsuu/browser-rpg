@@ -1,3 +1,5 @@
+import { Bounty } from "@src/types";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const fetchApi = async (url: string, options?: RequestInit) => {
@@ -577,6 +579,30 @@ export const updateBounty = async (bountyId: number, updateJson: object) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(updateJson)
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
+export const insertBounty = async (bounty: Bounty) => {
+    try {
+        return await fetchApi(`${apiUrl}/bounty`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bounty)
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
+export const deleteBounty = async (bountyId: number) => {
+    try {
+        return await fetchApi(`${apiUrl}/bounty/${bountyId}`, {
+            method: 'DELETE'
         });
     } catch (error) {
         throw new Error((error as Error).message);

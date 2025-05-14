@@ -67,6 +67,19 @@ export type Character = {
     farming_experience: number
 }
 
+export type CharacterLevels = {
+    combat_level: number,
+    combat_experience: number,
+    farming_level: number,
+    farming_experience: number,
+    cooking_level: number,
+    cooking_experience: number,
+    fishing_level: number,
+    fishing_experience: number,
+    farming_level: number,
+    farming_experience: number
+}
+
 export type FarmPlotData = {
     id: number,
     character_id: string,
@@ -74,6 +87,15 @@ export type FarmPlotData = {
     start_time: string,
     end_time: string
     previous_crop: Crop
+}
+
+export type Fish = {
+    id: number;
+    name: string;
+    item: Item;
+    area: FishingArea;
+    required_level: number;
+    experience: number;
 }
 
 export type FishingData = {
@@ -159,20 +181,19 @@ export type CombatData = {
 }
 
 export type Bounty = {
-    id: number;
-    active: boolean;
+    id: string;
     character_id: string;
     name: string;
     category: string;
     skill: string;
-    description: string;
-    required_item: Item;
-    required_monster: Monster;
+    description?: string;
+    required_item?: Item;
+    required_monster?: Monster;
     required_quantity: number;
     required_progress: number;
     experience: number;
     gold: number;
     bounty_tokens: number;
-    reward_item: Item;
-    reward_item_quantity: number;
+    reward_item?: Item;
+    reward_item_quantity?: number;
 }

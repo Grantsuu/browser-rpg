@@ -111,7 +111,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                 <div className="text-center">Rewards</div>
                 <div className="flex flex-row flex-wrap gap-1 items-center justify-center">
                     {/* Item */}
-                    {bounty?.reward_item &&
+                    {bounty?.reward_item && bounty?.reward_item_quantity &&
                         <BountyRewardIcon
                             tooltip={
                                 <div>
