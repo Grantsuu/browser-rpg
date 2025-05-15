@@ -1,8 +1,10 @@
-// import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDice, faFlag, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Bounty } from "@src/types";
 import { useGameStore } from "@src/stores/gameStore";
+import { deleteBounty } from '@lib/apiClient';
 import ResponsiveCard from "@components/Responsive/ResponsiveCard";
 import BountyRewardIcon from "./BountyRewardIcon";
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
@@ -13,9 +15,8 @@ interface BountyCardProps {
 };
 
 const BountyCard = ({ bounty }: BountyCardProps) => {
-    // const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
     const gameStore = useGameStore();
-
 
     let color;
     if (bounty?.category === 'gathering') {
@@ -25,6 +26,42 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
     } else {
         color = 'error';
     }
+
+    const { mutateAsync: deleteCharacterBounty } = useMutation({
+        mutationKey: ['characterBounties'],
+        mutationFn: async () => deleteBounty(bounty.id),
+        onMutate: async () => {
+            await queryClient.cancelQueries({ queryKey: ['characterBounties'] });
+            const deletedBounty = bounty;
+            queryClient.setQueryData(['characterBounties'], (old: Bounty[] | undefined) => {
+                if (!old) return old;
+                return old.filter((bounty: Bounty) => bounty.id !== deletedBounty.id);
+            });
+            const previousTrackedBounty = gameStore.trackedBounty;
+            if (gameStore?.trackedBounty?.id === bounty.id) {
+                gameStore.setTrackedBounty(undefined);
+                localStorage.removeItem('trackedBounty');
+            }
+            return { deletedBounty, previousTrackedBounty };
+        },
+        onError: (error, _, context) => {
+            if (error) {
+                toast.error(`Something went wrong deleting bounty please try again.`);
+            }
+            queryClient.setQueryData(['characterBounties'], (old: Bounty[] | undefined) => {
+                if (!old) return old;
+                return [...old, context?.deletedBounty];
+            });
+            if (context?.previousTrackedBounty) {
+                gameStore.setTrackedBounty(context?.previousTrackedBounty);
+                localStorage.setItem('trackedBounty', JSON.stringify(context?.previousTrackedBounty));
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['characterBounties'] });
+        }
+    });
+
     // Keep this code commented just for reference on how to use optimistic updates
     // const { mutateAsync: toggleActive } = useMutation({
     //     mutationFn: async () => updateBounty(bounty.id, { active: bounty.active }),
@@ -164,7 +201,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
             <div className="card-actions justify-between pl-5 pb-5 pr-5">
                 <div className="flex gap-1">
                     {/* Delete */}
-                    <ButtonPress className="btn-secondary">
+                    <ButtonPress className="btn-secondary" onClick={deleteCharacterBounty}>
                         <FontAwesomeIcon icon={faTrash} />
                     </ButtonPress>
                     {/* Reroll */}

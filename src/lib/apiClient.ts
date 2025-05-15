@@ -599,7 +599,7 @@ export const insertBounty = async (bounty: Bounty) => {
     }
 }
 
-export const deleteBounty = async (bountyId: number) => {
+export const deleteBounty = async (bountyId: string) => {
     try {
         return await fetchApi(`${apiUrl}/bounty/${bountyId}`, {
             method: 'DELETE'

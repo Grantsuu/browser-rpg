@@ -128,6 +128,7 @@ const BountyBoard = () => {
     const { mutateAsync: rollBounty } = useMutation({
         mutationKey: ['characterBounties'],
         mutationFn: async (variables: { newBounty: Bounty }) => {
+            await queryClient.cancelQueries({ queryKey: ['characterBounties'] });
             const newBounty = await rollNewBounty(queryClient);
             if (!newBounty) return;
             variables.newBounty = newBounty;
