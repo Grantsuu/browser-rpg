@@ -9,6 +9,7 @@ import ResponsiveCard from "@components/Responsive/ResponsiveCard";
 import BountyRewardIcon from "./BountyRewardIcon";
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
 import ProgressBar from '@src/components/Animated/ProgressBar';
+import ConfirmButton from '@src/components/ConfirmButton/ConfirmButton';
 
 interface BountyCardProps {
     bounty: Bounty;
@@ -201,20 +202,35 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
             <div className="card-actions justify-between pl-5 pb-5 pr-5">
                 <div className="flex gap-1">
                     {/* Delete */}
-                    <ButtonPress className="btn-secondary" onClick={deleteCharacterBounty}>
+                    <ConfirmButton
+                        className="btn-secondary"
+                        confirmContent={
+                            <div className="flex flex-row gap-1 items-center">
+                                1,000 <img src="/images/coins.png" alt="Coins" className="w-5" />
+                            </div>
+                        }
+                        onClick={deleteCharacterBounty}
+                    >
                         <FontAwesomeIcon icon={faTrash} />
-                    </ButtonPress>
+                    </ConfirmButton>
                     {/* Reroll */}
-                    <ButtonPress className="btn-accent">
+                    <ConfirmButton
+                        className="btn-accent text-primary-content"
+                        confirmContent={
+                            <div className="flex flex-row gap-1 items-center">
+                                1 Token <img src="/images/bounty_token.png" alt="Bounty Tokens" className="w-5" />
+                            </div>
+                        }
+                    >
                         Reroll <FontAwesomeIcon icon={faDice} />
-                    </ButtonPress>
+                    </ConfirmButton>
                 </div>
                 {/* Accept */}
                 <ButtonPress className='btn-primary'>
                     Complete
                 </ButtonPress>
             </div>
-        </ResponsiveCard>
+        </ResponsiveCard >
     )
 }
 

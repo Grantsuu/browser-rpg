@@ -7,15 +7,17 @@ interface ButtonPressProps {
     className?: React.HTMLAttributes<HTMLDivElement>['className'];
     disabled?: boolean;
     onClick?: () => void;
+    onBlur?: () => void;
     children: React.ReactNode;
 }
 
-const ButtonPress = ({ type, className, disabled, onClick, children }: ButtonPressProps) => {
+const ButtonPress = ({ type, className, disabled, onClick, onBlur, children }: ButtonPressProps) => {
     return (
         <motion.button
             type={type}
             className={clsx(className ? `btn ${className}` : "btn")}
             onClick={onClick}
+            onBlur={onBlur}
             disabled={disabled}
             whileTap={{ scale: 0.90 }}
         >
