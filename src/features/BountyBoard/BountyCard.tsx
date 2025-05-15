@@ -4,12 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDice, faFlag, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Bounty } from "@src/types";
 import { useGameStore } from "@src/stores/gameStore";
-import { deleteBounty } from '@lib/apiClient';
+import { useCharacter } from '@src/lib/stateMangers';
+import { deleteBounty, rerollBounty } from '@lib/apiClient';
 import ResponsiveCard from "@components/Responsive/ResponsiveCard";
 import BountyRewardIcon from "./BountyRewardIcon";
-import ButtonPress from "@src/components/Animated/Button/ButtonPress";
-import ProgressBar from '@src/components/Animated/ProgressBar';
-import ConfirmButton from '@src/components/ConfirmButton/ConfirmButton';
+import ButtonPress from "@components/Animated/Button/ButtonPress";
+import ProgressBar from '@components/Animated/ProgressBar';
+import ConfirmButton from '@components/ConfirmButton/ConfirmButton';
+import { rollNewBounty } from '@features/BountyBoard/BountyBoard';
 
 interface BountyCardProps {
     bounty: Bounty;
@@ -18,6 +20,7 @@ interface BountyCardProps {
 const BountyCard = ({ bounty }: BountyCardProps) => {
     const queryClient = useQueryClient();
     const gameStore = useGameStore();
+    const { data: character } = useCharacter();
 
     let color;
     if (bounty?.category === 'gathering') {
@@ -43,11 +46,15 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                 gameStore.setTrackedBounty(undefined);
                 localStorage.removeItem('trackedBounty');
             }
+            if (character?.gold) {
+                character.gold = character.gold - 1000;
+                queryClient.setQueryData(['character'], character);
+            }
             return { deletedBounty, previousTrackedBounty };
         },
         onError: (error, _, context) => {
             if (error) {
-                toast.error(`Something went wrong deleting bounty please try again.`);
+                toast.error(`Unable to delete bounty: ${(error as Error).message}`);
             }
             queryClient.setQueryData(['characterBounties'], (old: Bounty[] | undefined) => {
                 if (!old) return old;
@@ -56,6 +63,53 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
             if (context?.previousTrackedBounty) {
                 gameStore.setTrackedBounty(context?.previousTrackedBounty);
                 localStorage.setItem('trackedBounty', JSON.stringify(context?.previousTrackedBounty));
+            }
+            if (character?.gold) {
+                character.gold = character.gold + 1000;
+                queryClient.setQueryData(['character'], character);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['characterBounties'] });
+        }
+    });
+
+    const { mutateAsync: rerollCharaterBounty } = useMutation({
+        mutationKey: ['characterBounties'],
+        mutationFn: async (variables: { newBounty: Bounty }) => rerollBounty(bounty.id, variables.newBounty),
+        onMutate: async (variables) => {
+            await queryClient.cancelQueries({ queryKey: ['characterBounties'] });
+            const updatedBounty = bounty;
+            queryClient.setQueryData(['characterBounties'], (old: Bounty[] | undefined) => {
+                if (!old) return old;
+                return old.map((bounty: Bounty) => bounty.id === updatedBounty.id ? variables.newBounty : bounty);
+            });
+            const previousTrackedBounty = gameStore.trackedBounty;
+            if (gameStore?.trackedBounty?.id === bounty.id) {
+                gameStore.setTrackedBounty(undefined);
+                localStorage.removeItem('trackedBounty');
+            }
+            if (character?.bounty_tokens) {
+                character.bounty_tokens = character.bounty_tokens - 1;
+                queryClient.setQueryData(['character'], character);
+            }
+            return { updatedBounty, previousTrackedBounty };
+        },
+        onError: (error, _, context) => {
+            if (error) {
+                toast.error(`Unable to reroll bounty: ${(error as Error).message}`);
+            }
+            queryClient.setQueryData(['characterBounties'], (old: Bounty[] | undefined) => {
+                if (!old) return old;
+                return old.map((bounty: Bounty) => bounty.id === context?.updatedBounty.id ? context?.updatedBounty : bounty);
+            });
+            if (context?.previousTrackedBounty) {
+                gameStore.setTrackedBounty(context?.previousTrackedBounty);
+                localStorage.setItem('trackedBounty', JSON.stringify(context?.previousTrackedBounty));
+            }
+            if (character?.bounty_tokens) {
+                character.bounty_tokens = character.bounty_tokens + 1;
+                queryClient.setQueryData(['character'], character);
             }
         },
         onSettled: () => {
@@ -101,6 +155,28 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
         } else {
             gameStore.setTrackedBounty(bounty);
             localStorage.setItem('trackedBounty', JSON.stringify(bounty));
+        }
+    }
+
+    const handleRerollBounty = async () => {
+        if (character?.bounty_tokens < 1) {
+            toast.error("Not enough bounty tokens to reroll.");
+            return;
+        } else {
+            const newBounty = await rollNewBounty(queryClient, bounty.skill);
+            if (!newBounty) {
+                toast.error("Unable to reroll bounty. Please try again.");
+            } else {
+                await rerollCharaterBounty({ newBounty: newBounty });
+            }
+        }
+    }
+
+    const handleDeleteBounty = async () => {
+        if (character?.gold && character?.gold < 1000) {
+            toast.error("Not enough gold to delete bounty.");
+        } else {
+            await deleteCharacterBounty();
         }
     }
 
@@ -209,7 +285,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                                 1,000 <img src="/images/coins.png" alt="Coins" className="w-5" />
                             </div>
                         }
-                        onClick={deleteCharacterBounty}
+                        onClick={handleDeleteBounty}
                     >
                         <FontAwesomeIcon icon={faTrash} />
                     </ConfirmButton>
@@ -221,6 +297,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                                 1 Token <img src="/images/bounty_token.png" alt="Bounty Tokens" className="w-5" />
                             </div>
                         }
+                        onClick={handleRerollBounty}
                     >
                         Reroll <FontAwesomeIcon icon={faDice} />
                     </ConfirmButton>

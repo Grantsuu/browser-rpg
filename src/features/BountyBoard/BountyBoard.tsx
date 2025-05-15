@@ -13,10 +13,10 @@ import BountyCard from "./BountyCard";
 import ColumnDelayDown from "@components/Animated/Motion/ColumnDelayDown";
 import ButtonPress from "@src/components/Animated/Button/ButtonPress";
 
-const rollNewBounty = async (client: QueryClient) => {
+export const rollNewBounty = async (client: QueryClient, skill?: string) => {
     // Don't roll a new bounty if the character already has 3 bounties
     const bounties: Bounty[] | undefined = client.getQueryData(['characterBounties']);
-    if (bounties && bounties.length >= 3) {
+    if (!skill && bounties && (bounties.length >= 3)) {
         toast.error('You already have 3 bounties. Complete or remove one before rolling a new one.');
         return;
     }
@@ -34,13 +34,16 @@ const rollNewBounty = async (client: QueryClient) => {
         return;
     }
 
+    // If a skill is passed in, use that skill instead of a random one
+    const bountySkill = skill ? skill : skills[Math.floor(Math.random() * skills.length)];
+
     // Initialize a new bounty with a random uuid, character_id, random skill and a random quantity between 25 and 75
     const bounty: Bounty = {
         id: uuidv4(),
         character_id: character?.id,
         name: '',
         category: '',
-        skill: skills[Math.floor(Math.random() * skills.length)],
+        skill: bountySkill,
         description: '',
         required_quantity: Math.floor(Math.random() * (75 - 25 + 1)) + 25,
         required_progress: 0,

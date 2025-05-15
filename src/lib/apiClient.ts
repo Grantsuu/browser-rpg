@@ -599,6 +599,20 @@ export const insertBounty = async (bounty: Bounty) => {
     }
 }
 
+export const rerollBounty = async (bountyId: string, bounty: object) => {
+    try {
+        return await fetchApi(`${apiUrl}/bounty/reroll?id=${bountyId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bounty)
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
+
 export const deleteBounty = async (bountyId: string) => {
     try {
         return await fetchApi(`${apiUrl}/bounty/${bountyId}`, {
