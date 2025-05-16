@@ -35,7 +35,8 @@ export const rollNewBounty = async (client: QueryClient, skill?: string) => {
     }
 
     // If a skill is passed in, use that skill instead of a random one
-    const bountySkill = skill ? skill : skills[Math.floor(Math.random() * skills.length)];
+    let bountySkill = skill ? skill : skills[Math.floor(Math.random() * skills.length)];
+    bountySkill = 'combat'; // Force combat for testing
 
     // Initialize a new bounty with a random uuid, character_id, random skill and a random quantity between 25 and 75
     const bounty: Bounty = {

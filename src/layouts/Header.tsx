@@ -29,8 +29,13 @@ const Header = () => {
                 // If the tracked bounty is not in the bounties, set it to undefined and remove it from local storage
                 gameStore.setTrackedBounty(undefined);
                 localStorage.removeItem('trackedBounty');
+            } else {
+                // If the tracked bounty is in the bounties, set it in the store
+                gameStore.setTrackedBounty(trackedBounty);
             }
         }
+
+        console.log('Tracked bounty:', gameStore.trackedBounty);
     }, [bounties]);
 
     return (
@@ -57,7 +62,7 @@ const Header = () => {
                             </div>
                             <ProgressBar
                                 backgroundClassName='h-2'
-                                width={Math.floor(gameStore?.trackedBounty?.required_progress / gameStore?.trackedBounty?.required_quantity) * 100}
+                                width={Math.floor(gameStore?.trackedBounty?.required_progress / gameStore?.trackedBounty?.required_quantity * 100)}
                             />
                         </div> :
                         <div className="p-1">

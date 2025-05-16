@@ -68,6 +68,14 @@ const Combat = ({ combat }: CombatProps) => {
         },
         onError: (error) => {
             toast.error(`Something went wrong starting combat: ${(error as Error).message}`);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['combat'] });
+            queryClient.invalidateQueries({ queryKey: ['character'] });
+            queryClient.invalidateQueries({ queryKey: ['characterCombatStats'] });
+            queryClient.invalidateQueries({ queryKey: ['characterLevels'] });
+            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.invalidateQueries({ queryKey: ['characterBounties'] });
         }
     });
 
