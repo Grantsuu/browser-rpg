@@ -5,7 +5,7 @@ import { faDice, faFlag, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Bounty } from "@src/types";
 import { useGameStore } from "@src/stores/gameStore";
 import { useCharacter } from '@src/lib/stateMangers';
-import { deleteBounty, rerollBounty } from '@lib/apiClient';
+import { completeBounty, deleteBounty, rerollBounty } from '@lib/apiClient';
 import ResponsiveCard from "@components/Responsive/ResponsiveCard";
 import BountyRewardIcon from "./BountyRewardIcon";
 import ButtonPress from "@components/Animated/Button/ButtonPress";
@@ -53,9 +53,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
             return { deletedBounty, previousTrackedBounty };
         },
         onError: (error, _, context) => {
-            if (error) {
-                toast.error(`Unable to delete bounty: ${(error as Error).message}`);
-            }
+            toast.error(`Unable to delete bounty: ${(error as Error).message}`);
             queryClient.setQueryData(['characterBounties'], (old: Bounty[] | undefined) => {
                 if (!old) return old;
                 return [...old, context?.deletedBounty];
@@ -96,9 +94,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
             return { updatedBounty, previousTrackedBounty };
         },
         onError: (error, _, context) => {
-            if (error) {
-                toast.error(`Unable to reroll bounty: ${(error as Error).message}`);
-            }
+            toast.error(`Unable to reroll bounty: ${(error as Error).message}`);
             queryClient.setQueryData(['characterBounties'], (old: Bounty[] | undefined) => {
                 if (!old) return old;
                 return old.map((bounty: Bounty) => bounty.id === context?.updatedBounty.id ? context?.updatedBounty : bounty);
@@ -117,36 +113,21 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
         }
     });
 
-    // Keep this code commented just for reference on how to use optimistic updates
-    // const { mutateAsync: toggleActive } = useMutation({
-    //     mutationFn: async () => updateBounty(bounty.id, { active: bounty.active }),
-    //     onMutate: async () => {
-    //         await queryClient.cancelQueries({ queryKey: ['characterBounties'] });
-
-    //         const previousBounty = gameStore.trackedBounty;
-
-    //         if (bounty.active) {
-    //             gameStore.setTrackedBounty(undefined);
-    //             bounty.active = false;
-    //         } else {
-    //             gameStore.setTrackedBounty(bounty);
-    //             bounty.active = true;
-    //             if (previousBounty) {
-    //                 await updateBounty(previousBounty.id, { active: false });
-    //             }
-    //         }
-
-    //         return { previousBounty };
-    //     },
-    //     onError: (error, _, context) => {
-    //         toast.error(`Something went wrong updating bounty: ${(error as Error).message}`);
-    //         bounty.active = !bounty.active; // Revert the active state
-    //         gameStore.setTrackedBounty(context?.previousBounty); // Restore the previous bounty state
-    //     },
-    //     onSettled: () => {
-    //         queryClient.invalidateQueries({ queryKey: ['characterBounties'] });
-    //     }
-    // });
+    const { mutateAsync: completeCharacterBounty } = useMutation({
+        mutationKey: ['characterBounties'],
+        mutationFn: async () => completeBounty(bounty.id),
+        onMutate: async () => {
+            await queryClient.cancelQueries({ queryKey: ['characterBounties'] });
+        },
+        onError: (error) => {
+            toast.error(`Unable to complete bounty: ${(error as Error).message}`);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['characterBounties'] });
+            queryClient.invalidateQueries({ queryKey: ['character'] });
+            queryClient.invalidateQueries({ queryKey: ['characterLevels'] });
+        }
+    });
 
     const handleToggleActive = async () => {
         if (gameStore?.trackedBounty?.id === bounty.id) {
@@ -177,6 +158,14 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
             toast.error("Not enough gold to delete bounty.");
         } else {
             await deleteCharacterBounty();
+        }
+    }
+
+    const handleCompleteBounty = async () => {
+        if (bounty?.required_progress < bounty?.required_quantity) {
+            toast.error("Bounty not completed.");
+        } else {
+            await completeCharacterBounty();
         }
     }
 
@@ -303,7 +292,7 @@ const BountyCard = ({ bounty }: BountyCardProps) => {
                     </ConfirmButton>
                 </div>
                 {/* Accept */}
-                <ButtonPress className='btn-primary'>
+                <ButtonPress className='btn-primary' onClick={handleCompleteBounty} disabled={bounty?.required_progress < bounty?.required_quantity}>
                     Complete
                 </ButtonPress>
             </div>

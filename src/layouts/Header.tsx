@@ -57,7 +57,7 @@ const Header = () => {
                             </div>
                             <ProgressBar
                                 backgroundClassName='h-2'
-                                width={gameStore?.trackedBounty?.required_progress / gameStore?.trackedBounty?.required_quantity}
+                                width={Math.floor(gameStore?.trackedBounty?.required_progress / gameStore?.trackedBounty?.required_quantity) * 100}
                             />
                         </div> :
                         <div className="p-1">

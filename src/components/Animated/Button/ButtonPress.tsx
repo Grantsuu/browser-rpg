@@ -6,12 +6,13 @@ interface ButtonPressProps {
     type?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
     className?: React.HTMLAttributes<HTMLDivElement>['className'];
     disabled?: boolean;
+    loading?: boolean;
     onClick?: () => void;
     onBlur?: () => void;
     children: React.ReactNode;
 }
 
-const ButtonPress = ({ type, className, disabled, onClick, onBlur, children }: ButtonPressProps) => {
+const ButtonPress = ({ type, className, disabled, loading, onClick, onBlur, children }: ButtonPressProps) => {
     return (
         <motion.button
             type={type}
@@ -21,7 +22,7 @@ const ButtonPress = ({ type, className, disabled, onClick, onBlur, children }: B
             disabled={disabled}
             whileTap={{ scale: 0.90 }}
         >
-            {disabled ? <span className="loading loading-spinner loading-sm self-center"></span> : children}
+            {loading ? <span className="loading loading-spinner loading-sm self-center"></span> : children}
         </motion.button>
     );
 };

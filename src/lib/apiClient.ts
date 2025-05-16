@@ -622,3 +622,13 @@ export const deleteBounty = async (bountyId: string) => {
         throw new Error((error as Error).message);
     }
 }
+
+export const completeBounty = async (bountyId: string) => {
+    try {
+        return await fetchApi(`${apiUrl}/bounty/complete?id=${bountyId}`, {
+            method: 'POST'
+        });
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+}
